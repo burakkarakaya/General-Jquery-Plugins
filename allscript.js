@@ -184,10 +184,10 @@ var formController = {
 	el: [
 		{ el: '[id$="txtUYE_CEPTELEFONALAN"]', mask: '599', required: true, placeHolder: null, fnt: '[id$="lbfUYE_CEPTELEFON"]' },
 		{ el: '[id$="txtUYE_CEPTELEFON"]', mask: '9999999', required: true, placeHolder: null, fnt: '[id$="lbfUYE_CEPTELEFON"]' },
-		{ el: '[id$="txtUYE_DOGUMTARIHI"]', mask: null, required: true, placeHolder: null, fnt: '[id$="lbfUYE_DOGUMTARIHI"]' },
 		{ el: '[id$="txtUYA_CEPTELEFON"]', mask: '599 9999999', required: true, placeHolder: null },
-		{ el: '[id$="txtUYE_EMAIL"]', mask: null, required: true, placeHolder: { tr: 'Email adresinizi giriniz.', en: 'Email' } },
-		{ el: '[id$="txtUYE_SIFRE"]', mask: null, required: true, placeHolder: { tr: 'Şifrenizi giriniz.', en: 'Password' } },
+		{ el: '[id$="txtUYE_DOGUMTARIHI"]', mask: null, required: null, placeHolder: null, fnt: '[id$="lbfUYE_DOGUMTARIHI"]' },
+		{ el: '[id$="txtUYE_EMAIL"]', mask: null, required: null, placeHolder: { tr: 'Email adresinizi giriniz.', en: 'Email' } },
+		{ el: '[id$="txtUYE_SIFRE"]', mask: null, required: null, placeHolder: { tr: 'Şifrenizi giriniz.', en: 'Password' } },
 	],
 	init: function(){
 		var _t = this, e = _t.el;
