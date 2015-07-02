@@ -185,6 +185,7 @@ var formController = {
 		{ el: '[id$="txtUYE_CEPTELEFONALAN"]', mask: '599', required: true, placeHolder: null, fnt: '[id$="lbfUYE_CEPTELEFON"]' },
 		{ el: '[id$="txtUYE_CEPTELEFON"]', mask: '9999999', required: true, placeHolder: null, fnt: '[id$="lbfUYE_CEPTELEFON"]' },
 		{ el: '[id$="txtUYA_CEPTELEFON"]', mask: '599 9999999', required: true, placeHolder: null },
+		{ el: '[id$="drpUYE_CINSIYET"]', mask: null, required: false, placeHolder: null, fnt: '[id$="lbfUYE_CINSIYET"]' },
 		{ el: '[id$="txtUYE_DOGUMTARIHI"]', mask: null, required: null, placeHolder: null, fnt: '[id$="lbfUYE_DOGUMTARIHI"]' },
 		{ el: '[id$="txtUYE_EMAIL"]', mask: null, required: null, placeHolder: { tr: 'Email adresinizi giriniz.', en: 'Email' } },
 		{ el: '[id$="txtUYE_SIFRE"]', mask: null, required: null, placeHolder: { tr: 'Şifrenizi giriniz.', en: 'Password' } },
