@@ -139,7 +139,7 @@ function cartAdd(){ cart.add(); }
 /////////////////////////////////////////////////////////////////////////////////////////////////////// LOGIN
 var login = {
 	err: '.errorKutuLogin',
-	btn: '.btnGirisPc',
+	btn: '.btnGirisPc, .uyeBtnPc',
 	overlay: '#validateLogin .overlay, .closeUsrPp',
 	input: 'input[id$="txtUYE_EMAIL"]',
 	check: function(){
@@ -182,12 +182,12 @@ login.init();
 /////////////////////////////////////////////////////////////////////////////////////////////////////// FORM CONTROLLER
 var formController = {
 	el: [
-		{ el: '[id$="txtUYE_CEPTELEFONALAN"]', mask: '599', required: true, placeHolder: null },
-		{ el: '[id$="txtUYE_CEPTELEFON"]', mask: '9999999', required: true, placeHolder: null },
-		{ el: '[id$="txtUYE_DOGUMTARIHI"]', mask: null, required: true, placeHolder: null },
+		{ el: '[id$="txtUYE_CEPTELEFONALAN"]', mask: '599', required: true, placeHolder: null, fnt: '[id$="lbfUYE_CEPTELEFON"]' },
+		{ el: '[id$="txtUYE_CEPTELEFON"]', mask: '9999999', required: true, placeHolder: null, fnt: '[id$="lbfUYE_CEPTELEFON"]' },
+		{ el: '[id$="txtUYE_DOGUMTARIHI"]', mask: null, required: true, placeHolder: null, fnt: '[id$="lbfUYE_DOGUMTARIHI"]' },
 		{ el: '[id$="txtUYA_CEPTELEFON"]', mask: '599 9999999', required: true, placeHolder: null },
-		{ el: '[id$="txtUYE_EMAIL"]', mask: null, required: true, placeHolder: { tr: 'Email', en: 'Email' } },
-		{ el: '[id$="txtUYE_SIFRE"]', mask: null, required: true, placeHolder: { tr: 'Şifre', en: 'Password' } },
+		{ el: '[id$="txtUYE_EMAIL"]', mask: null, required: true, placeHolder: { tr: 'Email adresinizi giriniz.', en: 'Email' } },
+		{ el: '[id$="txtUYE_SIFRE"]', mask: null, required: true, placeHolder: { tr: 'Şifrenizi giriniz.', en: 'Password' } },
 	],
 	init: function(){
 		var _t = this, e = _t.el;
@@ -195,8 +195,15 @@ var formController = {
 			var el = $( o['el'] );
 			if( detectEl( el ) ){
 				if( o['mask'] != null ) el.mask( o['mask'] );
-				if( o['required'] != null ) el.attr('required', o['required'] );
-				if( o['placeHolder'] != null )el.attr('placeholder', o['placeHolder'][ siteLang ] );
+				if( o['placeHolder'] != null ) el.attr('placeholder', o['placeHolder'][ siteLang ] );
+				if( o['required'] != null ){
+					el.attr('required', o['required'] );	
+					if( o['required'] && o['fnt'] != undefined && o['fnt'] != null ){
+						el.parents('li').find( o['fnt'] ).addClass('zorunluFont');
+					}else if( !o['required'] && o['fnt'] != undefined && o['fnt'] != null ){
+						el.parents('li').find( o['fnt'] ).removeClass('zorunluFont');
+					}
+				}
 			}
 		});
 	}
