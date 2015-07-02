@@ -1,12 +1,13 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////// GLOBAL VARIABLE
-var win = $( window ), doc = $( document ), bdy = $('body'), pages = { main: '.pageHome', list: '.pageList', detail: '.pageDetail', blog: '.pageBlog' }, wt,  ht, wst, sRatio = 0, rstDom = false;
+var win = $( window ), doc = $( document ), bdy = $('body'), pages = { main: '.pageHome', list: '.pageList', detail: '.pageDetail', blog: '.pageBlog' }, wt,  ht, wst, sRatio = 0, rstDom = false, siteLang = lang.replace(/lang=/g, '') == 'tr-TR' ? 'tr' : 'en';
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////// MENU
 var menu = {
 	el: '.mainMenu',
 	mobile: '.mainMenu .subMenuHldr',
 	btn: '.mmenu',
-	overlay: '.mobiMenu.vail',
+	overlay: '.mobiMenu.vail, .mbHomePageBack > i',
+	mobiWrp: '.mobileCol',
 	plugin: function( ID ){
 		ID.minusDropDown({ customClass: 'opened', openedDelay: 222, isVisible: '.smartHeader' });
 	},
@@ -32,8 +33,16 @@ var menu = {
 			$('.opened', ID).removeClass('opened');
 		});	
 	},
+	resize: function(){
+		var _t = this, e = $( _t.mobiWrp );
+		if( e.length > 0 && bdy.hasClass('mobiMenuReady') )
+			e.css({ 'min-height': ht });
+	},
 	destroy: function(){
 		bdy.removeClass('mobiMenuReady mobileMenuOpened');
+		var _t = this, e = $( _t.mobiWrp );
+		if( e.length > 0 )
+			e.css({ 'min-height': '' });
 	},
 	initMobile: function(){
 		var _t = this, el = $( _t.mobile );
@@ -45,6 +54,8 @@ var menu = {
 						cssClass({ 'ID': 'body', 'delay': 444, 'type': 'remove', 'cls':['mobileMenuOpened', 'mobiMenuReady'] }); 
 					else
 						cssClass({ 'ID': 'body', 'delay': 100, 'type': 'add', 'cls':['mobiMenuReady', 'mobileMenuOpened'] }); 
+					
+					_t.resize();	
 				});
 		
 			if( detectEl( $( _t.overlay ) ) )
@@ -73,7 +84,7 @@ var cart = {
 	priceEl: 'span#lblUrunTutari',
 	priceTarget: '.basketTotal',
 	btn: '.userInfo .basket',
-	overlay: '.mobiCart.vail',
+	overlay: '.usrSepetWrapper .overlay, .clsPp, .goShopbtn',
 	add: function(){
 		var _t = this;
 			_t.amound();
@@ -129,12 +140,14 @@ function cartAdd(){ cart.add(); }
 var login = {
 	err: '.errorKutuLogin',
 	btn: '.btnGirisPc',
-	overlay: '.mobiLogin.vail',
+	overlay: '#validateLogin .overlay, .closeUsrPp',
+	input: 'input[id$="txtUYE_EMAIL"]',
 	check: function(){
-		var _t = this;
+		var _t = this, input = $( _t.input );
 		if( detectEl( $( _t.err ) ) ){
 			var ekt = cleanText( $( _t.err ).text() );
 			if( ekt != '' ) _t.opened();
+			if( detectEl( input ) ) input.focus();
 		}
 	},
 	destroy: function(){
@@ -148,6 +161,8 @@ var login = {
 	},
 	init: function(){
 		var _t = this;
+			_t.check();
+		
 		if( detectEl( $( _t.btn ) ) )
 			$( _t.btn ).bind('click', function(){
 				if( bdy.hasClass('userLoginReady') ) 
@@ -163,6 +178,30 @@ var login = {
 	}
 };
 login.init();
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////// FORM CONTROLLER
+var formController = {
+	el: [
+		{ el: '[id$="txtUYE_CEPTELEFONALAN"]', mask: '599', required: true, placeHolder: null },
+		{ el: '[id$="txtUYE_CEPTELEFON"]', mask: '9999999', required: true, placeHolder: null },
+		{ el: '[id$="txtUYE_DOGUMTARIHI"]', mask: null, required: true, placeHolder: null },
+		{ el: '[id$="txtUYA_CEPTELEFON"]', mask: '599 9999999', required: true, placeHolder: null },
+		{ el: '[id$="txtUYE_EMAIL"]', mask: null, required: true, placeHolder: { tr: 'Email', en: 'Email' } },
+		{ el: '[id$="txtUYE_SIFRE"]', mask: null, required: true, placeHolder: { tr: 'Şifre', en: 'Password' } },
+	],
+	init: function(){
+		var _t = this, e = _t.el;
+		$.each(e, function( i, o ){
+			var el = $( o['el'] );
+			if( detectEl( el ) ){
+				if( o['mask'] != null ) el.mask( o['mask'] );
+				if( o['required'] != null ) el.attr('required', o['required'] );
+				if( o['placeHolder'] != null )el.attr('placeholder', o['placeHolder'][ siteLang ] );
+			}
+		});
+	}
+};
+formController.init();
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////// MAIN PAGE
 function mainPage(){
@@ -300,7 +339,8 @@ var events =
 	onResize: function(){
 		wt = parseFloat( win.width() );
 		ht = parseFloat( win.height() );
-		resetDom();			
+		resetDom();		
+		menu.resize();	
 	},
 	
 	onScroll: function(){
@@ -312,4 +352,4 @@ var events =
 
 win.load( events.init );
 win.resize( events.onResize ).resize();
-win.scroll( events.onScroll ).scroll();
+win.scroll( events.onScroll ).scroll();	
