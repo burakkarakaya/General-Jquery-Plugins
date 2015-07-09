@@ -1,6 +1,12 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////// GLOBAL VARIABLE
 var win = $( window ), doc = $( document ), bdy = $('body'), pages = { main: '.pageHome', list: '.pageList', detail: '.pageDetail', blog: '.pageBlog' }, wt,  ht, wst, sRatio = 0, rstDom = false, siteLang = lang.replace(/lang=/g, '') == 'tr-TR' ? 'tr' : 'en';
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////// APPEND
+var appendManagament = {};
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////// CLASS
+var classManagament = {};
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////// MENU
 var menu = {
 	el: '.mainMenu',
@@ -8,6 +14,9 @@ var menu = {
 	btn: '.mmenu',
 	overlay: '.mobiMenu.vail, .mbHomePageBack > i',
 	mobiWrp: '.mobileCol',
+	input: 'input[id$="txtARM_KEYWORD"]',
+	clearBtn: 'a.clearInputBtn',
+	clearClass: 'searchSuggest',
 	plugin: function( ID ){
 		ID.minusDropDown({ customClass: 'opened', openedDelay: 222, isVisible: '.smartHeader' });
 	},
@@ -44,15 +53,21 @@ var menu = {
 		if( e.length > 0 )
 			e.css({ 'min-height': '' });
 	},
+	hideSuggestionsDiv: function(){
+		var _t = this, input = $( _t.input );
+		if( detectEl( input ) ) input.val('').blur();
+		if( typeof HideSuggestionsDiv != 'undefined'  ) HideSuggestionsDiv();
+	},
 	initMobile: function(){
 		var _t = this, el = $( _t.mobile );
 		if( detectEl( el ) ){
 			
 			if( detectEl( $( _t.btn ) ) )
 				$( _t.btn ).bind('click', function(){
-					if( bdy.hasClass('mobiMenuReady') ) 
+					if( bdy.hasClass('mobiMenuReady') ){ 
+						_t.hideSuggestionsDiv();
 						cssClass({ 'ID': 'body', 'delay': 444, 'type': 'remove', 'cls':['mobileMenuOpened', 'mobiMenuReady'] }); 
-					else
+					}else
 						cssClass({ 'ID': 'body', 'delay': 100, 'type': 'add', 'cls':['mobiMenuReady', 'mobileMenuOpened'] }); 
 					
 					_t.resize();	
@@ -60,6 +75,7 @@ var menu = {
 		
 			if( detectEl( $( _t.overlay ) ) )
 				$( _t.overlay ).bind('click', function(){ 
+					_t.hideSuggestionsDiv();
 					cssClass({ 'ID': 'body', 'delay': 444, 'type': 'remove', 'cls':['mobileMenuOpened', 'mobiMenuReady'] }); 
 				});
 			
@@ -67,11 +83,27 @@ var menu = {
 		}
 	},
 	init: function(){
-		var _t = this, el = $( _t.el );
+		var _t = this, el = $( _t.el ), clearBtn = $( _t.clearBtn ), input = $( _t.input );
+		
 		if( detectEl( el ) ){
 			_t.plugin( el );
 			_t.initMobile();
 		}
+		
+		if( detectEl( clearBtn ) )
+			clearBtn.bind('click', function(){
+				_t.hideSuggestionsDiv();
+				bdy.removeClass( _t.clearClass );
+			});
+			
+		if( detectEl( input ) ) 
+			input.bind('keyup change', function( e ){
+				if( $( this ).val().length > 0 ){
+					if( !bdy.hasClass( _t.clearClass ) )  
+						bdy.addClass( _t.clearClass );
+				}else
+					bdy.removeClass( _t.clearClass );
+			});	
 	}
 };
 
@@ -179,6 +211,87 @@ var login = {
 };
 login.init();
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////// YOUTUBE
+var youtube = {
+	el: 'a.vClick',
+	closeBtn: '.ytPlayerWrp .closeVideoBtn',
+	videoEl: '.ytPlayerWrp .inside',
+	video: null,
+	destroy: function(){
+		var _t = this, iframe = $( 'iframe', _t.videoEl );
+		if( _t.video != null ){
+			if( _t.video != null ){
+				_t.video[0].dispose();
+				_t.video = null;
+			}	
+		}
+		if( detectEl( iframe ) ) iframe.removeAttr('src');
+	},
+	template: '<div class="ytPlayerWrp"><div class="overlay"></div><div class="ytPlayer"><a class="closeVideoBtn" href="javascript:void(0);"><span>Close</span><i></i></a><div class="inside"></div></div></div>',
+	addVideo: function( ytID ){
+		var _t = this, videoEl = $( _t.videoEl );
+		if( detectEl( videoEl ) ){
+			cssClass({ 'ID': 'body', 'delay': 100, 'type': 'add', 'cls':['ytVideoReady', 'ytVideoAnimate'] }, function(){
+				setTimeout(function(){
+					_t.video = videoEl.minusPlayer({ videoId: ytID, controls: isMobile ? 1 : 0, autoplay: isMobile ? 0 : 1, sound: 70, orientation: 'vertical' });
+				}, 222);
+			});
+		}
+	},
+	add: function(){
+		var _t = this;
+		if( !detectEl( $('.ytPlayerWrp') ) )
+			bdy.append( _t.template );
+		
+		_t.addEvent();	
+	},
+	addEvent: function(){
+		var _t = this, el = $( _t.el ), closeBtn = $( _t.closeBtn );
+		
+		if( detectEl( el ) )
+			el.bind('click', function(){
+				var _this = $( this ), rel = _this.attr('rel');
+				if( rel != undefined && rel != null && rel != '' ) _t.addVideo( rel );
+			});
+			
+		if( detectEl( closeBtn ) )
+			closeBtn.bind('click', function(){
+				cssClass({ 'ID': 'body', 'delay': 222, 'type': 'remove', 'cls':['ytVideoAnimate', 'ytVideoReady'] }, function(){
+					_t.destroy();
+				});
+			});	
+	},
+	init: function(){
+		var _t = this, el = $( _t.el );
+		if( detectEl( el ) ){
+			if( $('script[src*="//www.youtube.com/iframe_api"]').length == 0 ) 
+				$.getScript('//www.youtube.com/iframe_api');
+		}
+	}
+};
+
+function onYouTubePlayerAPIReady(){
+	youtube.add();
+}
+
+youtube.init();
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////// BODY CLICKED
+var bodyClicked = {
+	el: '',
+	init: function(){
+		$('body, html').bind('click touchstart', function( e ){
+			/* example
+			var m = $('.wrapper .header, .subMenuWrapper'); 
+			if( !m.is( e.target ) && m.has( e.target ).length === 0 ){
+				menuClicked( 'closed' );
+			}
+			*/
+		});
+	}
+};
+bodyClicked.init();
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////// FORM CONTROLLER
 var formController = {
 	el: [
@@ -214,6 +327,10 @@ formController.init();
 /////////////////////////////////////////////////////////////////////////////////////////////////////// MAIN PAGE
 function mainPage(){
 	if( detectEl( $('.mainSlider') ) ) $('.mainSlider').minusSimpleSlider({ infinite: true, rotate:false, navPosition: false });
+	if( detectEl( $('.tabWrapper') ) )
+		$('.tabWrapper').minusTabMenu({ ajxFind: '.ajxList' }, function(){
+			
+		});
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////// LIST PAGE
