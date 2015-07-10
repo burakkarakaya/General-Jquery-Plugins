@@ -2,7 +2,33 @@
 var win = $( window ), doc = $( document ), bdy = $('body'), pages = { main: '.pageHome', list: '.pageList', detail: '.pageDetail', blog: '.pageBlog' }, wt,  ht, wst, sRatio = 0, rstDom = false, siteLang = lang.replace(/lang=/g, '') == 'tr-TR' ? 'tr' : 'en';
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////// APPEND
-var appendManagament = {};
+/*
+	main: taşınacak ana nesne
+	target: ana nesnenin taşınacağı hedef nesne
+	add: ekleme tipi append, prepend, before, after,
+	clone: ana nesne klonlansın mı
+*/
+var appendManagament = {
+	arr: [
+		{ main: '.urunMarka_siralamaSecim', target: '.mbSort', add: 'append', clone: true },
+		{ main: '.mbfilterHolder', target: '.listBanner', add: 'after' }
+	],	
+	init: function(){
+		var _t = this, arr = _t.arr;
+		for( var i = 0; i < arr.length; ++i ){
+			var o = arr[ i ], main = $( o['main'] ), target = $( o['target'] ), clone = o['clone'] || '', type = 'append';
+			if( detectEl( main ) && detectEl( target ) ){
+				var e = clone != '' ? main.clone() : main;
+				if( type == 'prepend' ) target.prepend( e );
+				else if( type == 'before' ) target.before( e );
+				else if( type == 'after' ) target.after( e );
+				else target.append( e );
+			}
+		}
+	},
+};
+
+appendManagament.init();
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////// CLASS
 var classManagament = {};
@@ -324,6 +350,50 @@ var formController = {
 };
 formController.init();
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////// FILTER
+var filter = {
+	btn: '.mbFiterBtn',
+	destroy: function(){
+		bdy.removeClass('filterMenuReady filterMenuOpened');
+	},
+	opened: function(){
+		cssClass({ 'ID': 'body', 'delay': 100, 'type': 'add', 'cls':['filterMenuReady', 'filterMenuOpened'] });
+	},
+	closed: function(){
+		cssClass({ 'ID': 'body', 'delay': 444, 'type': 'remove', 'cls':['filterMenuOpened', 'filterMenuReady'] });
+	},
+	init: function(){
+		var _t = this, btn = $( _t.btn );
+		if( detectEl( btn ) ){
+			btn.unbind('click').bind('click', function(){
+				if( bdy.hasClass('filterMenuReady') )
+					_t.closed();
+				else
+					_t.opened();	
+			});
+		}
+	}
+};
+
+filter.init();
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////// CONVERT DROPDOWN
+var convertDrp = {
+	arr: [
+		{ main: '.memberMenu ul', prop: { attachmentDiv: '.memberMenu', type: 'before', customClass:'memberMenuDrp' } },
+	],	
+	init: function(){
+		var _t = this, arr = _t.arr;
+		for( var i = 0; i < arr.length; ++i ){
+			var o = arr[ i ], main = $( o['main'] ), prop = o['prop'];
+			if( detectEl( main ) )
+				main.minusConvertDropDown( prop );
+		}
+		iStylers();
+	},
+};
+convertDrp.init();
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////// MAIN PAGE
 function mainPage(){
 	if( detectEl( $('.mainSlider') ) ) $('.mainSlider').minusSimpleSlider({ infinite: true, rotate:false, navPosition: false });
@@ -419,6 +489,7 @@ function destroy(){
 	login.destroy();
 	cart.destroy();
 	menu.destroy();
+	filter.destroy();
 }
 
 function changeDivPosition( type ){
@@ -477,4 +548,4 @@ var events =
 
 win.load( events.init );
 win.resize( events.onResize ).resize();
-win.scroll( events.onScroll ).scroll();	
+win.scroll( events.onScroll ).scroll();
