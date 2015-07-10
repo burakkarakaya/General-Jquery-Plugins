@@ -34,6 +34,17 @@ appendManagament.init();
 var classManagament = {};
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////// MENU
+/*
+	el: menu kapsayicisi
+	mobile: 
+	btn: mobil menüyü açma butonu
+	overlay: mobil menüyü kapatma butonu
+	mobiWrp: menu ana kolonu mobileCol; contentCol üst kısmı
+	input: arama inputu
+	clearBtn: arama inputunu temizleme
+	clearClass: input veri girilince eklenenen class
+	plugin: site bazlı değişecek pluginler
+*/
 var menu = {
 	el: '.mainMenu',
 	mobile: '.mainMenu .subMenuHldr',
