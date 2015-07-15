@@ -11,12 +11,12 @@ var win = $( window ), doc = $( document ), bdy = $('body'), pages = { main: '.p
 var appendManagament = {
 	arr: [
 		{ main: '.urunMarka_siralamaSecim', target: '.mbSort', add: 'append', clone: true },
-		{ main: '.mbfilterHolder', target: '.listBanner', add: 'after' }
+		{ main: '.mbfilterHolder', target: '.compareHolder', add: 'before' }
 	],	
 	init: function(){
 		var _t = this, arr = _t.arr;
 		for( var i = 0; i < arr.length; ++i ){
-			var o = arr[ i ], main = $( o['main'] ), target = $( o['target'] ), clone = o['clone'] || '', type = 'append';
+			var o = arr[ i ], main = $( o['main'] ), target = $( o['target'] ), clone = o['clone'] || '', type = o['add'] || '';
 			if( detectEl( main ) && detectEl( target ) ){
 				var e = clone != '' ? main.clone() : main;
 				if( type == 'prepend' ) target.prepend( e );
@@ -361,9 +361,10 @@ var formController = {
 };
 formController.init();
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////// FILTER
-var filter = {
+/////////////////////////////////////////////////////////////////////////////////////////////////////// FILTER BTN
+var filterBtn = {
 	btn: '.mbFiterBtn',
+	closeBtn: '.filterMenu.vail',
 	destroy: function(){
 		bdy.removeClass('filterMenuReady filterMenuOpened');
 	},
@@ -374,7 +375,7 @@ var filter = {
 		cssClass({ 'ID': 'body', 'delay': 444, 'type': 'remove', 'cls':['filterMenuOpened', 'filterMenuReady'] });
 	},
 	init: function(){
-		var _t = this, btn = $( _t.btn );
+		var _t = this, btn = $( _t.btn ), closeBtn = $( _t.closeBtn );
 		if( detectEl( btn ) ){
 			btn.unbind('click').bind('click', function(){
 				if( bdy.hasClass('filterMenuReady') )
@@ -383,15 +384,182 @@ var filter = {
 					_t.opened();	
 			});
 		}
+		
+		if( detectEl( closeBtn ) ){
+			closeBtn.unbind('click').bind('click', function(){
+				_t.closed();
+			});
+		}
 	}
+};
+
+filterBtn.init();
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////// FILTER
+var filter = {
+	activeFilterID: null,
+	begin: function(){
+		var s = $('.pnlUrunKiyasSecim'), t = $('.urunKiyaslamaOzellik_tumunuTemizle'), l = $('.prdListHolder .propertyTop');
+		if( t.length > 0 && s.length > 0 && l.length > 0 ){
+			s.append( t );
+			l.after( s.clone() );
+			if( cleanText( t.html() ).length > 0 ) s.addClass('filterSelected');
+		}
+
+		var f = $('.kutuOzellikFiltre'), c = $('.right .urnList .prdListHolder')
+		c.before( f.clone() );
+	},
+	clearBtn: function(){
+		var _t = this, b = '.urunKiyaslamaOzellik_secimler > a, .urunKiyaslamaOzellik_tumunuTemizle > a', btn = $( b );
+		if( detectEl( btn ) )
+			btn.unbind('click').bind('click', function( e ){
+				if( history.pushState ){
+					e.preventDefault();
+					var _this = $( this ), hrf = _this.attr('href');
+					if( hrf != undefined && hrf != null && hrf != '' ){
+						_t.loading('add');			
+						getAjax(hrf, function( d ){ _t.ajxResult( d ); }, function(){ _t.ajxError(); });	
+						history.pushState({}, document.title, hrf);
+						_t.activeFilterID = null;	
+					}
+				}
+			});
+	}, 
+	btn: function(){
+		var _t = this, b = '.urunKiyaslamaOzellik_ozellik a', p = '.urunKiyaslamaOzellik_ozellikIcerik', btn = $( b );
+		if( detectEl( btn ) )
+			btn.unbind('click').bind('click', function( e ){
+				if( history.pushState ){
+					e.preventDefault();
+					var _this = $( this ), hrf = _this.attr('href'), ids = _this.parents( p ).attr('id');
+					if( hrf != undefined && hrf != null && hrf != '' ){
+						_t.loading('add');			
+						getAjax(hrf, function( d ){ _t.ajxResult( d ); }, function(){ _t.ajxError(); });	
+						history.pushState({}, document.title, hrf);
+						if( ids != undefined && ids != null && ids != '' ) _t.activeFilterID = ids;	
+					}
+				}
+			});
+	},
+	loading: function( type ){
+		if( type == 'add' ) bdy.addClass('pageListAjxLoading');
+		else bdy.removeClass('pageListAjxLoading');
+	},
+	checkID: function( ID ){
+		var _t = this;
+		if( _t.activeFilterID != null )
+				$('.urunKiyaslamaOzellik_ozellikIcerik[id="'+ _t.activeFilterID +'"]', ID).addClass('open');	
+	},
+	el: '.pageList',
+	ajxResult: function( d ){
+		var _t = this, el = $( _t.el ), target = $( d ).find( _t.el );
+		if( detectEl( el ) && detectEl( target ) ){
+			_t.checkID();
+			_t.loading('remove');
+			el.html( target.html() );
+			_t.plugin();
+		}		
+	},
+	ajxError: function(){
+		var _t = this;
+			_t.loading('remove');	
+	},
+	plugin: function(){
+		var _t = this, el = $( _t.el );
+		appendManagament.init();
+		filter.init();
+		filterBtn.init();
+		compareList.active();
+		lazyControl( el );
+		iStylers();
+	},
+	init: function(){
+		var _t = this;
+			_t.begin();
+			_t.btn();
+			_t.clearBtn();		
+	},
 };
 
 filter.init();
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////// COMPARE
+var compareList = {
+	wrp: '.compareHolder',
+	btn: '.compareHolder .compareMenu ul li[rel="compareList"] span.tabBtn',
+	cls: 'showCompare',
+	list: '.compareContentList .ajxList ul > li',
+	clear: function( val ){
+		if( val == 'clear' ) $('span.cStyler').removeClass('checked');
+		else{
+		var e = $('input[id$="chkOZS_KOD"][value=' + val + ']');
+			setTimeout(function(){
+				$('.checked', e.parent('.sStylerMainWrp')).removeClass('checked');
+				e.siblings('span.cStyler').removeClass('checked');
+			}, 10);
+		} 
+	},
+	detect: function(){
+		var _t = this, wrp = $( _t.wrp ), list = $( _t.list )
+		if( detectEl( wrp ) ){ 
+			if( detectEl( list ) ) wrp.addClass( _t.cls );
+			else wrp.removeClass( _t.cls );
+		}
+	},
+	begin: function(){
+		var _t = this, btn = $( _t.btn );
+
+		if( detectEl( btn ) )
+			btn.click();
+		
+		if( typeof ssUrnKod !== 'undefined' ){	
+			if( ssUrnKod == '' ){
+				$('[id$="chkOZS_KOD"]').attr('checked', false);
+				_t.clear('clear');
+			}
+		}		
+	},
+	active: function(){
+		var _t = this;
+		setTimeout(function(){
+			
+			if( typeof initCompare != 'undefined' )
+				initCompare();
+			
+			_t.chkChange();
+      	
+			_t.begin();
+			
+		}, 100);
+	},
+	chkChange: function(){
+		/* Not: site bazlı değişebilir. */
+		if( typeof ctl00_u15_ascUrunList_strTip != 'undefined' )
+			$("#ajxUrunList." + ctl00_u15_ascUrunList_strTip +" input[id$='chkOZS_KOD']").change(function() {
+				ctl00_u15_ascUrunList_kiyaslaEkle( this );
+			});	
+	},
+	init: function(){
+		var _t = this;
+			_t.begin();
+	}
+};
+
+stage.addEventListener("CustomEvent", [{ type: "itemCompare", handler: "onItemCompare" }]);
+stage.addEventListener("CustomEvent", [{ type: "itemCompareClear", handler: "onItemCompareClear" }]);
+function onItemCompare(){ compareList.detect(); }
+function onItemCompareClear( obj ){
+	compareList.clear( obj['type'] );
+	compareList.detect();
+}
+
+compareList.init();
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////// CONVERT DROPDOWN
 var convertDrp = {
 	arr: [
-		{ main: '.memberMenu ul', prop: { attachmentDiv: '.memberMenu', type: 'before', customClass:'memberMenuDrp' } },
+		{ main: '.memberMenu ul', prop: { attachmentDiv: '.memberMenu', type: 'before', customClass:'memberMenuDrp customDrp' } },
+		{ main: '.kutuBodySolMenuTree > ul > li ul', prop: { attachmentDiv: '.kutuSolMenuTree', type: 'before', customClass:'solMenuDrp customDrp' } },
 	],	
 	init: function(){
 		var _t = this, arr = _t.arr;
@@ -405,12 +573,24 @@ var convertDrp = {
 };
 convertDrp.init();
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////// COUNTER
+var counter = {
+	el: '.urunDetay_urunAdet input, .countProduct input[id$="txtURN_ADET"]',
+	init: function(){
+		var _t = this, el = $( _t.el );
+		if( detectEl( el ) )
+			el.attr('min', 1).minusCounter();
+	}
+};
+
+counter.init();
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////// MAIN PAGE
 function mainPage(){
 	if( detectEl( $('.mainSlider') ) ) $('.mainSlider').minusSimpleSlider({ infinite: true, rotate:false, navPosition: false });
 	if( detectEl( $('.tabWrapper') ) )
 		$('.tabWrapper').minusTabMenu({ ajxFind: '.ajxList' }, function(){
-			
+			triggerMinusScroller( $('.content .selected[data-content]') );
 		});
 }
 
@@ -475,14 +655,14 @@ function pageScroll( t, callback ){
 
 function triggerMinusScroller( ID ){
 	if( detectEl( ID ) ){
-		ID.minusScroller({ resize:true, navigation:true, snap: true, padding:0, divName: { wrapper: '#ajxUrunList > .prdListHolder', ul: '> ul', li: '> li' } });
+		ID.minusScroller({ resize:true, navigation:true, snap: true, padding:0, minWidth: 250, divName: { wrapper: '#ajxUrunList > .prdListHolder', ul: '> ul', li: '> li' } });
 		lazyControl( ID );
 	}
 }
 
 function lazyControl( ID ){
 	if( detectEl( ID ) ){
-		if( $('img.lazyload', ID).length > 0 )
+		if( detectEl( $('img.lazyload', ID) ) )
 			$('img.lazyload', ID).unveil().trigger("unveil");
 	}
 }
@@ -500,7 +680,7 @@ function destroy(){
 	login.destroy();
 	cart.destroy();
 	menu.destroy();
-	filter.destroy();
+	filterBtn.destroy();
 }
 
 function changeDivPosition( type ){
@@ -559,4 +739,4 @@ var events =
 
 win.load( events.init );
 win.resize( events.onResize ).resize();
-win.scroll( events.onScroll ).scroll();
+win.scroll( events.onScroll ).scroll();	
