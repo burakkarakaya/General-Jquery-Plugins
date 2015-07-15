@@ -406,8 +406,8 @@ var filter = {
 			if( cleanText( t.html() ).length > 0 ) s.addClass('filterSelected');
 		}
 
-		var f = $('.kutuOzellikFiltre'), c = $('.right .urnList .prdListHolder')
-		c.before( f.clone() );
+		var f = $('.kutuOzellikFiltre'), c = $('.wrapperList');
+		c.prepend( f.clone() );
 	},
 	clearBtn: function(){
 		var _t = this, b = '.urunKiyaslamaOzellik_secimler > a, .urunKiyaslamaOzellik_tumunuTemizle > a', btn = $( b );
@@ -739,4 +739,4 @@ var events =
 
 win.load( events.init );
 win.resize( events.onResize ).resize();
-win.scroll( events.onScroll ).scroll();	
+win.scroll( events.onScroll ).scroll();
