@@ -14,8 +14,8 @@ window.cancelRequestAnimFrame = function () { return window.cancelAnimationFrame
 	ex: jQuery(window).bind('scrollstop', function(e){ onScroll(); });
 */
 (function () {
-	var special = jQuery.event.special, uid1 = "D" + +new Date, uid2 = "D" + (+new Date + 1); special.scrollstart = { setup: function () { var timer, handler = function (evt) { var _self = this, _args = arguments; if (timer) clearTimeout(timer); else { evt.type = "scrollstart"; jQuery.event.dispatch.apply(_self, _args) } timer = setTimeout(function () { timer = null }, special.scrollstop.latency) }; jQuery(this).bind("scroll", handler).data(uid1, handler) }, teardown: function () { jQuery(this).unbind("scroll", jQuery(this).data(uid1)) } }; special.scrollstop =
-		{ latency: 300, setup: function () { var timer, handler = function (evt) { var _self = this, _args = arguments; if (timer) clearTimeout(timer); timer = setTimeout(function () { timer = null; evt.type = "scrollstop"; jQuery.event.dispatch.apply(_self, _args) }, special.scrollstop.latency) }; jQuery(this).bind("scroll", handler).data(uid2, handler) }, teardown: function () { jQuery(this).unbind("scroll", jQuery(this).data(uid2)) } }
+    var special = jQuery.event.special, uid1 = "D" + +new Date, uid2 = "D" + (+new Date + 1); special.scrollstart = { setup: function () { var timer, handler = function (evt) { var _self = this, _args = arguments; if (timer) clearTimeout(timer); else { evt.type = "scrollstart"; jQuery.event.dispatch.apply(_self, _args) } timer = setTimeout(function () { timer = null }, special.scrollstop.latency) }; jQuery(this).bind("scroll", handler).data(uid1, handler) }, teardown: function () { jQuery(this).unbind("scroll", jQuery(this).data(uid1)) } }; special.scrollstop =
+        { latency: 300, setup: function () { var timer, handler = function (evt) { var _self = this, _args = arguments; if (timer) clearTimeout(timer); timer = setTimeout(function () { timer = null; evt.type = "scrollstop"; jQuery.event.dispatch.apply(_self, _args) }, special.scrollstop.latency) }; jQuery(this).bind("scroll", handler).data(uid2, handler) }, teardown: function () { jQuery(this).unbind("scroll", jQuery(this).data(uid2)) } }
 })();
 
 /*
@@ -23,12 +23,12 @@ window.cancelRequestAnimFrame = function () { return window.cancelAnimationFrame
 	ex: $(window).bind('resizestop', function (e) {  console.log(e.data.size); });
 */
 (function ($, setTimeout) {
-	var $window = $(window), cache = $([]), last = 0, timer = 0, size = {}; function onWindowResize() { last = $.now(); timer = timer || setTimeout(checkTime, 10) } function checkTime() { var now = $.now(); if (now - last < $.resizestop.threshold) timer = setTimeout(checkTime, 10); else { clearTimeout(timer); timer = last = 0; size.width = $window.width(); size.height = $window.height(); cache.trigger("resizestop") } } $.resizestop = { propagate: false, threshold: 500 }; $.event.special.resizestop = {
-		setup: function (data, namespaces) {
-			cache = cache.not(this);
-			cache = cache.add(this); if (cache.length === 1) $window.bind("resize", onWindowResize)
-		}, teardown: function (namespaces) { cache = cache.not(this); if (!cache.length) $window.unbind("resize", onWindowResize) }, add: function (handle) { var oldHandler = handle.handler; handle.handler = function (e) { if (!$.resizestop.propagate) e.stopPropagation(); e.data = e.data || {}; e.data.size = e.data.size || {}; $.extend(e.data.size, size); return oldHandler.apply(this, arguments) } }
-	}
+    var $window = $(window), cache = $([]), last = 0, timer = 0, size = {}; function onWindowResize() { last = $.now(); timer = timer || setTimeout(checkTime, 10) } function checkTime() { var now = $.now(); if (now - last < $.resizestop.threshold) timer = setTimeout(checkTime, 10); else { clearTimeout(timer); timer = last = 0; size.width = $window.width(); size.height = $window.height(); cache.trigger("resizestop") } } $.resizestop = { propagate: false, threshold: 500 }; $.event.special.resizestop = {
+        setup: function (data, namespaces) {
+            cache = cache.not(this);
+            cache = cache.add(this); if (cache.length === 1) $window.bind("resize", onWindowResize)
+        }, teardown: function (namespaces) { cache = cache.not(this); if (!cache.length) $window.unbind("resize", onWindowResize) }, add: function (handle) { var oldHandler = handle.handler; handle.handler = function (e) { if (!$.resizestop.propagate) e.stopPropagation(); e.data = e.data || {}; e.data.size = e.data.size || {}; $.extend(e.data.size, size); return oldHandler.apply(this, arguments) } }
+    }
 })(jQuery, setTimeout);
 
 /*
@@ -36,15 +36,15 @@ window.cancelRequestAnimFrame = function () { return window.cancelAnimationFrame
 	ex: 'example,'.endsWith(',') son karekter , varsa true yoksa false
 */
 if (!String.prototype.endsWith) {
-	String.prototype.endsWith = function (searchString, position) {
-		var subjectString = this.toString();
-		if (typeof position !== 'number' || !isFinite(position) || Math.floor(position) !== position || position > subjectString.length) {
-			position = subjectString.length;
-		}
-		position -= searchString.length;
-		var lastIndex = subjectString.indexOf(searchString, position);
-		return lastIndex !== -1 && lastIndex === position;
-	};
+    String.prototype.endsWith = function (searchString, position) {
+        var subjectString = this.toString();
+        if (typeof position !== 'number' || !isFinite(position) || Math.floor(position) !== position || position > subjectString.length) {
+            position = subjectString.length;
+        }
+        position -= searchString.length;
+        var lastIndex = subjectString.indexOf(searchString, position);
+        return lastIndex !== -1 && lastIndex === position;
+    };
 }
 
 /*
@@ -61,7 +61,7 @@ if (typeof Array.prototype.forEach != "function") Array.prototype.forEach = func
 	MOBILE DETECT
 */
 var mobile = function () { return { detect: function () { var uagent = navigator.userAgent.toLowerCase(); var list = this.mobiles; var ismobile = false; for (var d = 0; d < list.length; d += 1)if (uagent.indexOf(list[d]) != -1) ismobile = true; return ismobile }, mobiles: ["midp", "240x320", "blackberry", "netfront", "nokia", "panasonic", "portalmmm", "sharp", "sie-", "sonyericsson", "symbian", "windows ce", "benq", "mda", "mot-", "opera mini", "philips", "pocket pc", "sagem", "samsung", "sda", "sgh-", "vodafone", "xda", "palm", "iphone", "ipod", "android", "ipad"] } }(),
-	isMobile = mobile.detect();
+    isMobile = mobile.detect();
 if (isMobile) $('html').addClass('mobileVer');
 
 /*
@@ -386,124 +386,124 @@ jQuery.extend(jQuery.easing, {
 	Input Styler v2.2.8 www.minus99.com - 2013	
 */
 (function ($) {
-	$.fn.extend({
-		iStyler: function (options) {
-			var defaults = {
-				wrapper: false,
-				customClass: '',
-				passiveIco: '',
-				activeIco: ''
-			};
+    $.fn.extend({
+        iStyler: function (options) {
+            var defaults = {
+                wrapper: false,
+                customClass: '',
+                passiveIco: '',
+                activeIco: ''
+            };
 
-			var option = $.extend(defaults, options);
+            var option = $.extend(defaults, options);
 
-			return this.each(function (e) {
-				var opt = option,
-					obj = $(this),
-					tag = obj.prop("tagName").toLowerCase(),
-					sClass = '',
-					name, check,
-					customIcon = opt.passiveIco + opt.activeIco;
+            return this.each(function (e) {
+                var opt = option,
+                    obj = $(this),
+                    tag = obj.prop("tagName").toLowerCase(),
+                    sClass = '',
+                    name, check,
+                    customIcon = opt.passiveIco + opt.activeIco;
 
-				if (tag == "select") {
-					var selText = $("option:selected", obj).text();
+                if (tag == "select") {
+                    var selText = $("option:selected", obj).text();
 
-					if (!obj.hasClass("sSelect"))
-						if (!opt.wrapper)
-							obj.css({ opacity: 0, "-webkit-appearance": "none" }).addClass("sSelect").before('<div class="sStylerWrp"><span class="sStyleHolder"><span class="sStyler">' + selText + '</span>' + customIcon + '</span></div>');
-						else
-							obj.css({ opacity: 0, "-webkit-appearance": "none" }).addClass("sSelect").wrap('<span class="sStylerMainWrp ' + opt.customClass + ' sStylerWrp_select"></span>').before('<div class="sStylerWrp"><span class="sStyleHolder"><span class="sStyler">' + selText + '</span>' + customIcon + '</span></div>');
+                    if (!obj.hasClass("sSelect"))
+                        if (!opt.wrapper)
+                            obj.css({ opacity: 0, "-webkit-appearance": "none" }).addClass("sSelect").before('<div class="sStylerWrp"><span class="sStyleHolder"><span class="sStyler">' + selText + '</span>' + customIcon + '</span></div>');
+                        else
+                            obj.css({ opacity: 0, "-webkit-appearance": "none" }).addClass("sSelect").wrap('<span class="sStylerMainWrp ' + opt.customClass + ' sStylerWrp_select"></span>').before('<div class="sStylerWrp"><span class="sStyleHolder"><span class="sStyler">' + selText + '</span>' + customIcon + '</span></div>');
 
-					obj.change(function () {
-						selText = $('option:selected', obj).text();
-						obj.prev(".sStylerWrp").children(".sStyleHolder").children(".sStyler").text(selText);
-					});
+                    obj.change(function () {
+                        selText = $('option:selected', obj).text();
+                        obj.prev(".sStylerWrp").children(".sStyleHolder").children(".sStyler").text(selText);
+                    });
 
-				} else if (tag == "input" && obj.attr("type") == "checkbox") {
+                } else if (tag == "input" && obj.attr("type") == "checkbox") {
 
-					if (!obj.hasClass("sCheckbox")) {
+                    if (!obj.hasClass("sCheckbox")) {
 
-						sClass = (obj.is(":checked")) ? sClass + ' checked' : '';
+                        sClass = (obj.is(":checked")) ? sClass + ' checked' : '';
 
-						if (!opt.wrapper)
-							obj.addClass("sCheckbox").before('<span class="cStyler' + sClass + '">' + customIcon + '</span>');
-						else
-							obj.addClass("sCheckbox").wrap('<span class="sStylerMainWrp ' + opt.customClass + ' sStylerWrp_checkbox"></span>').before('<span class="cStyler' + sClass + '">' + customIcon + '</span>');
+                        if (!opt.wrapper)
+                            obj.addClass("sCheckbox").before('<span class="cStyler' + sClass + '">' + customIcon + '</span>');
+                        else
+                            obj.addClass("sCheckbox").wrap('<span class="sStylerMainWrp ' + opt.customClass + ' sStylerWrp_checkbox"></span>').before('<span class="cStyler' + sClass + '">' + customIcon + '</span>');
 
-					}
+                    }
 
-					obj.prev("span.cStyler").unbind('click').click(function () {
+                    obj.prev("span.cStyler").unbind('click').click(function () {
 
-						check = !obj.is(":checked");
+                        check = !obj.is(":checked");
 
-						if (obj.onclick != undefined) {
-							obj.attr("checked", check).click();
-							obj.attr("checked", check);
-						} else {
-							obj.click();
-						}
+                        if (obj.onclick != undefined) {
+                            obj.attr("checked", check).click();
+                            obj.attr("checked", check);
+                        } else {
+                            obj.click();
+                        }
 
-						if (check) {
-							$(this).addClass("checked");
-						} else {
-							$(this).removeClass("checked");
-						}
-					});
+                        if (check) {
+                            $(this).addClass("checked");
+                        } else {
+                            $(this).removeClass("checked");
+                        }
+                    });
 
-					obj.change(function () {
-						if (obj.is(":checked"))
-							obj.prev("span.cStyler").addClass("checked");
-						else
-							obj.prev("span.cStyler").removeClass("checked");
-					});
+                    obj.change(function () {
+                        if (obj.is(":checked"))
+                            obj.prev("span.cStyler").addClass("checked");
+                        else
+                            obj.prev("span.cStyler").removeClass("checked");
+                    });
 
-				} else if (tag == "input" && obj.attr("type") == "radio") {
+                } else if (tag == "input" && obj.attr("type") == "radio") {
 
-					if (!obj.hasClass("sRadio")) {
-						name = obj.attr("name");
-						var nameStr;
+                    if (!obj.hasClass("sRadio")) {
+                        name = obj.attr("name");
+                        var nameStr;
 
-						nameStr = (name == undefined) ? '' : ' name="' + name + '"';
+                        nameStr = (name == undefined) ? '' : ' name="' + name + '"';
 
-						if (obj.is(":checked")) sClass = sClass + ' checked'; else sClass = '';
+                        if (obj.is(":checked")) sClass = sClass + ' checked'; else sClass = '';
 
-						if (!opt.wrapper)
-							obj.addClass("sRadio").before('<span' + nameStr + ' class="rStyler' + sClass + '">' + customIcon + '</span>');
-						else
-							obj.addClass("sRadio").wrap('<span class="sStylerMainWrp ' + opt.customClass + ' sStylerWrp_radio"></span>').before('<span' + nameStr + ' class="rStyler' + sClass + '">' + customIcon + '</span>');
+                        if (!opt.wrapper)
+                            obj.addClass("sRadio").before('<span' + nameStr + ' class="rStyler' + sClass + '">' + customIcon + '</span>');
+                        else
+                            obj.addClass("sRadio").wrap('<span class="sStylerMainWrp ' + opt.customClass + ' sStylerWrp_radio"></span>').before('<span' + nameStr + ' class="rStyler' + sClass + '">' + customIcon + '</span>');
 
-					}
+                    }
 
-					obj.prev("span.rStyler").unbind('click').click(function () {
-						if (!obj.is(":checked")) {
-							check = !obj.is(":checked");
+                    obj.prev("span.rStyler").unbind('click').click(function () {
+                        if (!obj.is(":checked")) {
+                            check = !obj.is(":checked");
 
-							if (obj.onclick != undefined) {
-								obj.attr("checked", check).click();
-								obj.attr("checked", check);
-							} else {
-								obj.click();
-							}
+                            if (obj.onclick != undefined) {
+                                obj.attr("checked", check).click();
+                                obj.attr("checked", check);
+                            } else {
+                                obj.click();
+                            }
 
-							if (name != undefined)
-								$('span.rStyler[name="' + name + '"]').removeClass("checked");
+                            if (name != undefined)
+                                $('span.rStyler[name="' + name + '"]').removeClass("checked");
 
-							$(this).addClass("checked");
-						}
-					});
+                            $(this).addClass("checked");
+                        }
+                    });
 
-					obj.change(function () {
-						if (obj.is(":checked")) {
-							if (name != undefined) $('span.rStyler[name="' + name + '"]').removeClass("checked");
-							obj.prev("span.rStyler").addClass("checked");
-						}
-					});
+                    obj.change(function () {
+                        if (obj.is(":checked")) {
+                            if (name != undefined) $('span.rStyler[name="' + name + '"]').removeClass("checked");
+                            obj.prev("span.rStyler").addClass("checked");
+                        }
+                    });
 
-				}
+                }
 
-			});
-		}
-	});
+            });
+        }
+    });
 })(jQuery);
 
 /*
@@ -511,10 +511,12 @@ jQuery.extend(jQuery.easing, {
 */
 (function ($) {
     $.fn.extend({
-        minusSwiper: function (options) {
+        minusSwiper: function (options, callback) {
             var defaults = {
+                innerClass: '> .swiper-inner',
                 wrapperClass: '.swiper-wrapper',
-                slideClass: '> .swiper-slide'
+                slideClass: '> .swiper-slide',
+                lazy: '.lazy, .lazy-load, .lazy-back-load, .lazyload'
             };
 
             var option = $.extend(defaults, options);
@@ -522,8 +524,117 @@ jQuery.extend(jQuery.easing, {
             return this.each(function (e) {
                 var opt = option,
                     ID = $(this),
+                    duration = ID.attr('data-swiper-autoplay') || '',
+                    _callback = function (obj) {
+                        if (typeof callback !== 'undefined')
+                            callback($.extend({ ID: ID }, obj));
+                    },
+                    _autoPlay = function (o) {
+                        o = o || {};
+                        var current = main['current'] || '',
+                            type = o['type'] || 'start';
+
+                        if (duration != '' && current != '') {
+                            if (type == 'start')
+                                current.autoplay.start();
+                            else
+                                current.autoplay.stop();
+                        }
+                    },
+
+                    _lazy = function (o) {
+                        o = o || {};
+                        var target = (o['target'] || '').find(opt['lazy']);
+
+                        if (uty.detectEl(target))
+                            target
+                                .lazyload({
+                                    container: ID,
+                                    effect: 'fadeIn',
+                                    load: function () {
+                                        $(this)
+                                            .removeClass(main['cls']['imageLazy'])
+                                            .addClass(main['cls']['imageLoaded']);
+                                    }
+                                })
+                                .trigger('appear');
+                    },
+                    _detectPosition = {
+                        get: function (k) {
+                            var b = false,
+                                padding = 50,
+                                con = ID.find(opt['innerClass']),
+                                o1 = { x: con.offset().left, y: con.offset().top, width: con.width() - padding, height: con.height() },
+                                o2 = { x: k.offset().left, y: k.offset().top, width: k.width(), height: k.height() };
+                            if (o1.x < o2.x + o2.width && o1.x + o1.width > o2.x && o1.y < o2.y + o2.height && o1.y + o1.height > o2.y)
+                                b = true;
+
+                            return b;
+                        },
+                        set: function () {
+                            var _t = this,
+                                wrp = ID.find(opt['wrapperClass']),
+                                sld = wrp.find(opt['slideClass']);
+
+                            if (uty.detectEl(sld))
+                                setTimeout(function () {
+                                    sld
+                                        .removeClass(main.cls['active'])
+                                        .each(function () {
+                                            var ths = $(this);
+                                            if (_t.get(ths))
+                                                ths.addClass(main.cls['active']);
+                                        });
+
+                                    _lazy({ target: wrp.find(opt['slideClass'] + '.' + main.cls['active']) });
+                                    _callback({ type: 'lazyload', value: wrp.find(opt['slideClass'] + '.' + main.cls['active']) });
+
+                                }, 222);
+                        }
+                    },
                     main = {
+                        cls: {
+                            imageLoaded: 'image',
+                            imageLazy: 'lazy-load lazy lazy-back-load lazyload',
+                            active: 'slide-active',
+                            noResult: 'no-result',
+                            itemCount: 'item-'
+                        },
                         current: null,
+                        objAddEvent: function (obj) {
+                            obj = obj || {};
+                            var _t = this;
+
+                            if (duration != '')
+                                obj['autoplay'] = {
+                                    delay: duration
+                                };
+
+                            obj['on'] = {
+                                init: function () {
+                                    _detectPosition.set();
+                                    _callback({ type: 'init' });
+                                },
+                                touchStart: function () {
+                                    _autoPlay({ type: 'stop' });
+                                    _callback({ type: 'touchStart' });
+                                },
+                                touchEnd: function () {
+                                    _autoPlay({ type: 'start' });
+                                    _callback({ type: 'touchEnd' });
+                                },
+                                slideChangeTransitionStart: function (s) {
+                                    _autoPlay({ type: 'stop' });
+                                    _callback({ type: 'slideChangeTransitionStart', value: s });
+                                },
+                                slideChangeTransitionEnd: function (s) {
+                                    _detectPosition.set();
+                                    _autoPlay({ type: 'start' });
+                                    _callback({ type: 'slideChangeTransitionEnd', value: s });
+                                }
+                            };
+                            return obj;
+                        },
                         addOrder: function () {
                             var _t = this,
                                 wrp = ID.find(opt['wrapperClass']),
@@ -531,27 +642,26 @@ jQuery.extend(jQuery.easing, {
                                 n = sld.length;
 
                             ID
-                                .addClass('item-' + n)
+                                .addClass(_t.cls['itemCount'] + n)
                                 .find(opt['wrapperClass'])
                                 .find(opt['slideClass'])
                                 .each(function (i, k) {
                                     $(this).attr('data-order', i);
                                 });
 
-                            return n;    
+                            if (n == 0)
+                                ID.addClass(_t.cls['noResult']);
+
+                            return n;
                         },
                         init: function () {
                             var _t = this,
-                                key = ID.attr('data-swiper') || 'main',
-                                prop = (SITE_CONFIG['plugin']['swiper'] || {})[key] || {},
-                                wrp = ID.find(opt['wrapperClass']),
-                                sld = wrp.find(opt['slideClass']),
-                                n = sld.length;
+                                n = _t.addOrder();
 
                             if (n > 1) {
+                                var key = ID.attr('data-swiper') || 'main',
+                                    prop = (SITE_CONFIG['plugin']['swiper'] || {})[key] || {};
                                 _t.current = new Swiper(ID, prop);
-                            } else {
-
                             }
                         }
                     };

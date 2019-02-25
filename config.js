@@ -1,11 +1,12 @@
 var SITE_CONFIG = {
     plugin: {
         /* 
-            swiper config dosyası 
+            swiper api dosyası: http://idangero.us/swiper/api/ 
             default değeri main dir. data-swiper="widgetFive" config dosyası içerisinde ilgili objeye bakacaktır.
+            autoplay için data-swiper-autoplay kullanmalıyız. config dosyasına yazmazsınız. Ayrıca her bir li için ayrıca autoplay kullanmak isteseniz  <li class="swiper-slide" data-swiper-autoplay="2000">
 
             - hem desktop hem de mobilde swiper
-            <div class="swiper-container" data-swiper="widgetFive">
+            <div class="swiper-container" data-swiper="widgetFive" data-swiper-autoplay="5000">
                 <div class="swiper-inner">
                     <ul class="swiper-wrapper">
                         <li class="swiper-slide"></li>
