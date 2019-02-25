@@ -17,6 +17,18 @@ var SITE_CONFIG = {
                 <div class="swiper-button-prev"></div>
             </div>
 
+            video örneği: 
+
+            <li class="swiper-slide ems-swiper-video">
+                <div class="video-content">
+                    <video preload="none" autobuffer="autobuffer" class="video-player">
+                        <source type="video/youtube" src="http://www.youtube.com/watch?v={{youtubeID}}">
+                        </source>
+                    </video>
+                    <a class="btn-video-play" href="javascript:void(0);">video play</a>
+                </div>
+            </li>
+
         */
         swiper: {
             main: {

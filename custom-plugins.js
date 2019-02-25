@@ -529,6 +529,96 @@ jQuery.extend(jQuery.easing, {
                         if (typeof callback !== 'undefined')
                             callback($.extend({ ID: ID }, obj));
                     },
+                    _videos = {
+                        el: {
+                            con: '.video-content',
+                            button: '.btn-video-play',
+                            video: 'video',
+                            activeVideo: '.swiper-slide-active .btn-video-play'
+
+                        },
+                        cls: {
+                            activeVideo: 'video-active',
+                            isPause: 'isPause',
+                            isPlay: 'isPlay'
+                        },
+                        arr: {},
+                        activeted: function () {
+                            var _t = this,
+                                elm = ID.find(_t.el.activeVideo);
+
+                            if (uty.detectEl(elm))
+                                elm.get(0).click();
+                        },
+                        disabled: function () {
+                            var _t = this;
+
+                            ID
+                                .find('.' + _t.cls['isPlay'])
+                                .removeClass(_t.cls['isPlay'])
+                                .removeClass(_t.cls['activeVideo']);
+
+                            $.each(_t.arr, function (ind, item) {
+                                item.pause();
+                            });
+
+                            _t.activeted();
+                        },
+                        addEvent: function () {
+                            var _t = this;
+                            ID
+                                .find(_t.el.button)
+                                .unbind('click')
+                                .bind('click', function (evt) {
+                                    evt.preventDefault();
+                                    var ths = $(this),
+                                        order = ths.attr('data-order'),
+                                        prts = ths.parents('li').eq(0);
+
+                                    _t.arr[order].play();
+                                    prts.addClass(_t.cls['isPlay']).addClass(_t.cls['activeVideo']);
+                                    main.autoControl.clear();
+                                });
+                        },
+                        setVideo: function (o) {
+                            o = o || {};
+                            var _t = this,
+                                k = o['ID'],
+                                ind = o['order'],
+                                vid = new MediaElementPlayer(k, {
+                                    stretching: 'responsive',
+                                    success: function (player, node) {
+                                        player.addEventListener('ended', function (e) {
+                                            main.current.slideNext();
+                                        });
+                                    }
+                                });
+                            _t.arr[ind] = vid;
+                        },
+                        initPlugin: function () {
+                            var _t = this;
+                            ID
+                                .find(_t.el.con)
+                                .each(function (ind) {
+                                    var ths = $(this),
+                                        button = ths.siblings(_t.el.button);
+
+                                    button.attr('data-order', ind);
+
+                                    if (uty.detectEl(ths.find(_t.el.video)))
+                                        _t.setVideo({ ID: ths.find(_t.el.video).get(0), order: ind });
+                                });
+                        },
+                        init: function () {
+                            var _t = this;
+                            if (ID.find(_t.el.con).length > 0) {
+                                _t.initPlugin();
+                                _t.addEvent();
+                            }
+
+                        }
+                    },
+
                     _autoPlay = function (o) {
                         o = o || {};
                         var current = main['current'] || '',
@@ -559,6 +649,7 @@ jQuery.extend(jQuery.easing, {
                                 })
                                 .trigger('appear');
                     },
+
                     _detectPosition = {
                         get: function (k) {
                             var b = false,
@@ -592,6 +683,7 @@ jQuery.extend(jQuery.easing, {
                                 }, 222);
                         }
                     },
+
                     main = {
                         cls: {
                             imageLoaded: 'image',
@@ -630,6 +722,7 @@ jQuery.extend(jQuery.easing, {
                                 slideChangeTransitionEnd: function (s) {
                                     _detectPosition.set();
                                     _autoPlay({ type: 'start' });
+                                    _videos.disabled();
                                     _callback({ type: 'slideChangeTransitionEnd', value: s });
                                 }
                             };
@@ -666,6 +759,7 @@ jQuery.extend(jQuery.easing, {
                         }
                     };
                 main.init();
+                _videos.init();
 
             });
         }
