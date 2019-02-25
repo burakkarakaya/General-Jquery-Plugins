@@ -505,3 +505,59 @@ jQuery.extend(jQuery.easing, {
 		}
 	});
 })(jQuery);
+
+/*
+    Minus Swiper
+*/
+(function ($) {
+    $.fn.extend({
+        minusSwiper: function (options) {
+            var defaults = {
+                wrapperClass: '.swiper-wrapper',
+                slideClass: '> .swiper-slide'
+            };
+
+            var option = $.extend(defaults, options);
+
+            return this.each(function (e) {
+                var opt = option,
+                    ID = $(this),
+                    main = {
+                        current: null,
+                        addOrder: function () {
+                            var _t = this,
+                                wrp = ID.find(opt['wrapperClass']),
+                                sld = wrp.find(opt['slideClass']),
+                                n = sld.length;
+
+                            ID
+                                .addClass('item-' + n)
+                                .find(opt['wrapperClass'])
+                                .find(opt['slideClass'])
+                                .each(function (i, k) {
+                                    $(this).attr('data-order', i);
+                                });
+
+                            return n;    
+                        },
+                        init: function () {
+                            var _t = this,
+                                key = ID.attr('data-swiper') || 'main',
+                                prop = (SITE_CONFIG['plugin']['swiper'] || {})[key] || {},
+                                wrp = ID.find(opt['wrapperClass']),
+                                sld = wrp.find(opt['slideClass']),
+                                n = sld.length;
+
+                            if (n > 1) {
+                                _t.current = new Swiper(ID, prop);
+                            } else {
+
+                            }
+                        }
+                    };
+                main.init();
+
+            });
+        }
+    });
+})(jQuery);
