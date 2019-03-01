@@ -195,11 +195,37 @@ var bdy = $('body'),
         }
     },
     plugin = {
+        swiper: {
+            el: {
+                con: '[data-swiper]',
+                target: '.swiper-wrapper > .swiper-slide'
+            },
+            cls: { active: 'ems-swiper-active' },
+            set: function (ID) {
+                var _t = this;
+                if (!ID.hasClass(_t['cls']['active']) && uty.detectEl(ID.find(_t.el.target))) {
+                    ID.addClass(_t['cls']['active']);
+                    ID.minusSwiper();
+                }
+            },
+            init: function () {
+                var _t = this,
+                    con = $(_t.el.con);
+                if (uty.detectEl(con))
+                    con
+                        .each(function () {
+                            _t.set($(this));
+                        });
+
+            }
+        },
         styler: {
             arr: GET_CONFIG({ group: 'plugin', key: 'styler' }),
             cls: { active: 'ems-styler-active' },
             set: function (o) {
-                var ID = $(o['ID']), prop = o['prop'] || {};
+                var _t = this,
+                    ID = $(o['ID']),
+                    prop = o['prop'] || {};
                 if (uty.detectEl(ID) && !ID.hasClass(_t.cls['active']))
                     ID
                         .addClass(_t.cls['active'])
@@ -213,6 +239,7 @@ var bdy = $('body'),
         },
         init: function () {
             var _t = this;
+            _t.swiper.init();
             _t.styler.init();
         }
     },

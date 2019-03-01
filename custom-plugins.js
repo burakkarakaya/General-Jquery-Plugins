@@ -525,16 +525,19 @@ jQuery.extend(jQuery.easing, {
                 var opt = option,
                     ID = $(this),
                     duration = ID.attr('data-swiper-autoplay') || '',
+                    _dispatch  = function (obj) {
+                        stage.dispatchEvent("CustomEvent", "SWIPER_ACTIVE_ELEMENT", $.extend({ ID: ID }, obj));
+                    },
                     _callback = function (obj) {
                         if (typeof callback !== 'undefined')
                             callback($.extend({ ID: ID }, obj));
                     },
                     _videos = {
                         el: {
-                            con: '.video-content',
-                            button: '.btn-video-play',
+                            con: '.slide-video',
+                            button: '.slide-video-btn',
                             video: 'video',
-                            activeVideo: '.swiper-slide-active .btn-video-play'
+                            activeVideo: '.swiper-slide-active .slide-video-btn'
 
                         },
                         cls: {
@@ -564,6 +567,19 @@ jQuery.extend(jQuery.easing, {
 
                             _t.activeted();
                         },
+                        playVideo: function (ths) {
+                            var _t = this;
+                            var order = ths.attr('data-order') || '',
+                                prts = ths.parents('li').eq(0),
+                                vid = _t.arr[order] || '';
+
+                            if( vid != '' ){
+                                vid.play();
+                                prts.addClass(_t.cls['isPlay']).addClass(_t.cls['activeVideo']);
+                                _autoPlay({ type: 'stop' });
+                            }else
+                                console.error('swiper video html kontrol et');
+                        },
                         addEvent: function () {
                             var _t = this;
                             ID
@@ -571,13 +587,7 @@ jQuery.extend(jQuery.easing, {
                                 .unbind('click')
                                 .bind('click', function (evt) {
                                     evt.preventDefault();
-                                    var ths = $(this),
-                                        order = ths.attr('data-order'),
-                                        prts = ths.parents('li').eq(0);
-
-                                    _t.arr[order].play();
-                                    prts.addClass(_t.cls['isPlay']).addClass(_t.cls['activeVideo']);
-                                    main.autoControl.clear();
+                                    _t.playVideo( $( this ) );
                                 });
                         },
                         setVideo: function (o) {
@@ -638,16 +648,13 @@ jQuery.extend(jQuery.easing, {
 
                         if (uty.detectEl(target))
                             target
-                                .lazyload({
-                                    container: ID,
-                                    effect: 'fadeIn',
-                                    load: function () {
-                                        $(this)
-                                            .removeClass(main['cls']['imageLazy'])
-                                            .addClass(main['cls']['imageLoaded']);
-                                    }
-                                })
-                                .trigger('appear');
+                                .each(function () {
+                                    var lazyImage = $(this).get(0);
+                                    lazyImage.src = lazyImage.dataset.src;
+                                    //lazyImage.srcset = lazyImage.dataset.srcset;
+                                    lazyImage.classList.remove(main['cls']['imageLazy']);
+                                    lazyImage.classList.add(main['cls']['imageLoaded']);
+                                });
                     },
 
                     _detectPosition = {
@@ -677,8 +684,10 @@ jQuery.extend(jQuery.easing, {
                                                 ths.addClass(main.cls['active']);
                                         });
 
-                                    _lazy({ target: wrp.find(opt['slideClass'] + '.' + main.cls['active']) });
-                                    _callback({ type: 'lazyload', value: wrp.find(opt['slideClass'] + '.' + main.cls['active']) });
+                                    var active = wrp.find(opt['slideClass'] + '.' + main.cls['active']);   
+                                    _lazy({ target: active });
+                                    _dispatch({ target: active });
+                                    _callback({ type: 'lazyload', value: active });
 
                                 }, 222);
                         }
@@ -686,8 +695,8 @@ jQuery.extend(jQuery.easing, {
 
                     main = {
                         cls: {
-                            imageLoaded: 'image',
-                            imageLazy: 'lazy-load lazy lazy-back-load lazyload',
+                            imageLoaded: 'image-loaded',
+                            imageLazy: 'lazy-load',
                             active: 'slide-active',
                             noResult: 'no-result',
                             itemCount: 'item-'
@@ -753,7 +762,7 @@ jQuery.extend(jQuery.easing, {
 
                             if (n > 1) {
                                 var key = ID.attr('data-swiper') || 'main',
-                                    prop = (SITE_CONFIG['plugin']['swiper'] || {})[key] || {};
+                                    prop = _t.objAddEvent((SITE_CONFIG['plugin']['swiper'] || {})[key] || SITE_CONFIG['plugin']['swiper']['main'] || {});
                                 _t.current = new Swiper(ID, prop);
                             }
                         }

@@ -1,12 +1,11 @@
 var SITE_CONFIG = {
     plugin: {
         /* 
-            swiper api dosyası: http://idangero.us/swiper/api/ 
+            swiper config dosyası 
             default değeri main dir. data-swiper="widgetFive" config dosyası içerisinde ilgili objeye bakacaktır.
-            autoplay için data-swiper-autoplay kullanmalıyız. config dosyasına yazmazsınız. Ayrıca her bir li için ayrıca autoplay kullanmak isteseniz  <li class="swiper-slide" data-swiper-autoplay="2000">
 
             - hem desktop hem de mobilde swiper
-            <div class="swiper-container" data-swiper="widgetFive" data-swiper-autoplay="5000">
+            <div class="swiper-container" data-swiper="widgetFive">
                 <div class="swiper-inner">
                     <ul class="swiper-wrapper">
                         <li class="swiper-slide"></li>
@@ -16,18 +15,6 @@ var SITE_CONFIG = {
                 <div class="swiper-button-next"></div>
                 <div class="swiper-button-prev"></div>
             </div>
-
-            video örneği: 
-
-            <li class="swiper-slide ems-swiper-video">
-                <div class="video-content">
-                    <video preload="none" autobuffer="autobuffer" class="video-player">
-                        <source type="video/youtube" src="http://www.youtube.com/watch?v={{youtubeID}}">
-                        </source>
-                    </video>
-                    <a class="btn-video-play" href="javascript:void(0);">video play</a>
-                </div>
-            </li>
 
         */
         swiper: {
