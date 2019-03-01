@@ -195,6 +195,34 @@ var bdy = $('body'),
         }
     },
     plugin = {
+        /* 
+            tab menu
+        */
+        tabMenu: {
+            el: {
+                con: '.ems-tab',
+            },
+            cls: { active: 'ems-tabmenu-active' },
+            set: function (ID) {
+                var _t = this;
+                if (!ID.hasClass(_t['cls']['active'])) {
+                    ID.addClass(_t['cls']['active']);
+                    ID.minusTab();
+                }
+            },
+            init: function () {
+                var _t = this,
+                    con = $(_t.el.con);
+                if (uty.detectEl(con))
+                    con
+                        .each(function () {
+                            _t.set($(this));
+                        });
+            }
+        },
+        /* 
+            swiper
+        */
         swiper: {
             el: {
                 con: '[data-swiper]',
@@ -216,9 +244,11 @@ var bdy = $('body'),
                         .each(function () {
                             _t.set($(this));
                         });
-
             }
         },
+        /* 
+            styler
+        */
         styler: {
             arr: GET_CONFIG({ group: 'plugin', key: 'styler' }),
             cls: { active: 'ems-styler-active' },
@@ -237,8 +267,10 @@ var bdy = $('body'),
                     _t.set(arr[i]);
             }
         },
+
         init: function () {
             var _t = this;
+            _t.tabMenu.init();
             _t.swiper.init();
             _t.styler.init();
         }
