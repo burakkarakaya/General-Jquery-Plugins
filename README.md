@@ -1,6 +1,6 @@
 # General-Jquery-Plugins
 
-# Swiper
+## Swiper
 
 ``` HTML
 <div class="swiper-container homepage-slider" data-swiper="main">
