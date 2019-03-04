@@ -770,6 +770,30 @@ jQuery.extend(jQuery.easing, {
                 main.init();
                 _videos.init();
 
+                this.adjust = function () {
+                    if (main.current != null)
+                        _detectPosition.set();
+                };
+
+                this.update = function () {
+                    if (main.current != null) {
+                        var wrp = ID.find(opt['wrapperClass']),
+                            sld = wrp.find(opt['slideClass']);
+                        sld.css({ width: '' });
+                        (function () { main.current.update(); }());
+                    }
+                };
+
+                this.destroy = function () {
+                    if (main.current != null)
+                        main.current.destroy(false, true);
+                };
+
+                this.focused = function (index) {
+                    if (main.current != null)
+                        main.current.slideTo(index, 222);
+                };
+
             });
         }
     });
@@ -782,8 +806,9 @@ jQuery.extend(jQuery.easing, {
     $.fn.extend({
         minusTab: function (options, callback) {
             var defaults = {
-                content: '> .ems-tab-content > div', // content
-                tabNav: '> .ems-tab-header > a', // tab menu button
+                swiperWrapperClass: '.swiper-container',
+                content: '> .ems-tab-content > [rel]', // content
+                tabNav: '> .ems-tab-header > [rel]', // tab menu button
                 accNav: '> .ems-tab-content > div > .ems-tab-inner-header', // accordion menu button
                 begin: 0,
                 ajx: {
@@ -804,7 +829,8 @@ jQuery.extend(jQuery.easing, {
                         cls: {
                             selected: 'selected',
                             ajx: 'ajx-loading',
-                            loaded: 'ajx-loaded'
+                            loaded: 'ajx-loaded',
+                            scrollerTrigger: 'scroller-trigger'
                         },
                         clicklable: true,
                         loading: function (k) {
@@ -834,8 +860,10 @@ jQuery.extend(jQuery.easing, {
                                 _t.clicklable = false;
                                 _t.loading('show');
                                 uty.ajx({ uri: uri }, function (d) {
+                                    var responseType = 'error';
                                     if (d['type'] == 'success') {
-                                        ID.addClass(_t.cls['loaded']);
+                                        responseType = 'success';
+                                        target.addClass(_t.cls['loaded']);
                                         d = uty.clearScriptTag(d['val'] || '');
                                         d = $('<div>' + d + '</div>').find(opt.ajx.target).html() || '';
                                         if (opt.ajx.target !== '')
@@ -848,12 +876,21 @@ jQuery.extend(jQuery.easing, {
                                             else if (typ == 'before') target.before(d);
                                             else if (typ == 'after') target.after(d);
                                             else target.html(d);
-
                                         }
                                     }
+                                    stage.dispatchEvent("CustomEvent", "AJX_TAB_LOADED", { ID: ID, target: target, type: responseType });
                                     _t.loading('hide');
                                     _t.clicklable = true;
                                 });
+                            }
+                        },
+                        updateSwiper: function (target) {
+                            var _t = this,
+                                elm = target.find(opt['swiperWrapperClass']);
+                            if (uty.detectEl(elm)) {
+                                elm = elm.get(0);
+                                if (typeof elm.update !== 'undefined')
+                                    elm.update();
                             }
                         },
                         addEvent: function () {
@@ -873,8 +910,31 @@ jQuery.extend(jQuery.easing, {
 
                                         if (uri != '')
                                             _t.ajx({ ID: target, uri: uri });
+
+                                        _t.updateSwiper(target);
                                     }
                                 });
+
+                            if (!ID.hasClass(_t.cls['scrollerTrigger']))
+                                _t.trigger();
+                        },
+                        trigger: function () {
+                            var _t = this;
+
+                            var elm = ID.find(opt['tabNav'] + '.' + _t.cls['selected']);
+                            if (!uty.detectEl(elm))
+                                elm = ID.find(opt['tabNav']).eq(0);
+                            elm.click();
+
+                        },
+                        adjust: function () {
+                            var _t = this;
+                            if (ID.hasClass(_t.cls['scrollerTrigger'])) {
+                                if (uty.detectPosition({ ID: ID })) {
+                                    ID.removeClass(_t.cls['scrollerTrigger']);
+                                    _t.trigger();
+                                }
+                            }
                         },
                         init: function () {
                             var _t = this;
@@ -883,6 +943,125 @@ jQuery.extend(jQuery.easing, {
                         }
                     };
                 main.init();
+
+                // public fonk
+                this.adjust = function () {
+                    main.adjust();
+                };
+            });
+        }
+    });
+})(jQuery);
+
+/* 
+    MINUS SYSTEM WIDGET 
+*/
+(function ($) {
+    $.fn.extend({
+        minusSystemWidget: function (options, callback) {
+            var defaults = {
+                target: '.emosInfinite',
+                ajx: {
+                    target: '.emosInfinite',
+                    itemTarget: '> li',
+                    typ: 'append'
+                }
+            };
+
+            var option = $.extend(defaults, options);
+
+            return this.each(function (e) {
+                var opt = option,
+                    ID = $(this),
+                    main = {
+                        cls: {
+                            loading: 'ajx-loading',
+                            noResult: 'no-result',
+                            found: 'results-found',
+                            active: 'widget-active',
+                            items: 'items-',
+                            scrollerTrigger: 'scroller-trigger'
+                        },
+                        loading: function (k) {
+                            var _t = this;
+                            if (k == 'show')
+                                ID.addClass(_t.cls['loading']);
+                            else
+                                ID.removeClass(_t.cls['loading']);
+                        },
+                        getPrdCode: function () {
+                            return uty.cleanText(ID.attr('data-code') || $('[id$="hdnURN_KOD"]').val() || $('.ems-grid-cart [data-prd-code]').map(function () { return $(this).attr('data-prd-code') || '' }).get().join(',') || '');
+                        },
+                        getCatCode: function () {
+                            return uty.cleanText(ID.attr('data-cat') || uty.trimText(minusLoc.get('?', 'kat', urlString)) || '');
+                        },
+                        getUri: function () {
+                            /* 
+                               ex: /usercontrols/urunDetay/ajxIlgiliUrun.aspx?lang={{lang}}&urn={{prdCode}}&kat={{prdCat}}&ps=100&rp=1 
+                            */
+                            var _t = this,
+                                uri = uty.cleanText(ID.attr('data-uri') || ''),
+                                code = _t.getPrdCode(),
+                                cat = _t.getCatCode();
+                            return uri.replace(/{{lang}}/g, lang).replace(/{{prdCode}}/g, code).replace(/{{prdCat}}/g, cat);
+                        },
+                        set: function () {
+                            var _t = this,
+                                uri = _t.getUri();
+
+                            _t.loading('show');
+                            uty.ajx({ uri: uri }, function (d) {
+                                var responseType = 'error';
+                                if (d['type'] == 'success') {
+                                    responseType = 'success';
+                                    d = uty.clearScriptTag(d['val'] || '');
+
+                                    var ajxTargetWrp = $('<div>' + d + '</div>'),
+                                        ajxTarget = ajxTargetWrp.find(opt.ajx.target).html() || '',
+                                        ajxTargetItem = ajxTargetWrp.find(opt.ajx.target).find(opt.ajx.itemTarget),
+                                        target = ID.find(opt.target);
+
+                                    if (uty.detectEl(target) && uty.detectEl(ajxTargetItem)) {
+                                        var typ = opt.ajx['typ'] || '';
+                                        if (typ == 'append') target.append(ajxTarget);
+                                        else if (typ == 'prepend') target.append(ajxTarget);
+                                        else if (typ == 'before') target.before(ajxTarget);
+                                        else if (typ == 'after') target.after(ajxTarget);
+                                        else target.html(ajxTarget);
+
+                                        ID
+                                            .addClass(_t.cls['items'] + ajxTargetItem.length)
+                                            .addClass(_t.cls['found'])
+                                            .addClass(_t.cls['active'])
+                                    } else
+                                        ID
+                                            .addClass(_t.cls['noResult']);
+                                }
+                                stage.dispatchEvent("CustomEvent", "SYSTEM_WIDGET_LOADED", { ID: ID, type: responseType });
+                                _t.loading('hide');
+                            });
+                        },
+                        adjust: function () {
+                            var _t = this;
+                            if (ID.hasClass(_t.cls['scrollerTrigger'])) {
+                                if (uty.detectPosition({ ID: ID })) {
+                                    ID.removeClass(_t.cls['scrollerTrigger']);
+                                    _t.set();
+                                }
+                            }
+                        },
+                        init: function () {
+                            var _t = this;
+                            if (!ID.hasClass(_t.cls['scrollerTrigger']))
+                                _t.set();
+                        }
+                    };
+                main.init();
+
+                // public fonk
+                this.adjust = function () {
+                    main.adjust();
+                };
             });
         }
     });

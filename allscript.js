@@ -178,29 +178,158 @@ var bdy = $('body'),
                 target.html((translation['price'] || '{{p}}<span class="d">,{{d}}</span><span class="pb1"> TL</span>').replace(/{{p}}/g, uty.priceFormat(Math.abs(parseFloat(k[0] || 0)))).replace(/{{d}}/g, k[1] || '00'))
             }
         },
-        lowerCase: {
-            charMap: { Ç: 'c', Ö: 'o', Ş: 's', İ: 'i', I: 'i', Ü: 'u', Ğ: 'g', ç: 'c', ö: 'o', ş: 's', ı: 'i', ü: 'u', ğ: 'g' },
-            change: function (k) { return k.replace(/\s+/g, '').toLowerCase(); },
-            get: function (val) {
-                var _t = this, str_array = val.split('');
-                for (var i = 0, len = str_array.length; i < len; i++)
-                    str_array[i] = _t.charMap[str_array[i]] || str_array[i];
-                val = str_array.join('');
-                return _t.change(val);
+        lowerCase: function (k) {
+
+            var letters = { "İ": "i", "Ş": "ş", "Ğ": "ğ", "Ü": "ü", "Ö": "ö", "Ç": "ç", "I": "ı" },
+                n = '';
+            for (var i = 0; i < k.length; ++i) {
+                var j = k[i];
+                n += (letters[j] || j);
             }
+
+            return n.toLowerCase() || '';
+        },
+        upperCase: function (k) {
+
+            var letters = { "i": "İ", "ş": "Ş", "ğ": "Ğ", "ü": "Ü", "ö": "Ö", "ç": "Ç", "ı": "I" },
+                n = '';
+            for (var i = 0; i < k.length; ++i) {
+                var j = k[i];
+                n += (letters[j] || j);
+            }
+
+            return n.toUpperCase() || '';
         },
         isLogin: function () {
             var _t = this;
             return _t.detectEl($('.ems-login'));
+        },
+        detectPosition: function (o) {
+            o = o || {};
+            var ID = o['ID'],
+                rate = o['rate'] || 1,
+                o1 = { x: 0, y: wst, width: wt, height: ht * rate },
+                o2 = { x: 0, y: ID.offset().top, width: wt, height: ID.height() * rate },
+                b = false;
+            if (o1.x < o2.x + o2.width && o1.x + o1.width > o2.x && o1.y < o2.y + o2.height && o1.y + o1.height > o2.y)
+                b = true;
+            return b;
+        },
+        Cookies: function (o) {
+            var typ = o['typ'] || '', name = o['name'] || '';
+            if (typ == 'set') {
+                var date = new Date(), minutes = o['minutes'] || 5;
+                date.setTime(date.getTime() + (minutes * 60 * 1000));
+                $.cookie(name, o['value'] || '', { expires: date, path: '/' });
+            } else if (typ == 'get')
+                return $.cookie(name);
+        },
+    },
+    management = {
+        multiLanguages: {
+            el: {
+                con: '.ems-multi-languages [data-target]'
+            },
+            set: function (ID) {
+                var _t = this;
+                var target = $(ID.attr('data-target') || ''),
+                    type = ID.attr('data-type') || 'html';
+                if (uty.detectEl(target)) {
+                    var htm = ID.html() || '';
+                    if (type == 'append')
+                        target.append(htm);
+                    else if (type == 'prepend')
+                        target.prepend(htm);
+                    else if (type == 'before')
+                        target.before(htm);
+                    else if (type == 'after')
+                        target.after(htm);
+                    else
+                        target.html(htm);
+                }
+            },
+            init: function () {
+                var _t = this,
+                    con = $(_t.el.con);
+                if (uty.detectEl(con))
+                    con
+                        .each(function () {
+                            _t.set($(this));
+                        });
+            }
+        },
+        append: {
+			arr: GET_CONFIG({ group: 'management', key: 'append' }),
+			set: function (o) {
+				var main = $(o['main'] || ''), target = $(o['target'] || ''), clone = o['clone'] || '', type = o['add'] || '', htm = o['htm'] || '';
+				if (uty.detectEl(main) && uty.detectEl(target)) {
+					main = main.eq(0);
+					var e = clone != '' ? main.clone() : main;
+					if (htm != '') e = htm;
+					if (type == 'prepend') target.prepend(e);
+					else if (type == 'before') target.before(e);
+					else if (type == 'after') target.after(e);
+					else if (type == 'html') target.html(e.html() || '');
+					else target.append(e);
+				}
+			},
+			init: function (k) {
+				var _t = this, arr = k || _t.arr;
+				for (var i = 0; i < arr.length; ++i)
+					_t.set(arr[i]);
+			}
+		},
+        init: function () {
+            var _t = this;
+            _t.append.init();
+            _t.multiLanguages.init();
         }
     },
     plugin = {
+        /* 
+            System widget
+        */
+        systemWidget: {
+            el: {
+                con: '.system-widget[data-uri]',
+            },
+            cls: { active: 'ems-system-widget-active' },
+            set: function (ID) {
+                var _t = this;
+                if (!ID.hasClass(_t['cls']['active'])) {
+                    ID.addClass(_t['cls']['active']);
+                    ID.minusSystemWidget();
+                }
+            },
+            adjust: function () {
+                var _t = this, el = $(_t.el.con)
+                if (uty.detectEl(el))
+                    el.each(function () {
+                        var ths = $(this);
+                        if (ths.hasClass(_t.cls['active'])) {
+                            ths = ths.get(0);
+                            if (typeof ths.adjust !== 'undefined')
+                                ths.adjust();
+                        }
+                    });
+            },
+            init: function () {
+                var _t = this,
+                    con = $(_t.el.con);
+                if (uty.detectEl(con))
+                    con
+                        .each(function () {
+                            _t.set($(this));
+                        });
+            }
+        },
+
         /* 
             tab menu
         */
         tabMenu: {
             el: {
-                con: '.ems-tab',
+                con: '.ems-tab:not(".not-trigger")',
             },
             cls: { active: 'ems-tabmenu-active' },
             set: function (ID) {
@@ -209,6 +338,18 @@ var bdy = $('body'),
                     ID.addClass(_t['cls']['active']);
                     ID.minusTab();
                 }
+            },
+            adjust: function () {
+                var _t = this, el = $(_t.el.con)
+                if (uty.detectEl(el))
+                    el.each(function () {
+                        var ths = $(this);
+                        if (ths.hasClass(_t.cls['active'])) {
+                            ths = ths.get(0);
+                            if (typeof ths.adjust !== 'undefined')
+                                ths.adjust();
+                        }
+                    });
             },
             init: function () {
                 var _t = this,
@@ -225,7 +366,7 @@ var bdy = $('body'),
         */
         swiper: {
             el: {
-                con: '[data-swiper]',
+                con: '[data-swiper]:not(".not-trigger")',
                 target: '.swiper-wrapper > .swiper-slide'
             },
             cls: { active: 'ems-swiper-active' },
@@ -235,6 +376,18 @@ var bdy = $('body'),
                     ID.addClass(_t['cls']['active']);
                     ID.minusSwiper();
                 }
+            },
+            adjust: function () {
+                var _t = this, el = $(_t.el.con)
+                if (uty.detectEl(el) && uty.detectEl(el.find(_t.el.target)))
+                    el.each(function () {
+                        var ths = $(this);
+                        if (ths.hasClass(_t.cls['active'])) {
+                            ths = ths.get(0);
+                            if (typeof ths.adjust !== 'undefined')
+                                ths.adjust();
+                        }
+                    });
             },
             init: function () {
                 var _t = this,
@@ -267,16 +420,81 @@ var bdy = $('body'),
                     _t.set(arr[i]);
             }
         },
-
+        adjust: function () {
+            var _t = this;
+            _t.systemWidget.adjust();
+            _t.tabMenu.adjust();
+            _t.swiper.adjust();
+        },
         init: function () {
             var _t = this;
+            _t.systemWidget.init();
             _t.tabMenu.init();
             _t.swiper.init();
             _t.styler.init();
         }
     },
+    modules = {
+        adjust: function () {
+            var _t = this;
+        },
+        init: function () {
+            var _t = this;
+        }
+    },
+    events = {
+        loaded: function () {
+
+        },
+
+        ready: function () {
+
+        },
+
+        bdyClicked: function () {
+            $('body, html').bind('click touchstart', function (e) {
+
+            });
+        },
+
+        onResize: function () {
+            wt = parseFloat(win.width());
+            ht = parseFloat(win.height());
+
+            plugin.adjust();
+        },
+
+        onResizeStop: function () {
+
+        },
+
+        onScroll: function () {
+            wst = parseFloat(win.scrollTop());
+            sRatio = wst / (doc.height() - ht);
+
+
+            plugin.adjust();
+
+        },
+
+        onScrollStop: function () {
+
+        },
+        init: function () {
+            var _t = this;
+            _t.bdyClicked();
+            win.load(_t.loaded);
+            doc.ready(_t.ready);
+            win.resize(_t.onResize).resize();
+            win.bind('resizestop', _t.onResizeStop);
+            win.bind('scrollstop', _t.onScrollStop);
+            win.scroll(_t.onScroll).scroll();
+        }
+    },
     initialize = function () {
+        management.init();
         plugin.init();
+        events.init();
     };
 
 initialize();

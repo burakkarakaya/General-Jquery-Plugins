@@ -1,4 +1,22 @@
 var SITE_CONFIG = {
+    management: {
+        append: [
+            /* 
+                { 
+                    'main': 'Taşınacak olan ana nesne', 
+                    'target': 'Hedef nesne', 
+                    'add': 'ekleme türü', // append, prepend, before, after, html 
+                    'clone': 'nesne taşınırken kopyası alınsın alınmasın' // true, false 
+                },
+
+                example: 
+                
+                { 'main': '[id$="lblNavigation"] a:last', 'target': '.ems-prd-cat-name', 'add': 'append', 'clone': true },
+                { 'main': '.featured-products-link', 'target': '.featured-products ', 'add': 'append' },
+            */
+           
+        ]
+    },
     plugin: {
         /* 
             swiper config dosyası 
