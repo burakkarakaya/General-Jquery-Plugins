@@ -28,3 +28,24 @@
     <div class="swiper-pagination"></div>
 </div>
 ```
+
+## Tab Menu
+
+``` HTML
+<div class="ems-tab scroller-trigger">
+    <div class="ems-tab-header">
+        <a rel="tab-1" href="javascript:void(0);" data-ajx="/urun_liste.aspx?kat=22949&lang=tr-TR&ps=8">ERKEK</a>
+        <a rel="tab-2" href="javascript:void(0);">KADIN</a>
+        <a rel="tab-3" href="javascript:void(0);">ÇOCUK</a>
+    </div>
+    <div class="ems-tab-content">
+        <div rel="tab-1">
+            <div class="swiper-container">
+                <ul class="emosInfinite"></ul>
+            </div>
+        </div>
+        <div rel="tab-2">tab2</div>
+        <div rel="tab-3">tab3</div>
+    </div>
+</div>
+```
