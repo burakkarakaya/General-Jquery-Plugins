@@ -53,3 +53,19 @@
         </div>
     </div>
 ```
+
+## System Widget
+
+``` HTML
+<div class="system-widget widget swiper-container scroller-trigger"
+    data-uri="/urun_liste.aspx?kat=22949&lang=tr-TR&ps=8">
+    <div class="swiper-header"><span>ÖNE ÇIKAN ÜRÜNLER</span></div>
+    <div class="swiper-inner">
+        <ul class="emosInfinite swiper-wrapper">
+        </ul>
+    </div>
+    <div class="swiper-button-prev"><i> </i></div>
+    <div class="swiper-button-next"><i> </i></div>
+    <div class="swiper-pagination"></div>
+</div>
+```
