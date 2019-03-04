@@ -32,20 +32,24 @@
 ## Tab Menu
 
 ``` HTML
-<div class="ems-tab scroller-trigger">
-    <div class="ems-tab-header">
-        <a rel="tab-1" href="javascript:void(0);" data-ajx="/urun_liste.aspx?kat=22949&lang=tr-TR&ps=8">ERKEK</a>
-        <a rel="tab-2" href="javascript:void(0);">KADIN</a>
-        <a rel="tab-3" href="javascript:void(0);">ÇOCUK</a>
-    </div>
-    <div class="ems-tab-content">
-        <div rel="tab-1">
-            <div class="swiper-container">
-                <ul class="emosInfinite"></ul>
-            </div>
+ <div class="ems-tab scroller-trigger">
+        <div class="ems-tab-header">
+            <a data-ajx="/urun_liste.aspx?kat=22949&lang=tr-TR&ps=8" href="javascript:void(0);"
+                rel="tab-1">ERKEK</a>
+            <a href="javascript:void(0);" rel="tab-2">KADIN</a>
+            <a href="javascript:void(0);" rel="tab-3">ÇOCUK</a>
         </div>
-        <div rel="tab-2">tab2</div>
-        <div rel="tab-3">tab3</div>
+        <div class="ems-tab-content">
+            <div rel="tab-1">
+                <div class="swiper-container">
+                    <div class="swiper-inner">
+                        <ul class="emosInfinite">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div rel="tab-2">tab2</div>
+            <div rel="tab-3">tab3</div>
+        </div>
     </div>
-</div>
 ```
