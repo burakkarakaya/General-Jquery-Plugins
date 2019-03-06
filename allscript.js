@@ -259,26 +259,26 @@ var bdy = $('body'),
             }
         },
         append: {
-			arr: GET_CONFIG({ group: 'management', key: 'append' }),
-			set: function (o) {
-				var main = $(o['main'] || ''), target = $(o['target'] || ''), clone = o['clone'] || '', type = o['add'] || '', htm = o['htm'] || '';
-				if (uty.detectEl(main) && uty.detectEl(target)) {
-					main = main.eq(0);
-					var e = clone != '' ? main.clone() : main;
-					if (htm != '') e = htm;
-					if (type == 'prepend') target.prepend(e);
-					else if (type == 'before') target.before(e);
-					else if (type == 'after') target.after(e);
-					else if (type == 'html') target.html(e.html() || '');
-					else target.append(e);
-				}
-			},
-			init: function (k) {
-				var _t = this, arr = k || _t.arr;
-				for (var i = 0; i < arr.length; ++i)
-					_t.set(arr[i]);
-			}
-		},
+            arr: GET_CONFIG({ group: 'management', key: 'append' }),
+            set: function (o) {
+                var main = $(o['main'] || ''), target = $(o['target'] || ''), clone = o['clone'] || '', type = o['add'] || '', htm = o['htm'] || '';
+                if (uty.detectEl(main) && uty.detectEl(target)) {
+                    main = main.eq(0);
+                    var e = clone != '' ? main.clone() : main;
+                    if (htm != '') e = htm;
+                    if (type == 'prepend') target.prepend(e);
+                    else if (type == 'before') target.before(e);
+                    else if (type == 'after') target.after(e);
+                    else if (type == 'html') target.html(e.html() || '');
+                    else target.append(e);
+                }
+            },
+            init: function (k) {
+                var _t = this, arr = k || _t.arr;
+                for (var i = 0; i < arr.length; ++i)
+                    _t.set(arr[i]);
+            }
+        },
         init: function () {
             var _t = this;
             _t.append.init();
@@ -286,6 +286,44 @@ var bdy = $('body'),
         }
     },
     plugin = {
+        /* 
+            main menu
+        */
+        menu: {
+            arr: GET_CONFIG({ group: 'plugin', key: 'menu' }),
+            cls: { active: 'ems-menu-active' },
+            set: function (o) {
+                var _t = this,
+                    ID = $(o['ID'] || ''),
+                    custom = o['custom'] || '';
+                if (uty.detectEl(ID) && !ID.hasClass(_t['cls']['active'])) {
+                    ID.addClass(_t['cls']['active']);
+                    ID.minusMenu(o['prop'] || {});
+                    if (custom != '')
+                        setTimeout(function () {
+                            if (!uty.visibleControl()) {
+                                ID
+                                    .find(custom['elm'] || '')
+                                    .each(function () {
+                                        $(this)
+                                            .find(custom['target'] || '')
+                                            .addClass(custom['class'] || '');
+                                    });
+
+                                ID
+                                    .find(custom['unbind'] || '')
+                                    .unbind('mouseleave')
+                            }
+                        }, 100);
+                }
+            },
+            init: function () {
+                var _t = this;
+                for (var i = 0; i < _t.arr.length; ++i)
+                    _t.set(_t.arr[i]);
+            }
+        },
+
         /* 
             System widget
         */
@@ -428,6 +466,7 @@ var bdy = $('body'),
         },
         init: function () {
             var _t = this;
+            _t.menu.init();
             _t.systemWidget.init();
             _t.tabMenu.init();
             _t.swiper.init();

@@ -14,26 +14,42 @@ var SITE_CONFIG = {
                 { 'main': '[id$="lblNavigation"] a:last', 'target': '.ems-prd-cat-name', 'add': 'append', 'clone': true },
                 { 'main': '.featured-products-link', 'target': '.featured-products ', 'add': 'append' },
             */
-           
+
+            { 'main': '.mini-lang', 'target': '.mini-lang-append', 'add': 'append', 'clone': true },
+            { 'main': '.top-menu', 'target': '.top-menu-append', 'add': 'append', 'clone': true }
+
         ]
     },
     plugin: {
         /* 
-            swiper config dosyası 
-            default değeri main dir. data-swiper="widgetFive" config dosyası içerisinde ilgili objeye bakacaktır.
+            main menu
+        */
+        menu: [
 
-            - hem desktop hem de mobilde swiper
-            <div class="swiper-container" data-swiper="widgetFive">
-                <div class="swiper-inner">
-                    <ul class="swiper-wrapper">
-                        <li class="swiper-slide"></li>
-                    </ul>
-                </div>
-                <div class="swiper-pagination"></div>
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
-            </div>
+            {
+                'ID': '.menu.main-menu',
+                /*
+                    NOT: cosmetica daki gibi bir menu istenirse
+                    'custom': {
+                        'elm': '.sub-nav > ul',
+                        'unbind': '.sub-nav > ul > li',
+                        'target': '> li:eq( 1 )',
+                        'class': 'selected'
+                    },
+                */
+                'prop': {
+                    'closeElem': '.mod-mini-cart, .mod-mini-login',
+                    'bdyClicked': true,
+                    'eventType': isMobile ? 'click' : 'hover',
+                    'overlay': true,
+                    'bdyCls': 'main-menu-ready',
+                    'items': 'ul > li'
+                }
+            }
+        ],
 
+        /* 
+            swiper config
         */
         swiper: {
             main: {
