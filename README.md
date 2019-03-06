@@ -1,5 +1,30 @@
 # General-Jquery-Plugins
 
+
+## Menu
+```HTML
+<div class="menu main-menu">
+    <ul class="lvl-1">
+        <li><a href="/">FUTBOL</a></li>
+        <li><a href="/">ERKEK</a></li>
+        <li><a href="/">KADIN</a>
+            <div class="sub animated fadeIn faster">
+                <ul class="lvl-2">
+                    <li><a href="/">Yeni Gelenler</a></li>
+                    <li><a href="/">Öne Çıkanlar</a>
+                        <ul class="lvl-3">
+                            <li><a href="/">Maç Ürünleri</a></li>
+                            <li><a href="/">En Çok Satanlar</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+</div>
+```
+
+
 ## Swiper
 
 ``` HTML
