@@ -1216,3 +1216,401 @@ jQuery.extend(jQuery.easing, {
         }
     })
 })(jQuery, window);
+
+/* 
+    MINUS DROPDOWN 
+*/
+(function ($) {
+    $.fn.extend({
+        minusDropDown: function (options, callback) {
+            var defaults = {
+                closeElem: '',
+                type: "hover",
+                customClass: "hover",
+                bdyCls: "",
+                bdyCls2: "",
+                delay: 555,
+                openedDelay: 0,
+                className: "",
+                clicked: "",
+                closedBtn: '',
+                openedControl: "",
+                hideDropDown: [],
+                attachmentDiv: null,
+                isVisible: null,
+                overlay: null,
+                parents: null,
+                toggle: true,
+                bdyClicked: true
+            };
+            var options = $.extend(defaults, options);
+            return this.each(function () {
+
+                var holder = $(this),
+                    o = options,
+                    attachmentDiv = o.attachmentDiv != null ? $(o.attachmentDiv) : null,
+                    stm = null,
+                    bdy = $('body');
+
+                if (holder.hasClass('activePlug')) return false;
+
+                function init() {
+                    if (o.type == "hover") {
+                        holder.mouseenter(events.mouseenter).mouseleave(events.mouseleave);
+                        if (attachmentDiv != null) attachmentDiv.mouseenter(events.mouseenter).mouseleave(events.mouseleave)
+
+                        $("body, html").bind('click touchstart', events.bodyClicked);
+                    }
+                    else if (o.type == "click") {
+                        $(o.clicked, holder).bind('click', events.clicked);
+                        if (o.bdyClicked)
+                            $("body, html").bind('click touchstart', events.bodyClicked);
+                    } else if (o.type == "hoverClick") {
+                        holder.mouseenter(events.onMouseenter).mouseleave(events.onMouseleave);
+                        $(o.clicked, holder).bind('click', events.onClicked);
+                        if (o.bdyClicked)
+                            $("body, html").bind('click touchstart', events.bodyClicked);
+                    }
+
+                    $(o.closedBtn)
+                        .unbind('click')
+                        .bind('click', function () {
+                            animate.closed();
+                        });
+                }
+                var animate = {
+                    opened: function () {
+                        controls();
+                        if (attachmentDiv != null) attachmentDiv.addClass(o.customClass);
+                        holder.addClass(o.customClass);
+                        if (o.parents != null) holder.parents(o.parents).addClass(o.customClass);
+                        overlayControls('opened');
+                        if (callback != undefined) callback("opened")
+                    },
+                    closed: function () {
+                        if (attachmentDiv != null) attachmentDiv.removeClass(o.customClass);
+                        holder.removeClass(o.customClass);
+                        if (o.parents != null) holder.parents(o.parents).removeClass(o.customClass);
+                        overlayControls('closed');
+                        if (callback != undefined) callback("closed");
+                        bdy.removeClass(o.bdyCls2);
+                    }
+                };
+
+                function closeElem() {
+                    if (o.closeElem != '')
+                        $(o.closeElem).each(function () {
+                            var ths = $(this).get(0);
+                            if (typeof ths.closed !== 'undefined')
+                                ths.closed();
+                        });
+                }
+                var events = {
+
+                    onMouseenter: function () {
+                        if (visibleControls()) return false;
+                        if (stm != null) clearTimeout(stm);
+                        if (o.openedControl != "") {
+                            var ID = o.openedControl;
+                            if (ID.html() == "") return false
+                        }
+                        stm = setTimeout(function () {
+                            closeElem();
+                            overlayControls('opened');
+                        }, o.openedDelay)
+                    },
+                    onMouseleave: function () {
+                        if (visibleControls()) return false;
+                        if (stm != null) clearTimeout(stm);
+                        stm = setTimeout(function () {
+                            if (!holder.hasClass(o.customClass))
+                                overlayControls('closed');
+
+                        }, o.delay)
+                    },
+                    onClicked: function () {
+                        animate.opened();
+                        bdy.addClass(o.bdyCls2);
+                    },
+                    mouseenter: function () {
+                        if (visibleControls()) return false;
+                        if (stm != null) clearTimeout(stm);
+                        if (o.openedControl != "") {
+                            var ID = o.openedControl;
+                            if (ID.html() == "") return false
+                        }
+                        stm = setTimeout(function () {
+                            animate.opened()
+                        }, o.openedDelay)
+                    },
+                    mouseleave: function () {
+                        if (visibleControls()) return false;
+                        if (stm != null) clearTimeout(stm);
+                        stm = setTimeout(function () {
+                            animate.closed()
+                        }, o.delay)
+                    },
+                    clicked: function () {
+                        if (o.toggle) {
+                            if (holder.hasClass(o.customClass)) animate.closed();
+                            else animate.opened()
+                        } else
+                            animate.opened()
+                    },
+                    bodyClicked: function (e) {
+                        if (!holder.is(e.target) && holder.has(e.target).length === 0)
+                            animate.closed();
+                    }
+                };
+
+                function overlayControls(k) {
+                    if (o.overlay != null) {
+                        if (k == 'opened') {
+                            bdy.addClass(o.bdyCls);
+                            if (o.bdyCls2 != '')
+                                setTimeout(function () { bdy.addClass(o.bdyCls2); }, 100);
+                        }
+                        else {
+                            if (o.bdyCls2 != '') {
+                                bdy.removeClass(o.bdyCls2);
+                                setTimeout(function () { bdy.removeClass(o.bdyCls); }, 333);
+                            } else
+                                bdy.removeClass(o.bdyCls);
+                        }
+                    }
+                }
+
+                function visibleControls() {
+                    if (o.isVisible != null)
+                        return uty.visibleControl();
+                }
+
+                function controls() {
+                    if (o.hideDropDown.length > 0)
+
+                        for (var i = 0; i < o.hideDropDown.length; ++i)
+                            if (o.hideDropDown[i].length > 0) o.hideDropDown[i][0].closed()
+                }
+
+                this.opened =
+                    function () {
+                        animate.opened()
+                    };
+                this.closed = function () {
+                    if (stm != null) clearTimeout(stm);
+                    animate.closed()
+                };
+                this.dispose = function () {
+                    if (o.type == "hover") holder.unbind("mouseenter").unbind("mouseleave");
+                    else $(o.clicked, holder).unbind("click")
+                };
+                this.live = function () {
+                    if (o.type == "hover") holder.mouseenter(events.mouseenter).mouseleave(events.mouseleave);
+                    else $(o.clicked, holder).click(events.clicked)
+                };
+
+                init();
+            })
+        }
+    })
+})(jQuery, window);
+
+/* 
+    MINUS CUSTOM SEARCH
+*/
+(function ($) {
+    $.fn.extend({
+        minusCustomSearch: function (options, callback) {
+            var defaults = {
+                btn: '.mini-search-info', // trigger button
+                clearButton: '.mini-search-sub .sub-close',
+                closeBtn: '.mini-search-overlay', // search close button
+                input: '[id$="txtARM_KEYWORD"]', // search input
+
+                // cls
+                ajx: 'mini-search-ajx-loading',
+                ready: 'mini-search-ready',
+                focused: 'mini-search-focused',
+                keyup: 'mini-search-keyup',
+                result: 'mini-search-result-found',
+                noResult: 'mini-search-no-result',
+            };
+
+            var option = $.extend(defaults, options);
+
+            return this.each(function (e) {
+                var opt = option,
+                    ID = $(this),
+                    main = {
+                        loading: function (k) {
+                            var _t = this;
+                            if (k == 'show')
+                                bdy.addClass(opt['ajx']);
+                            else
+                                bdy.removeClass(opt['ajx']);
+                        },
+                        animate: function (k) {
+                            var _t = this;
+                            if (k == 'show')
+                                bdy.addClass(opt['ready']);
+                            else
+                                bdy.removeClass(opt['ready']);
+                        },
+                        destroy: function () {
+                            var _t = this,
+                                input = $(opt['input']);
+
+                            bdy.removeClass(opt['ready']).removeClass(opt['focused']).removeClass(opt['keyup']).removeClass(opt['noResult']).removeClass(opt['result']);
+                            input.val('').blur();
+                            if (typeof HideSuggestionsDiv !== 'undefined')
+                                HideSuggestionsDiv();
+                        },
+                        addEvent: function () {
+                            var _t = this,
+                                input = $(opt['input']),
+                                btn = $(opt['btn']),
+                                closeBtn = $(opt['closeBtn']),
+                                clearButton = $(opt['clearButton']);
+
+                            if (uty.detectEl(btn))
+                                btn
+                                    .unbind('click')
+                                    .bind('click', function () {
+                                        var ths = $(this);
+                                        if (bdy.hasClass(opt['ready'])) {
+                                            _t.animate('hide');
+                                            input.blur();
+                                        } else {
+                                            _t.animate('show');
+                                            input.focus();
+                                        }
+                                    });
+
+                            if (uty.detectEl(clearButton))
+                                clearButton
+                                    .unbind('click')
+                                    .bind('click', function () {
+                                        input.val('').focus();
+                                        bdy.removeClass(opt['result']).removeClass(opt['noResult']);
+                                        HideSuggestionsDiv();
+                                    });
+
+                            if (uty.detectEl(closeBtn))
+                                closeBtn
+                                    .unbind('click')
+                                    .bind('click', function () {
+                                        _t.destroy();
+                                    });
+
+                            if (uty.detectEl(input))
+                                input
+                                    .bind('focus', function () {
+                                        bdy.addClass(opt['focused']);
+                                    })
+                                    .bind('blur', function () {
+                                        var ths = $(this),
+                                            msg = uty.cleanText($('[id$="lbfARM_MESAJ"]').text() || ''),
+                                            val = uty.cleanText(ths.val() || '').replace(msg, '');
+                                        if (val.length == 0)
+                                            bdy.removeClass(opt['focused']);
+                                    })
+                                    .bind('keyup', function () {
+                                        var ths = $(this),
+                                            val = uty.cleanText(ths.val() || '');
+                                        if (val.length > 0)
+                                            bdy.addClass(opt['keyup']);
+                                        else
+                                            bdy.removeClass(opt['keyup']);
+
+                                        if (val.length < 3)
+                                            bdy.removeClass(opt['result']).removeClass(opt['noResult']);
+                                    });
+                        },
+                        set: function () {
+                            var _t = this,
+                                input = $(opt['input']);
+                            /* sistem arama kutusunu ezmek */
+                            if (uty.detectEl(input))
+                                input.get(0).removeEventListener("blur", onFocusLost);
+                        },
+                        searchResult: function () {
+                            var _t = this,
+                                elm = $('.searchSuggestDivHolder'),
+                                prd = (elm.find('.prd .sHolder').html() || '').trim(),
+                                cat = (elm.find('.cat .sHolder').html() || '').trim();
+                            if (prd != '' || prd != '')
+                                bdy.addClass(opt['result']).removeClass(opt['noResult']);
+                            else
+                                bdy.addClass(opt['noResult']).removeClass(opt['result']);
+                        },
+                        init: function () {
+                            var _t = this;
+                            if (uty.detectEl($(opt['input']))) {
+                                _t.set();
+                                _t.addEvent();
+                            }
+
+                        }
+                    };
+                main.init();
+
+                this.searchReady = function () {
+                    main.loading('show');
+                };
+                this.searchComplete = function () {
+                    main.loading('hide');
+                    main.searchResult();
+                };
+
+            });
+        }
+    });
+})(jQuery);
+
+
+
+/* 
+    MINUS POPULAR WORLDS
+*/
+(function ($) {
+    $.fn.extend({
+        minusSearchPopularWorlds: function (options, callback) {
+            var defaults = {
+                input: '[id="txtARM_KEYWORD"]',
+                btn: '.ems-section-wrapper a'
+            };
+
+            var option = $.extend(defaults, options);
+
+            return this.each(function (e) {
+                var opt = option,
+                    ID = $(this),
+                    main = {
+                        addEvent: function () {
+                            var _t = this,
+                                btn = $(opt['btn']),
+                                input = $(opt['input']);
+
+                            if (uty.detectEl(btn))
+                                btn
+                                    .unbind('click')
+                                    .bind('click', function ( evt ) {
+                                        evt.preventDefault();
+                                        var ths = $(this),
+                                            keyword = uty.trimText(ths.attr('data-keyword') || '');
+                                        if (keyword != '') {
+                                            input.val(keyword);
+                                            generateSearchLink();
+                                        }
+                                    });
+                        },
+                        init: function () {
+                            var _t = this;
+                            _t.addEvent();
+                        }
+                    };
+                main.init();
+            });
+        }
+    });
+})(jQuery);

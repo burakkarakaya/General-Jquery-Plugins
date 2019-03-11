@@ -1,5 +1,24 @@
 var SITE_CONFIG = {
+    general: {
+        regex: {
+            typ1: /[^a-zA-ZıiIğüşöçİĞÜŞÖÇ\s]+/g, /* sadece harf */
+            typ2: /[^0-9\s]+/g, /* sadece rakam */
+            typ3: /[^a-zA-ZıiI0-9ğüşöçİĞÜŞÖÇ\s]+/g /* harf rakam karışık */
+        },
+    },
     management: {
+        form: [
+            {
+                'el': '[id$="txtUYA_CEPTELEFON"]',
+                'mask': '999 9999999',
+                'prop': { 'type': 'tel' },
+                'attr': { 'required': 'true' }
+            },
+            {
+                'el': '[id$="lbfUYA_CEPTELEFON"]',
+                'addClass': 'zorunluFont'
+            }
+        ],
         append: [
             /* 
                 { 
@@ -16,11 +35,91 @@ var SITE_CONFIG = {
             */
 
             { 'main': '.mini-lang', 'target': '.mini-lang-append', 'add': 'append', 'clone': true },
-            { 'main': '.top-menu', 'target': '.top-menu-append', 'add': 'append', 'clone': true }
-
+            { 'main': '.top-menu', 'target': '.top-menu-append', 'add': 'append', 'clone': true },
+            { 'main': '.popular-search-words', 'target': '.popular-search-words-append', 'add': 'append' },
         ]
     },
     plugin: {
+
+       /* 
+        popular worlds
+       */
+       popularWorlds: [
+        {
+            'ID': '.popular-search-words',
+            'prop': {
+                'input': '[id="txtARM_KEYWORD"]',
+                'btn': '.ems-section-wrapper a'
+            }
+        }
+    ],
+
+        /* 
+            custom search
+        */
+        customSearch: {
+            'ID': '.mini-search',
+            'prop': {
+                btn: '.mini-search-info', // trigger button
+                clearButton: '.mini-search-sub .sub-close',
+                closeBtn: '.mini-search-overlay', // search close button
+                input: '[id$="txtARM_KEYWORD"]', // search input
+
+                // cls
+                ajx: 'mini-search-ajx-loading',
+                ready: 'mini-search-ready',
+                focused: 'mini-search-focused',
+                keyup: 'mini-search-keyup',
+                result: 'mini-search-result-found',
+                noResult: 'mini-search-no-result',
+            }
+        },
+
+        /* 
+            dropDown
+        */
+        dropDown: [
+            {
+                'ID': '.mini-lang-con .mini-lang',
+                'prop': {
+                    'clicked': '.mini-lang-info',
+                    'closeElem': '.mod-mini-login, #validateLogin',
+                    'type': isMobile ? 'click' : 'click',
+                    'customClass': 'ems-lang-opened',
+                    'bdyCls': 'mini-lang-ready',
+                    'closedBtn': '.mini-lang-overlay',
+                    'overlay': true,
+                    'openedDelay': 222,
+                }
+            },
+            {
+                'ID': '.mini-cart',
+                'prop': {
+                    'clicked': '.mini-cart-info',
+                    'closeElem': '.mod-mini-login, .mini-lang',
+                    'type': isMobile ? 'click' : 'click',
+                    'customClass': 'ems-cart-opened',
+                    'bdyCls': 'mini-cart-ready',
+                    'closedBtn': '.mini-cart .mini-cart-overlay, .mini-cart .sub-close',
+                    'overlay': true,
+                    'openedDelay': 222
+                }
+            },
+            {
+                'ID': '#validateLogin',
+                'prop': {
+                    'clicked': '.mini-user-info',
+                    'closeElem': '.mod-mini-cart, .mini-lang',
+                    'type': isMobile ? 'click' : 'click',
+                    'customClass': 'ems-user-opened',
+                    'bdyCls': 'mini-user-ready',
+                    'closedBtn': '#validateLogin .sub-close, #validateLogin .mini-user-overlay',
+                    'overlay': true,
+                    'openedDelay': 222
+                }
+            },
+        ],
+
         /* 
             main menu
         */

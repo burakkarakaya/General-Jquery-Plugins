@@ -226,6 +226,58 @@ var bdy = $('body'),
         },
     },
     management = {
+        form: {
+            arr: GET_CONFIG({ group: 'management', key: 'form' }),
+            set: function (o) {
+                var _t = this,
+                    el = $(o['el']);
+                if (uty.detectEl(el)) {
+                    var msk = o['mask'] || '',
+                        rgx = o['regex'] || '',
+                        prop = o['prop'] || '',
+                        attr = o['attr'] || '',
+                        removeAttr = o['removeAttr'] || '',
+                        addClss = o['addClass'] || '',
+                        removeClss = o['removeClass'] || '';
+
+                    if (prop != '')
+                        $.each(prop, function (i, k) {
+                            el.prop(i, k);
+                        });
+
+                    if (attr != '')
+                        $.each(attr, function (i, k) {
+                            el.attr(i, k);
+                        });
+
+                    if (removeAttr != '')
+                        $.each(attr, function (i, k) {
+                            el.removeAttr(k);
+                        });
+
+                    if (msk != '')
+                        el.mask(msk);
+
+                    if (addClss != '')
+                        el.addClass(addClss);
+
+                    if (removeClss != '')
+                        el.removeClass(removeClss);
+
+                    if (rgx != '')
+                        el
+                            .attr('data-regex', rgx)
+                            .unbind('keyup paste', _t.events.onKeyUp)
+                            .bind('keyup paste', _t.events.onKeyUp);
+                }
+
+            },
+            init: function (k) {
+                var _t = this, arr = k || _t.arr;
+                for (var i = 0; i < arr.length; ++i)
+                    _t.set(arr[i]);
+            }
+        },
         multiLanguages: {
             el: {
                 con: '.ems-multi-languages [data-target]'
@@ -286,6 +338,95 @@ var bdy = $('body'),
         }
     },
     plugin = {
+        /* 
+            dropDown
+        */
+       popularWorlds: {
+        arr: GET_CONFIG({ group: 'plugin', key: 'popularWorlds' }),
+        cls: { active: 'ems-popular-worlds-active' },
+        set: function (o) {
+            var _t = this, ID = $(o['ID']);
+            if (uty.detectEl(ID)) {
+                if (!ID.hasClass(_t['cls']['active'])) {
+                    ID.addClass(_t['cls']['active']);
+                    ID.minusSearchPopularWorlds(o['prop'] || {});
+                }
+            }
+        },
+        init: function () {
+            var _t = this;
+            for (var i = 0; i < _t.arr.length; ++i)
+                _t.set(_t.arr[i]);
+        }
+    },
+
+        /* 
+            customSearch
+        */
+        customSearch: {
+            arr: GET_CONFIG({ group: 'plugin', key: 'customSearch' }),
+            cls: { active: 'ems-custom-search-active' },
+            set: function (o) {
+                var _t = this, ID = $(o['ID']);
+                if (uty.detectEl(ID)) {
+                    if (!ID.hasClass(_t['cls']['active'])) {
+                        ID.addClass(_t['cls']['active']);
+                        ID.minusCustomSearch(o['prop'] || {});
+                    }
+                }
+            },
+            searchReady: function () {
+                var _t = this, el = $(_t.arr['ID'])
+                if (uty.detectEl(el))
+                    el.each(function () {
+                        var ths = $(this);
+                        if (ths.hasClass(_t.cls['active'])) {
+                            ths = ths.get(0);
+                            if (typeof ths.searchReady !== 'undefined')
+                                ths.searchReady();
+                        }
+                    });
+            },
+            searchComplete: function () {
+                var _t = this, el = $(_t.arr['ID'])
+                if (uty.detectEl(el))
+                    el.each(function () {
+                        var ths = $(this);
+                        if (ths.hasClass(_t.cls['active'])) {
+                            ths = ths.get(0);
+                            if (typeof ths.searchComplete !== 'undefined')
+                                ths.searchComplete();
+                        }
+                    });
+            },
+            init: function () {
+                var _t = this;
+                _t.set(_t.arr);
+            }
+        },
+
+        /* 
+            dropDown
+        */
+        dropDown: {
+            arr: GET_CONFIG({ group: 'plugin', key: 'dropDown' }),
+            cls: { active: 'ems-dropdown-active' },
+            set: function (o) {
+                var _t = this, ID = $(o['ID']);
+                if (uty.detectEl(ID)) {
+                    if (!ID.hasClass(_t['cls']['active'])) {
+                        ID.addClass(_t['cls']['active']);
+                        ID.minusDropDown(o['prop'] || {});
+                    }
+                }
+            },
+            init: function () {
+                var _t = this;
+                for (var i = 0; i < _t.arr.length; ++i)
+                    _t.set(_t.arr[i]);
+            }
+        },
+
         /* 
             main menu
         */
@@ -466,6 +607,9 @@ var bdy = $('body'),
         },
         init: function () {
             var _t = this;
+            _t.popularWorlds.init();
+            _t.customSearch.init();
+            _t.dropDown.init();
             _t.menu.init();
             _t.systemWidget.init();
             _t.tabMenu.init();
@@ -537,3 +681,17 @@ var bdy = $('body'),
     };
 
 initialize();
+
+
+// DISPATCHER
+
+/* Arama */
+function onSearchReady() {
+    plugin.customSearch.searchReady();  
+}
+
+function onSearchComplete() {
+    plugin.customSearch.searchComplete();
+}
+stage.addEventListener("CustomEvent", [{ type: "aramaSonucReady", handler: "onSearchReady" }]);
+stage.addEventListener("CustomEvent", [{ type: "aramaSonucDoldur", handler: "onSearchComplete" }]);
