@@ -177,6 +177,9 @@ form: [
                         <ul class="emosInfinite">
                         </ul>
                     </div>
+                    <div class="swiper-button-prev"><i> </i></div>
+                    <div class="swiper-button-next"><i> </i></div>
+                    <div class="swiper-pagination"></div>
                 </div>
             </div>
             <div rel="tab-2">tab2</div>
