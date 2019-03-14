@@ -159,6 +159,49 @@ form: [
     <div class="swiper-pagination"></div>
 </div>
 ```
+``` HTML
+<!--
+    özel durumlarda swiper sadece mobilde tetiklensin isteniyorsa "mobi-swiper" classı eklenmeli. Dekstopta tetiklenmiyor. Burada dikkat edilmesi gereken desktopda swiper-button-next, swiper-button-prev, swiper-pagination css ile gizlenmesi
+-->
+<div class="swiper-container mobi-swiper" data-swiper="widgetThree">
+    <div class="swiper-title">Mobile Swiper</div>
+    <div class="swiper-inner">
+        <ul class="swiper-wrapper">
+            <li class="swiper-slide">1. slide</li>
+            <li class="swiper-slide">2. slide</li>
+            <li class="swiper-slide">3. slide</li>
+            <li class="swiper-slide">4. slide</li>
+            <li class="swiper-slide">5. slide</li>
+            <li class="swiper-slide">6. slide</li>
+        </ul>
+    </div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-pagination"></div>
+</div>
+```
+
+``` HTML
+<!--
+    özel durumlarda swiper sadece desktopda tetiklensin isteniyorsa "desktop-swiper" classı eklenmeli. mobilde tetiklenmiyor. Burada dikkat edilmesi gereken mobilde swiper-button-next, swiper-button-prev, swiper-pagination css ile gizlenmesi
+-->
+<div class="swiper-container desktop-swiper" data-swiper="widgetThree">
+    <div class="swiper-title">Desktop Swiper</div>
+    <div class="swiper-inner">
+        <ul class="swiper-wrapper">
+            <li class="swiper-slide">1. slide</li>
+            <li class="swiper-slide">2. slide</li>
+            <li class="swiper-slide">3. slide</li>
+            <li class="swiper-slide">4. slide</li>
+            <li class="swiper-slide">5. slide</li>
+            <li class="swiper-slide">6. slide</li>
+        </ul>
+    </div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-pagination"></div>
+</div>
+```
 
 ### Tab Menu
 
