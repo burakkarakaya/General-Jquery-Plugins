@@ -1,6 +1,8 @@
 # General-Jquery-Plugins
 
 
+# Plugins
+
 ## Menu
 ```HTML
 <div class="menu main-menu">
