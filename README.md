@@ -17,7 +17,8 @@
 
 ### Append
 ```Javascript
-/* 
+/*
+    Özel durumlarda multi languages dışında başka bir taşıma metodu olarak append kullanabilirsiniz.
     { 
         'main': 'Taşınacak olan ana nesne', 
         'target': 'Hedef nesne', 
