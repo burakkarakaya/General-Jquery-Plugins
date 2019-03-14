@@ -1,6 +1,3 @@
-# General-Jquery-Plugins
-
-
 # Plugins
 
 ### Menu
