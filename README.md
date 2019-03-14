@@ -1,6 +1,6 @@
 # Management
 
-### Multilanguages
+### Multi Languages
 ```HTML
 /* 
     default değeri data-type="html" 
@@ -15,7 +15,24 @@
 </div>
 ```
 
-### UrlSelected
+### Append
+```Javascript
+/* 
+    { 
+        'main': 'Taşınacak olan ana nesne', 
+        'target': 'Hedef nesne', 
+        'add': 'ekleme türü', // append, prepend, before, after, html 
+        'clone': 'nesne taşınırken kopyası alınsın veya alınmasın' // true, false default değeri false
+    },
+*/
+    append: [
+        { 'main': '.mini-lang', 'target': '.mini-lang-append', 'add': 'append', 'clone': true },
+        { 'main': '.top-menu', 'target': '.top-menu-append', 'add': 'append', 'clone': true },
+        { 'main': '.popular-search-words', 'target': '.popular-search-words-append', 'add': 'append' },
+    ]
+```
+
+### Url Selected
 ```Javascript
 /* 
     amacı genel olarak üye işlem sayfalarındaki url değişikliklerinde belirtilen butonlara istediğiniz classın eklenmesi. 
