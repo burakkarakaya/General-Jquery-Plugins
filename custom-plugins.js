@@ -980,7 +980,8 @@ jQuery.extend(jQuery.easing, {
                             found: 'results-found',
                             active: 'widget-active',
                             items: 'items-',
-                            scrollerTrigger: 'scroller-trigger'
+                            scrollerTrigger: 'scroller-trigger',
+                            slideClass: 'swiper-slide',
                         },
                         loading: function (k) {
                             var _t = this;
@@ -1032,7 +1033,7 @@ jQuery.extend(jQuery.easing, {
                                         ID
                                             .addClass(_t.cls['items'] + ajxTargetItem.length)
                                             .addClass(_t.cls['found'])
-                                            .addClass(_t.cls['active'])
+                                            .addClass(_t.cls['active']);
                                     } else
                                         ID
                                             .addClass(_t.cls['noResult']);
@@ -1567,8 +1568,6 @@ jQuery.extend(jQuery.easing, {
     });
 })(jQuery);
 
-
-
 /* 
     MINUS POPULAR WORLDS
 */
@@ -1577,7 +1576,8 @@ jQuery.extend(jQuery.easing, {
         minusSearchPopularWorlds: function (options, callback) {
             var defaults = {
                 input: '[id="txtARM_KEYWORD"]',
-                btn: '.ems-section-wrapper a'
+                btn: '[data-keyword]',
+                attr: 'data-keyword'
             };
 
             var option = $.extend(defaults, options);
@@ -1588,16 +1588,16 @@ jQuery.extend(jQuery.easing, {
                     main = {
                         addEvent: function () {
                             var _t = this,
-                                btn = $(opt['btn']),
+                                btn = ID.find(opt['btn']),
                                 input = $(opt['input']);
 
                             if (uty.detectEl(btn))
                                 btn
                                     .unbind('click')
-                                    .bind('click', function ( evt ) {
+                                    .bind('click', function (evt) {
                                         evt.preventDefault();
                                         var ths = $(this),
-                                            keyword = uty.trimText(ths.attr('data-keyword') || '');
+                                            keyword = uty.trimText(ths.attr(opt['attr']) || '');
                                         if (keyword != '') {
                                             input.val(keyword);
                                             generateSearchLink();
@@ -1607,6 +1607,92 @@ jQuery.extend(jQuery.easing, {
                         init: function () {
                             var _t = this;
                             _t.addEvent();
+                        }
+                    };
+                main.init();
+            });
+        }
+    });
+})(jQuery);
+
+/* 
+    KATEGORI SWIPER
+*/
+(function ($) {
+    $.fn.extend({
+        MinusCategorySwiper: function (options, callback) {
+            var defaults = {
+                target: '.categories-append',
+                activeElem: '.act',
+                otherTarget: '.kutuKategori_icerik', // aktif elemanı bulamadığı zaman kullanılacak
+                appendType: 'append', // append, prepend, before, after
+                temp: '<div class="swiper-container swiper-categories not-trigger"><div class="swiper-inner">{{htm}}</div></div>',
+                swiperTrigger: true
+            };
+
+            var option = $.extend(defaults, options);
+
+            return this.each(function (e) {
+                var opt = option,
+                    ID = $(this),
+                    main = {
+                        getTemplate: function (o) {
+                            var _t = this;
+                            return opt['temp'].replace(/{{htm}}/g, o['htm'] || '');
+                        },
+                        add: function (o) {
+                            var _t = this,
+                                htm = o['htm'] || '',
+                                typ = opt['appendType'] || '',
+                                target = $(opt['target'] || '');
+
+                            if (typ == 'append')
+                                target.append(htm);
+                            else if (typ == 'prepend')
+                                target.append(htm);
+                            else if (typ == 'before')
+                                target.before(htm);
+                            else if (typ == 'after')
+                                target.after(htm);
+                            else
+                                target.html(htm);
+                        },
+                        set: function () {
+                            var _t = this,
+                                act = uty.detectEl(ID.find(opt['activeElem'])) ? ID.find(opt['activeElem']) : $(opt['otherTarget']),
+                                elm = uty.detectEl(act.find('> ul')) ? act : act.parents('li').eq(0);
+                            if (uty.detectEl(elm.find('ul'))) {
+                                _t.add({ htm: _t.getTemplate({ htm: elm.find('ul').get(0).outerHTML || '' }) });
+                                _t.initPlugins();
+                            }
+
+                        },
+                        initPlugins: function () {
+                            var _t = this;
+                            if (opt['swiperTrigger']) {
+                                var swiper = $(opt['target']).find('.swiper-container');
+                                if (uty.detectEl(swiper)) {
+                                    swiper
+                                        .find('.swiper-inner > ul')
+                                        .removeAttr('class')
+                                        .removeAttr('style')
+                                        .removeAttr('rel')
+                                        .addClass('swiper-wrapper')
+                                        .find('> li')
+                                        .addClass('swiper-slide');
+
+                                        var act = (swiper.find(opt['activeElem']).index() || 0) - 1;
+                                        new Swiper(swiper, {
+                                            initialSlide: act,
+                                            slidesPerView: 'auto',
+                                            slidesPerGroup: 1
+                                        });  
+                                }
+                            }
+                        },
+                        init: function () {
+                            var _t = this;
+                            _t.set();
                         }
                     };
                 main.init();

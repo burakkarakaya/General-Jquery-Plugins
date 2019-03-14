@@ -7,6 +7,27 @@ var SITE_CONFIG = {
         },
     },
     management: {
+
+        /* 
+            url selection 
+            url içerisinde uride geçeni arar ve class atar ama cls verilmezzse default değeri selected
+        */
+        urlSelected: [
+            { uri: '/uyeIslem/favorilistem.aspx', elm: '[rel="ems-page-favorites"]', cls: 'selected' },
+            { uri: '/uyeIslem/marketdedektif.aspx', elm: '[rel="ems-page-follow-list"]' },
+            { uri: '/uyeIslem/siparistakip.aspx', elm: '[rel="ems-page-order"]' },
+            { uri: '/uyeIslem/siparisdetay.aspx', elm: '[rel="ems-page-order"]' },
+            { uri: '/uyeIslem/siparisIptal.aspx', elm: '[rel="ems-page-order"]' },
+            { uri: '/uyeIslem/kuponlarim.aspx', elm: '[rel="ems-page-coupon"]' },
+            { uri: '/uyeBilgi/uyeBilgi.aspx', elm: '[rel="ems-page-info"]' },
+            { uri: '/uyebilgi/uyeSifre.aspx', elm: '[rel="ems-page-password"]' },
+            { uri: '/uyebilgi/uyeAdres.aspx', elm: '[rel="ems-page-address"]' },
+            { uri: '/mesaj/mesaj.aspx', elm: '[rel="ems-page-message"]' },
+            { uri: '/mesaj/mesaj_oku.aspx', elm: '[rel="ems-page-message"]' },
+            { uri: '/mesaj/mesaj_gonder.aspx', elm: '[rel="ems-page-message"]' },
+        ],
+
+        /* form yönetimi */
         form: [
             {
                 'el': '[id$="txtUYA_CEPTELEFON"]',
@@ -19,6 +40,8 @@ var SITE_CONFIG = {
                 'addClass': 'zorunluFont'
             }
         ],
+
+        /* append yönetimi */
         append: [
             /* 
                 { 
@@ -41,18 +64,30 @@ var SITE_CONFIG = {
     },
     plugin: {
 
-       /* 
-        popular worlds
-       */
-       popularWorlds: [
-        {
-            'ID': '.popular-search-words',
-            'prop': {
-                'input': '[id="txtARM_KEYWORD"]',
-                'btn': '.ems-section-wrapper a'
+        /* 
+            kategori swiper
+        */
+        catSwiper: [
+            {
+                'ID': '.menuKategori',
+                'prop': {
+                    'target': '.categories-append',
+                }
             }
-        }
-    ],
+        ],
+
+        /* 
+         popular worlds
+        */
+        popularWorlds: [
+            {
+                'ID': '.popular-search-words',
+                'prop': {
+                    'input': '[id="txtARM_KEYWORD"]',
+                    'btn': '[data-keyword]'
+                }
+            }
+        ],
 
         /* 
             custom search

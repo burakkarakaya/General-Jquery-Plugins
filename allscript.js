@@ -224,8 +224,40 @@ var bdy = $('body'),
             } else if (typ == 'get')
                 return $.cookie(name);
         },
+        addSwiperClass: function (ID) {
+            /* 
+                swiper-container yolla diğer classları halletsin
+            */
+            ID
+                .find('ul')
+                .addClass('swiper-wrapper')
+                .find('> li')
+                .addClass('swiper-slide');
+        }
     },
     management = {
+
+        urlSelected: {
+            cls: 'selected',
+            arr: GET_CONFIG({ group: 'management', key: 'urlSelected' }),
+            init: function () {
+                var _t = this,
+                    arr = _t.arr,
+                    loc = window.location.href || '';
+                for (var i = 0; i < arr.length; ++i) {
+                    var ID = $(arr[i]['elm']),
+                        key = arr[i]['uri'] || '',
+                        cls = arr[i]['cls'] || _t.cls || '';
+                    if (loc.indexOf(key) != -1) {
+                        if (uty.detectEl(ID)) {
+                            ID.addClass(cls);
+                            //break;
+                        }
+                    }
+                }
+            }
+        },
+
         form: {
             arr: GET_CONFIG({ group: 'management', key: 'form' }),
             set: function (o) {
@@ -338,27 +370,50 @@ var bdy = $('body'),
         }
     },
     plugin = {
+
+        /* 
+            kategori swiper
+        */
+        catSwiper: {
+            arr: GET_CONFIG({ group: 'plugin', key: 'catSwiper' }),
+            cls: { active: 'ems-cat-swiper-active' },
+            set: function (o) {
+                var _t = this, ID = $(o['ID']);
+                if (uty.detectEl(ID)) {
+                    if (!ID.hasClass(_t['cls']['active'])) {
+                        ID.addClass(_t['cls']['active']);
+                        ID.MinusCategorySwiper(o['prop'] || {});
+                    }
+                }
+            },
+            init: function () {
+                var _t = this;
+                for (var i = 0; i < _t.arr.length; ++i)
+                    _t.set(_t.arr[i]);
+            }
+        },
+
         /* 
             dropDown
         */
-       popularWorlds: {
-        arr: GET_CONFIG({ group: 'plugin', key: 'popularWorlds' }),
-        cls: { active: 'ems-popular-worlds-active' },
-        set: function (o) {
-            var _t = this, ID = $(o['ID']);
-            if (uty.detectEl(ID)) {
-                if (!ID.hasClass(_t['cls']['active'])) {
-                    ID.addClass(_t['cls']['active']);
-                    ID.minusSearchPopularWorlds(o['prop'] || {});
+        popularWorlds: {
+            arr: GET_CONFIG({ group: 'plugin', key: 'popularWorlds' }),
+            cls: { active: 'ems-popular-worlds-active' },
+            set: function (o) {
+                var _t = this, ID = $(o['ID']);
+                if (uty.detectEl(ID)) {
+                    if (!ID.hasClass(_t['cls']['active'])) {
+                        ID.addClass(_t['cls']['active']);
+                        ID.minusSearchPopularWorlds(o['prop'] || {});
+                    }
                 }
+            },
+            init: function () {
+                var _t = this;
+                for (var i = 0; i < _t.arr.length; ++i)
+                    _t.set(_t.arr[i]);
             }
         },
-        init: function () {
-            var _t = this;
-            for (var i = 0; i < _t.arr.length; ++i)
-                _t.set(_t.arr[i]);
-        }
-    },
 
         /* 
             customSearch
@@ -607,6 +662,7 @@ var bdy = $('body'),
         },
         init: function () {
             var _t = this;
+            _t.catSwiper.init();
             _t.popularWorlds.init();
             _t.customSearch.init();
             _t.dropDown.init();
@@ -685,9 +741,11 @@ initialize();
 
 // DISPATCHER
 
-/* Arama */
+/* 
+    Search
+*/
 function onSearchReady() {
-    plugin.customSearch.searchReady();  
+    plugin.customSearch.searchReady();
 }
 
 function onSearchComplete() {
@@ -695,3 +753,31 @@ function onSearchComplete() {
 }
 stage.addEventListener("CustomEvent", [{ type: "aramaSonucReady", handler: "onSearchReady" }]);
 stage.addEventListener("CustomEvent", [{ type: "aramaSonucDoldur", handler: "onSearchComplete" }]);
+
+/* 
+    System Widget
+*/
+function onSystemWidgetLoaded(o) {
+    var ID = o['ID'] || '',
+        type = o['type'] || '';
+    if (type == 'success') {
+        uty.addSwiperClass(ID)
+        plugin.swiper.set(ID);
+    }
+}
+stage.addEventListener("CustomEvent", [{ type: "SYSTEM_WIDGET_LOADED", handler: "onSystemWidgetLoaded" }]);
+
+/* 
+    System Widget
+*/
+function onAjxTabLoaded(o) {
+    var ID = o['ID'] || '',
+        target = o['target'] || '',
+        type = o['type'] || '';
+    if (type == 'success') {
+        uty.addSwiperClass(target.parents('[data-swiper]').eq(0));
+        plugin.swiper.set(target.parents('[data-swiper]').eq(0));
+    }
+}
+stage.addEventListener("CustomEvent", [{ type: "AJX_TAB_LOADED", handler: "onAjxTabLoaded" }]);
+
