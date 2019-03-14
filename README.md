@@ -1,3 +1,19 @@
+# Management
+
+### Multilanguages
+```HTML
+/* 
+    default değeri data-type="html" 
+    isterseniz alabileceği değerler: append, prepend, before, after, html  
+*/
+<div class="ems-multi-languages ems-none">
+    <div data-target="[rel='lbfBeden']" data-type="append">Beden: </div>
+    <div data-target="[rel='lbfAdet']">Adet: </div>
+    <div data-target="[rel='lbfIndirim']">indirim</div>
+    <div data-target="[rel='lbfSonuc0']">Sonuç bulunamadı.</div>
+</div>
+```
+
 # Plugins
 
 ### Menu
