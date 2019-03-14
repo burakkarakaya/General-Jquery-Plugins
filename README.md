@@ -54,6 +54,23 @@ urlSelected: [
     'regex': 'hedef nesneye regex verilebilir. Örneğin sadece rakam girişine izin vermek gibi'
 },
 
+NOT:
+regex tanımlama örneği, default olarak general altında 3 tip tanımlı, buraya daha fazla tipte ekleyebilirsiniz.
+general: {   
+    regex: {
+        typ1: /[^a-zA-ZıiIğüşöçİĞÜŞÖÇ\s]+/, /* sadece harf */
+        typ2: /[^0-9\s]+/, /* sadece rakam */
+        typ3: /[^a-zA-ZıiI0-9ğüşöçİĞÜŞÖÇ\s]+/ /* harf rakam karışık */
+    },
+},
+
+form: [
+    {
+        'el': '[id$="txtKUTU_UYEEMAIL"]',
+        'regex': 'typ1'
+    }
+]
+
 */
 
 form: [
