@@ -4,7 +4,8 @@
 ```HTML
 /* 
     default değeri data-type="html" 
-    isterseniz alabileceği değerler: append, prepend, before, after, html  
+    isterseniz alabileceği değerler: append, prepend, before, after, html
+    amacı data-target ile belirtilen nesneye div içerisinde belirttiğiniz html veya texti ekler.
 */
 <div class="ems-multi-languages ems-none">
     <div data-target="[rel='lbfBeden']" data-type="append">Beden: </div>
@@ -12,6 +13,30 @@
     <div data-target="[rel='lbfIndirim']">indirim</div>
     <div data-target="[rel='lbfSonuc0']">Sonuç bulunamadı.</div>
 </div>
+```
+
+###urlSelected
+```Javascript
+/* 
+    default değeri data-type="html" 
+    isterseniz alabileceği değerler: append, prepend, before, after, html
+    amacı data-target ile belirtilen nesneye div içerisinde belirttiğiniz html veya texti ekler.
+*/
+
+urlSelected: [
+    { uri: '/uyeIslem/favorilistem.aspx', elm: '[rel="ems-page-favorites"]', cls: 'selected' },
+    { uri: '/uyeIslem/marketdedektif.aspx', elm: '[rel="ems-page-follow-list"]' },
+    { uri: '/uyeIslem/siparistakip.aspx', elm: '[rel="ems-page-order"]' },
+    { uri: '/uyeIslem/siparisdetay.aspx', elm: '[rel="ems-page-order"]' },
+    { uri: '/uyeIslem/siparisIptal.aspx', elm: '[rel="ems-page-order"]' },
+    { uri: '/uyeIslem/kuponlarim.aspx', elm: '[rel="ems-page-coupon"]' },
+    { uri: '/uyeBilgi/uyeBilgi.aspx', elm: '[rel="ems-page-info"]' },
+    { uri: '/uyebilgi/uyeSifre.aspx', elm: '[rel="ems-page-password"]' },
+    { uri: '/uyebilgi/uyeAdres.aspx', elm: '[rel="ems-page-address"]' },
+    { uri: '/mesaj/mesaj.aspx', elm: '[rel="ems-page-message"]' },
+    { uri: '/mesaj/mesaj_oku.aspx', elm: '[rel="ems-page-message"]' },
+    { uri: '/mesaj/mesaj_gonder.aspx', elm: '[rel="ems-page-message"]' },
+]        
 ```
 
 # Plugins
