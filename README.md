@@ -15,12 +15,11 @@
 </div>
 ```
 
-###urlSelected
+### UrlSelected
 ```Javascript
 /* 
-    default değeri data-type="html" 
-    isterseniz alabileceği değerler: append, prepend, before, after, html
-    amacı data-target ile belirtilen nesneye div içerisinde belirttiğiniz html veya texti ekler.
+    amacı genel olarak üye işlem sayfalarındaki url değişikliklerinde belirtilen butonlara istediğiniz classın eklenmesi. 
+    url içerisinde uride geçeni arar ve class atar ama cls verilmezzse default değeri selected
 */
 
 urlSelected: [
@@ -37,6 +36,38 @@ urlSelected: [
     { uri: '/mesaj/mesaj_oku.aspx', elm: '[rel="ems-page-message"]' },
     { uri: '/mesaj/mesaj_gonder.aspx', elm: '[rel="ems-page-message"]' },
 ]        
+```
+
+### Form
+```Javascript
+/* 
+    amacı sitedeki genel inputlara veya html elementte olabilir bunlara mask, attr, class ekleyip, silebilirsiniz.   
+{
+    'el': 'hedef nesne',
+    'mask': 'hedef nesneye mask input',
+    'prop': 'hedef nesneye dilediğin kadar prop verebilirsin', { 'type': 'tel', 'prop2': 'prop2' },
+    'attr': 'hedef nesneye dilediğin kadar attr verebilirsin', { 'required': 'true', 'attr2': 'attr2' },
+    'attr': 'hedef nesneye dilediğin kadar attr verebilirsin', { 'required': 'true', 'attr2': 'attr2' },
+    'removeAttr': 'hedef nesneye attr kaldırmaya yarar', ['required', 'type', 'prop2']
+    'addClass': 'hedef nesneye class vermek'
+    'removeClass': 'hedef nesneden class silmek',
+    'regex': 'hedef nesneye regex verilebilir. Örneğin sadece rakam girişine izin vermek gibi'
+},
+
+*/
+
+form: [
+    {
+        'el': '[id$="txtUYA_CEPTELEFON"]',
+        'mask': '999 9999999',
+        'prop': { 'type': 'tel' },
+        'attr': { 'required': 'true' }
+    },
+    {
+        'el': '[id$="lbfUYA_CEPTELEFON"]',
+        'addClass': 'zorunluFont'
+    }
+]
 ```
 
 # Plugins
