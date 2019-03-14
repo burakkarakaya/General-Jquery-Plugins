@@ -3,7 +3,7 @@
 
 # Plugins
 
-## Menu
+### Menu
 ```HTML
 <div class="menu main-menu">
     <ul class="lvl-1">
@@ -27,7 +27,7 @@
 ```
 
 
-## Swiper
+### Swiper
 
 ``` HTML
 <div class="swiper-container homepage-slider" data-swiper="main">
@@ -56,7 +56,7 @@
 </div>
 ```
 
-## Tab Menu
+### Tab Menu
 
 ``` HTML
  <div class="ems-tab scroller-trigger">
@@ -81,7 +81,7 @@
     </div>
 ```
 
-## System Widget
+### System Widget
 
 ``` HTML
 <div class="system-widget widget swiper-container scroller-trigger"
