@@ -142,8 +142,10 @@ var bdy = $('body'),
             return minusLoc.get('?', 'kat', urlString) || '';
         },
         visibleControl: function () {
-            var _t = this, b = false;
-            if (window.matchMedia("(max-width: 960px)").matches)
+            var _t = this,
+                responsive = GET_CONFIG({ group: 'general', key: 'responsive' }) || '(max-width: 960px)',
+                b = false;
+            if (window.matchMedia(responsive).matches)
                 b = true;
 
             return b;
@@ -259,6 +261,7 @@ var bdy = $('body'),
         },
 
         form: {
+            regex: GET_CONFIG({ group: 'general', key: 'regex' }),
             arr: GET_CONFIG({ group: 'management', key: 'form' }),
             set: function (o) {
                 var _t = this,
@@ -299,10 +302,26 @@ var bdy = $('body'),
                     if (rgx != '')
                         el
                             .attr('data-regex', rgx)
-                            .unbind('keyup paste', _t.events.onKeyUp)
-                            .bind('keyup paste', _t.events.onKeyUp);
+                            .unbind('keypress paste', _t.events.onKeyPress)
+                            .bind('keypress paste', _t.events.onKeyPress);
                 }
 
+            },
+            events: {
+                onKeyPress: function (evt) {
+                    var _t = management.form,
+                        theEvent = evt || window.event,
+                        key = theEvent.keyCode || theEvent.which,
+                        ths = $(this),
+                        rgx = ths.attr('data-regex') || '',
+                        regex = _t.regex[rgx] || '';
+
+                    if (regex != '' && regex.test(String.fromCharCode(key))) {
+                        theEvent.returnValue = false;
+                        if (theEvent.preventDefault)
+                            theEvent.preventDefault();
+                    }
+                }
             },
             init: function (k) {
                 var _t = this, arr = k || _t.arr;
@@ -365,6 +384,8 @@ var bdy = $('body'),
         },
         init: function () {
             var _t = this;
+            _t.urlSelected.init();
+            _t.form.init();
             _t.append.init();
             _t.multiLanguages.init();
         }
@@ -394,7 +415,7 @@ var bdy = $('body'),
         },
 
         /* 
-            dropDown
+            popular worlds
         */
         popularWorlds: {
             arr: GET_CONFIG({ group: 'plugin', key: 'popularWorlds' }),
@@ -601,12 +622,19 @@ var bdy = $('body'),
         swiper: {
             el: {
                 con: '[data-swiper]:not(".not-trigger")',
-                target: '.swiper-wrapper > .swiper-slide'
+                target: '.swiper-wrapper > .swiper-slide',
+                mobiSwiper: '.mobi-swiper[data-swiper]', // mobilde swiper, desktopda liste şeklinde
+                desktopSwiper: '.desktop-swiper[data-swiper]' // desktopda swiper, mobilde liste şeklinde
             },
-            cls: { active: 'ems-swiper-active' },
+            cls: {
+                active: 'ems-swiper-active',
+                mobiSwiper: 'mobi-swiper',
+                desktopSwiper: 'desktop-swiper'
+            },
             set: function (ID) {
                 var _t = this;
-                if (!ID.hasClass(_t['cls']['active']) && uty.detectEl(ID.find(_t.el.target))) {
+
+                if (!ID.hasClass(_t['cls']['active']) && uty.detectEl(ID.find(_t.el.target)) && (!ID.hasClass(_t.cls['mobiSwiper']) || (uty.visibleControl() && ID.hasClass(_t.cls['mobiSwiper'])))) {
                     ID.addClass(_t['cls']['active']);
                     ID.minusSwiper();
                 }
@@ -622,6 +650,41 @@ var bdy = $('body'),
                                 ths.adjust();
                         }
                     });
+            },
+            destroy: function (ID) {
+                var _t = this;
+                if (uty.detectEl(ID)) {
+                    ID.removeClass(_t.cls['active']);
+                    ID = ID.get(0);
+                    if (typeof ID.destroy !== 'undefined')
+                        ID.destroy();
+                }
+            },
+            control: function (o) {
+                var _t = this,
+                    typ = o['type'] || '',
+                    mobiSwiper = $(_t.el.mobiSwiper),
+                    desktopSwiper = $(_t.el.desktopSwiper);
+
+                if (uty.detectEl(mobiSwiper))
+                    mobiSwiper
+                        .each(function () {
+                            var ths = $(this);
+                            if (typ == 'mobi')
+                                _t.set(ths);
+                            else
+                                _t.destroy(ths);
+                        });
+
+                if (uty.detectEl(desktopSwiper))
+                    desktopSwiper
+                        .each(function () {
+                            var ths = $(this);
+                            if (typ == 'desktop')
+                                _t.set(ths);
+                            else
+                                _t.destroy(ths);
+                        });
             },
             init: function () {
                 var _t = this,
@@ -681,6 +744,29 @@ var bdy = $('body'),
             var _t = this;
         }
     },
+    resetDom = {
+        k: true,
+        adjust: function () {
+            var _t = this;
+            if (!_t.k && uty.visibleControl()) {
+                // mobi
+                _t.k = true;
+                plugin.swiper.control({ type: 'mobi' });
+                stage.dispatchEvent("CustomEvent", "RESET_DOM_CONTENT", { type: 'mobi' });
+
+            } else if (_t.k && !uty.visibleControl()) {
+                // pc
+                _t.k = false;
+                plugin.swiper.control({ type: 'desktop' });
+                stage.dispatchEvent("CustomEvent", "RESET_DOM_CONTENT", { type: 'pc' });
+            }
+        },
+        init: function () {
+            var _t = this;
+            if (uty.visibleControl())
+                _t.k = false;
+        }
+    },
     events = {
         loaded: function () {
 
@@ -701,6 +787,7 @@ var bdy = $('body'),
             ht = parseFloat(win.height());
 
             plugin.adjust();
+            resetDom.adjust();
         },
 
         onResizeStop: function () {
@@ -733,6 +820,7 @@ var bdy = $('body'),
     initialize = function () {
         management.init();
         plugin.init();
+        resetDom.init();
         events.init();
     };
 
@@ -755,7 +843,7 @@ stage.addEventListener("CustomEvent", [{ type: "aramaSonucReady", handler: "onSe
 stage.addEventListener("CustomEvent", [{ type: "aramaSonucDoldur", handler: "onSearchComplete" }]);
 
 /* 
-    System Widget
+    System Widget yüklendikten sonra teiklenir
 */
 function onSystemWidgetLoaded(o) {
     var ID = o['ID'] || '',
@@ -768,7 +856,7 @@ function onSystemWidgetLoaded(o) {
 stage.addEventListener("CustomEvent", [{ type: "SYSTEM_WIDGET_LOADED", handler: "onSystemWidgetLoaded" }]);
 
 /* 
-    System Widget
+    ajx tab menu yüklendikten sonra tetiklenir
 */
 function onAjxTabLoaded(o) {
     var ID = o['ID'] || '',
@@ -780,4 +868,3 @@ function onAjxTabLoaded(o) {
     }
 }
 stage.addEventListener("CustomEvent", [{ type: "AJX_TAB_LOADED", handler: "onAjxTabLoaded" }]);
-

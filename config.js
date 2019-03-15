@@ -1,16 +1,16 @@
 var SITE_CONFIG = {
     general: {
+        responsive: '(max-width: 960px)', /* kaç px de responsive geçeceği */
         regex: {
-            typ1: /[^a-zA-ZıiIğüşöçİĞÜŞÖÇ\s]+/g, /* sadece harf */
-            typ2: /[^0-9\s]+/g, /* sadece rakam */
-            typ3: /[^a-zA-ZıiI0-9ğüşöçİĞÜŞÖÇ\s]+/g /* harf rakam karışık */
+            typ1: /[^a-zA-ZıiIğüşöçİĞÜŞÖÇ\s]+/, /* sadece harf */
+            typ2: /[^0-9\s]+/, /* sadece rakam */
+            typ3: /[^a-zA-ZıiI0-9ğüşöçİĞÜŞÖÇ\s]+/ /* harf rakam karışık */
         },
     },
     management: {
 
         /* 
             url selection 
-            url içerisinde uride geçeni arar ve class atar ama cls verilmezzse default değeri selected
         */
         urlSelected: [
             { uri: '/uyeIslem/favorilistem.aspx', elm: '[rel="ems-page-favorites"]', cls: 'selected' },
@@ -27,7 +27,9 @@ var SITE_CONFIG = {
             { uri: '/mesaj/mesaj_gonder.aspx', elm: '[rel="ems-page-message"]' },
         ],
 
-        /* form yönetimi */
+        /* 
+            form yönetimi 
+        */
         form: [
             {
                 'el': '[id$="txtUYA_CEPTELEFON"]',
@@ -38,24 +40,13 @@ var SITE_CONFIG = {
             {
                 'el': '[id$="lbfUYA_CEPTELEFON"]',
                 'addClass': 'zorunluFont'
-            }
+            }         
         ],
 
-        /* append yönetimi */
+        /* 
+            append yönetimi 
+        */
         append: [
-            /* 
-                { 
-                    'main': 'Taşınacak olan ana nesne', 
-                    'target': 'Hedef nesne', 
-                    'add': 'ekleme türü', // append, prepend, before, after, html 
-                    'clone': 'nesne taşınırken kopyası alınsın alınmasın' // true, false 
-                },
-
-                example: 
-                
-                { 'main': '[id$="lblNavigation"] a:last', 'target': '.ems-prd-cat-name', 'add': 'append', 'clone': true },
-                { 'main': '.featured-products-link', 'target': '.featured-products ', 'add': 'append' },
-            */
 
             { 'main': '.mini-lang', 'target': '.mini-lang-append', 'add': 'append', 'clone': true },
             { 'main': '.top-menu', 'target': '.top-menu-append', 'add': 'append', 'clone': true },
