@@ -150,15 +150,6 @@ var bdy = $('body'),
 
             return b;
         },
-        Cookies: function (o) {
-            var typ = o['typ'] || '', name = o['name'] || '';
-            if (typ == 'set') {
-                var date = new Date(), minutes = o['minutes'] || 5;
-                date.setTime(date.getTime() + (minutes * 60 * 1000));
-                $.cookie(name, o['value'] || '', { expires: date, path: '/' });
-            } else if (typ == 'get')
-                return $.cookie(name);
-        },
         convertHttps: function (k) {
             if (protocols == 'https:')
                 k = k.replace(/http:/g, 'https:');
@@ -391,6 +382,82 @@ var bdy = $('body'),
         }
     },
     plugin = {
+        /* 
+            kategori filtre
+        */
+        categoryFilter: {
+            arr: GET_CONFIG({ group: 'plugin', key: 'categoryFilter' }),
+            cls: { active: 'ems-category-filter-active' },
+            set: function (o) {
+                var _t = this, ID = $(o['ID']);
+                if (uty.detectEl(ID)) {
+                    if (!ID.hasClass(_t['cls']['active'])) {
+                        ID.addClass(_t['cls']['active']);
+                        ID.MinusCategoryFilter(o['prop'] || {});
+                    }
+                }
+            },
+            setURI: function(o){
+                var _t = this, el = $(_t.arr['ID'])
+                if (uty.detectEl(el))
+                    el.each(function () {
+                        var ths = $(this);
+                        if (ths.hasClass(_t.cls['active'])) {
+                            ths = ths.get(0);
+                            if (typeof ths.setURI !== 'undefined')
+                                ths.setURI(o);
+                        }
+                    });
+            },
+            init: function () {
+                var _t = this;
+                _t.set(_t.arr);
+            }
+        },
+
+        /* 
+            list sorts
+        */
+        listSort: {
+            arr: GET_CONFIG({ group: 'plugin', key: 'listSort' }),
+            cls: { active: 'ems-list-sort-active' },
+            set: function (o) {
+                var _t = this, ID = $(o['ID']);
+                if (uty.detectEl(ID)) {
+                    if (!ID.hasClass(_t['cls']['active'])) {
+                        ID.addClass(_t['cls']['active']);
+                        ID.minusListSort(o['prop'] || {});
+                    }
+                }
+            },
+            init: function () {
+                var _t = this;
+                for (var i = 0; i < _t.arr.length; ++i)
+                    _t.set(_t.arr[i]);
+            }
+        },
+
+
+        /* 
+            liste görünüm
+        */
+        viewer: {
+            arr: GET_CONFIG({ group: 'plugin', key: 'viewer' }),
+            cls: { active: 'ems-list-viewer-active' },
+            set: function (o) {
+                var _t = this, ID = $(o['ID']);
+                if (uty.detectEl(ID)) {
+                    if (!ID.hasClass(_t['cls']['active'])) {
+                        ID.addClass(_t['cls']['active']);
+                        ID.minusViewer(o['prop'] || {});
+                    }
+                }
+            },
+            init: function () {
+                var _t = this;
+                _t.set(_t.arr);
+            }
+        },
 
         /* 
             kategori swiper
@@ -725,6 +792,9 @@ var bdy = $('body'),
         },
         init: function () {
             var _t = this;
+            _t.categoryFilter.init();
+            _t.listSort.init();
+            _t.viewer.init();
             _t.catSwiper.init();
             _t.popularWorlds.init();
             _t.customSearch.init();
@@ -868,3 +938,35 @@ function onAjxTabLoaded(o) {
     }
 }
 stage.addEventListener("CustomEvent", [{ type: "AJX_TAB_LOADED", handler: "onAjxTabLoaded" }]);
+
+/* 
+    kategori filter yüklenirse
+*/
+function onListLoaded(o) {
+    var ID = o['ID'] || '',
+        target = o['target'] || '',
+        type = o['type'] || '';
+
+    if (type == 'success') {
+        /* 
+            filtre yüklendikten sonra tetiklenecek pluginler buraya tanımlanacak
+        */
+        uty.pageScroll({ scrollTop: 0 });
+        plugin.listSort.init();
+        plugin.viewer.init();
+        plugin.catSwiper.init();
+    }
+}
+stage.addEventListener("CustomEvent", [{ type: "LIST_LOADED", handler: "onListLoaded" }]);
+
+/* 
+    kategori list sorts
+*/
+function onSortListClicked(o) {
+    var ID = o['ID'] || '',
+        type = o['type'] || '';
+
+    if (type == 'change_uri')
+        plugin.categoryFilter.setURI({ uri: o['uri'] || '' });
+}
+stage.addEventListener("CustomEvent", [{ type: "SORT_LIST_CLICKED", handler: "onSortListClicked" }]);

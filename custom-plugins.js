@@ -982,6 +982,7 @@ jQuery.extend(jQuery.easing, {
                             items: 'items-',
                             scrollerTrigger: 'scroller-trigger',
                             slideClass: 'swiper-slide',
+                            cartPrdCode: '.ems-grid-cart [data-prd-code]'
                         },
                         loading: function (k) {
                             var _t = this;
@@ -991,7 +992,7 @@ jQuery.extend(jQuery.easing, {
                                 ID.removeClass(_t.cls['loading']);
                         },
                         getPrdCode: function () {
-                            return uty.cleanText(ID.attr('data-code') || $('[id$="hdnURN_KOD"]').val() || $('.ems-grid-cart [data-prd-code]').map(function () { return $(this).attr('data-prd-code') || '' }).get().join(',') || '');
+                            return uty.cleanText(ID.attr('data-code') || $('[id$="hdnURN_KOD"]').val() || $(opt['cartPrdCode']).map(function () { return $(this).attr('data-prd-code') || '' }).get().join(',') || '');
                         },
                         getCatCode: function () {
                             return uty.cleanText(ID.attr('data-cat') || uty.trimText(minusLoc.get('?', 'kat', urlString)) || '');
@@ -1681,18 +1682,383 @@ jQuery.extend(jQuery.easing, {
                                         .find('> li')
                                         .addClass('swiper-slide');
 
-                                        var act = (swiper.find(opt['activeElem']).index() || 0) - 1;
-                                        new Swiper(swiper, {
-                                            initialSlide: act,
-                                            slidesPerView: 'auto',
-                                            slidesPerGroup: 1
-                                        });  
+                                    var act = (swiper.find(opt['activeElem']).index() || 0) - 1;
+                                    new Swiper(swiper, {
+                                        initialSlide: act,
+                                        slidesPerView: 'auto',
+                                        slidesPerGroup: 1
+                                    });
                                 }
                             }
                         },
                         init: function () {
                             var _t = this;
                             _t.set();
+                        }
+                    };
+                main.init();
+            });
+        }
+    });
+})(jQuery);
+
+/*
+    Minus Filter
+*/
+
+(function ($) {
+    $.fn.extend({
+        MinusCategoryFilter: function (options, callback) {
+            var defaults = {
+                target: '.ems-page-product-list', // ajx ile htmlin dolacağı kapsayici div
+                btn: '.urunKiyaslamaOzellik_ozellik a, .menuKategori li > a, .urunPaging_pageNavigation a', // ajx button olacak tüm nesneler buraya tanımlanır
+
+
+                mobiBtn: '.btn-filter-popup', // mobilde filtre popup açma
+                mobiCloseBtn: '.btn-filter-popup-close', // mobilde filtre popup açma
+
+                // cls
+                loading: 'ajx-loading', // ajx yüklenirken body class
+                popupReady: 'ems-filter-ready' // mobile filtre açılması
+            };
+
+            var option = $.extend(defaults, options);
+
+            return this.each(function (e) {
+                var opt = option,
+                    ID = $(this),
+                    _dispatch = function (obj) {
+                        obj = obj || {};
+                        stage.dispatchEvent("CustomEvent", 'LIST_LOADED', $.extend({ ID: ID, con: opt['target'] }, obj));
+                    },
+                    _callback = function (obj) {
+                        obj = obj || {};
+                        if (typeof callback !== 'undefined')
+                            callback($.extend({ ID: ID, target: opt['target'] }, obj));
+                    },
+                    main = {
+                        el: {
+                            target: opt['target'],
+                            btn: opt['btn'],
+                            mobiBtn: opt['mobiBtn'],
+                            mobiCloseBtn: opt['mobiCloseBtn']
+                        },
+                        cls: {
+                            loading: opt['loading'],
+                            popupReady: opt['popupReady']
+                        },
+                        trigger: function (o) {
+                            o = o || {};
+                            _dispatch(o);
+                            _callback(o);
+                        },
+                        loading: function (k) {
+                            var _t = this;
+                            if (k == 'add')
+                                bdy.addClass(_t['cls']['loading']);
+                            else
+                                bdy.removeClass(_t['cls']['loading']);
+                        },
+                        popup: function (k) {
+                            var _t = this;
+                            if (k == 'show')
+                                bdy.addClass(_t.cls['popupReady']);
+                            else
+                                bdy.removeClass(_t.cls['popupReady']);
+                        },
+                        ajx: function (o) {
+                            var _t = this, uri = o['uri'];
+                            _t.loading('add');
+                            uty.ajx({ uri: uri }, function (k) {
+                                if (k['type'] == 'success')
+                                    _t.ajxResult({ val: k['val'] || '', uri: uri });
+                                _t.loading('remove');
+                            });
+                        },
+                        ajxResult: function (o) {
+                            var _t = this,
+                                target = $(_t.el.target),
+                                ajxTargetCon = $('<div>' + o['val'] + '</div>'), // ajx yüklenen sayfa
+                                ajxTarget = ajxTargetCon.find(_t.el.target), // ajx yüklenen sayfanın içerisindeki hedef alan
+                                ttl = ajxTargetCon.find('title').text() || document.title || '', // ajx yüklenen sayfanın title
+                                uri = o['uri'],
+                                type = 'error';
+
+                            if (uty.detectEl(target) && uty.detectEl(ajxTarget)) {
+                                type = 'success';
+                                $('title').text(ttl); // ajx ile yüklenen sayfanın title mevcut title ile değiştirir
+                                target.html(uty.clearScriptTag(ajxTarget.html() || ''));
+                                history.pushState({ Url: uri, Page: ttl }, ttl, uri);
+                                _t.trigger({ type: type });
+                                _t.init(); // domdaki nesneler silindiği için filter tekrardan tetiklenir.
+                            } else
+                                _t.trigger({ type: type });
+                        },
+                        addEvent: function () {
+                            var _t = this;
+                            $(_t.el.btn)
+                                .unbind('click')
+                                .bind('click', function (evt) {
+                                    if (history.pushState) {
+                                        evt.preventDefault();
+                                        var ths = $(this), uri = ths.attr('href') || '';
+                                        if (uri != '' && uri.indexOf('javascript') == -1)
+                                            _t.ajx({ uri: uri });
+
+                                        _t.trigger({ type: 'click', target: ths });
+                                    }
+                                });
+
+
+                            $(_t.el.mobiBtn)
+                                .unbind('click')
+                                .bind('click', function (evt) {
+                                    _t.popup('show');
+                                });
+
+                            $(_t.el.mobiCloseBtn)
+                                .unbind('click')
+                                .bind('click', function (evt) {
+                                    _t.popup('show');
+                                });
+
+                            if (history.pushState)
+                                window.onpopstate = function (event) {
+                                    setTimeout(function () {
+                                        _t.ajx({ uri: uty.convertHttps(event.state ? event.state.Url : window.location.href) });
+                                    }, 1);
+                                };
+                        },
+                        init: function () {
+                            var _t = this;
+                            _t.addEvent();
+                        }
+                    };
+                main.init();
+
+                this.setURI = function (o) {
+                    o = o || {};
+                    var uri = o['uri'] || '';
+                    main.ajx({ uri: uri });
+                };
+            });
+        }
+    });
+})(jQuery);
+
+/* 
+    liste görünüm
+*/
+(function ($) {
+    $.fn.extend({
+        minusViewer: function (options, callback) {
+            var defaults = {
+                btn: '[rel]'
+            };
+
+            var option = $.extend(defaults, options);
+
+            return this.each(function (e) {
+                var opt = option,
+                    ID = $(this),
+                    _dispatch = function (obj) {
+                        obj = obj || {};
+                        stage.dispatchEvent("CustomEvent", 'VIEW_TYPE_CLICKED', $.extend({ ID: ID }, obj));
+                    },
+                    _callback = function (obj) {
+                        obj = obj || {};
+                        if (typeof callback !== 'undefined')
+                            callback($.extend({ ID: ID }, obj));
+                    },
+                    main = {
+                        el: {
+                            btn: opt['btn']
+                        },
+                        cls: {
+                            selected: 'link_selected',
+                        },
+                        trigger: function (o) {
+                            o = o || {};
+                            _dispatch(o);
+                            _callback(o);
+                        },
+                        cookie: function (o) {
+                            var _t = this,
+                                typ = o['typ'] || '';
+
+                            if (typ == 'set')
+                                uty.Cookies({ name: 'viewType', typ: 'set', minutes: 14400, value: o['val'] || '' });
+                            else if (typ == 'get')
+                                return uty.Cookies({ name: 'viewType', typ: 'get' });
+                        },
+                        addEvent: function () {
+                            var _t = this,
+                                btn = ID.find(_t.el.btn),
+                                cls = btn
+                                    .map(function () {
+                                        return $(this).attr('rel') || '';
+                                    })
+                                    .get()
+                                    .join(' ');
+
+                            btn
+                                .unbind('click')
+                                .bind('click', function () {
+                                    var ths = $(this),
+                                        rel = ths.attr('rel') || '';
+
+                                    btn
+                                        .removeClass(_t.cls['selected']);
+
+                                    ths.addClass(_t.cls['selected']);
+
+                                    bdy.removeClass(cls).addClass(rel);
+
+                                    _t.cookie({ typ: 'set', val: rel });
+
+                                    setTimeout(function () {
+                                        win.resize();
+                                        _t.trigger({ type: 'clicked', target: ths });
+                                    }, 10);
+                                });
+                        },
+                        check: function () {
+                            var _t = this,
+                                btn = ID.find(_t.el.btn),
+                                k = _t.cookie({ typ: 'get' }),
+                                ind = $(_t.el.btn + '.' + _t.cls['selected']).index() || 0;
+
+                            if (k != '') {
+                                k = $(_t.el.btn + '[rel="' + k + '"]');
+                                if (uty.detectEl(k))
+                                    ind = k.index();
+                            }
+
+                            btn
+                                .eq(ind)
+                                .click();
+                        },
+                        init: function () {
+                            var _t = this;
+                            if (uty.detectEl(ID.find(_t.el.btn))) {
+                                _t.addEvent();
+                                _t.check();
+                            }
+                        }
+                    };
+                main.init();
+            });
+        }
+    });
+})(jQuery);
+
+/* 
+
+    liste sort
+
+*/
+(function ($) {
+    $.fn.extend({
+        minusListSort: function (options, callback) {
+            var defaults = {
+                drp: '[id$="drpSRT_SPR_AD"]',
+                btn: '[rel]',
+
+                mobiBtn: '.btn-sort-popup',
+                mobiCloseBtn: '.btn-sort-popup-close',
+            };
+
+            var option = $.extend(defaults, options);
+
+            return this.each(function (e) {
+                var opt = option,
+                    ID = $(this),
+                    _dispatch = function (obj) {
+                        obj = obj || {};
+                        stage.dispatchEvent("CustomEvent", 'SORT_LIST_CLICKED', $.extend({ ID: ID }, obj));
+                    },
+                    _callback = function (obj) {
+                        obj = obj || {};
+                        if (typeof callback !== 'undefined')
+                            callback($.extend({ ID: ID }, obj));
+                    },
+                    main = {
+                        param: 'srt',
+                        cls: {
+                            selected: 'link_selected',
+                            ready: 'ems-sort-ready'
+                        },
+                        trigger: function (o) {
+                            o = o || {};
+                            _dispatch(o);
+                            _callback(o);
+                        },
+                        popup: function (k) {
+                            var _t = this;
+                            if (k == 'show')
+                                bdy.addClass(_t.cls['ready']);
+                            else
+                                bdy.removeClass(_t.cls['ready']);
+                        },
+                        set: function (o) {
+                            var _t = this,
+                                rel = o['rel'] || '',
+                                uri = '';
+                            if (rel != '') {
+                                var loc = window.location.search;
+                                if (loc.indexOf(_t.param + '=' + rel) != -1)
+                                    uri = minusLoc.remove('?', _t.param);
+                                else
+                                    uri = minusLoc.put('?', rel, _t.param);
+
+                                _t.trigger({ type: 'change_uri', uri: uri });
+                            }
+
+                        },
+                        addEvent: function () {
+                            var _t = this;
+
+                            ID
+                                .find(opt['btn'])
+                                .unbind('click')
+                                .bind('click', function () {
+                                    _t.set({ rel: $(this).attr('rel') || '' });
+                                });
+
+                            $(opt['drp'])
+                                .removeAttr('onchange')
+                                .unbind('change')
+                                .bind('change', function () {
+                                    _t.set({ rel: $(this).val() || '' });
+                                })
+
+                            $(opt['mobiBtn'])
+                                .unbind('click')
+                                .bind('click', function () {
+                                    _t.popup('show');
+                                });
+
+                            $(opt['mobiCloseBtn'])
+                                .unbind('click')
+                                .bind('click', function () {
+                                    _t.popup('hide');
+                                });
+                        },
+                        check: function () {
+                            var _t = this,
+                                k = minusLoc.get('?', _t.param) || '';
+                            if (k != '') {
+                                k = ID.find('[rel="' + k + '"]');
+                                if (uty.detectEl(k))
+                                    k.addClass(_t.cls['selected']);
+                            }
+                        },
+                        init: function () {
+                            var _t = this;
+                            if (uty.detectEl(ID.find(opt['btn']))) {
+                                _t.check();
+                                _t.addEvent();
+                            }
                         }
                     };
                 main.init();

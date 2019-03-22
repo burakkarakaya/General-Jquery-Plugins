@@ -40,7 +40,7 @@ var SITE_CONFIG = {
             {
                 'el': '[id$="lbfUYA_CEPTELEFON"]',
                 'addClass': 'zorunluFont'
-            }         
+            }
         ],
 
         /* 
@@ -54,6 +54,44 @@ var SITE_CONFIG = {
         ]
     },
     plugin: {
+
+        /* 
+           kategori filter
+       */
+        categoryFilter: {
+            'ID': 'body',
+            'prop': {
+                'target': '.ems-page-product-list', // ajx ile htmlin dolacağı kapsayici div
+                'btn': '.urunKiyaslamaOzellik_ozellik a, .menuKategori li > a, .urunPaging_pageNavigation a, .ozellikSecimGrup a', // ajx button olacak tüm nesneler buraya tanımlanır
+
+                'mobiBtn': '.btn-filter-popup', // mobilde filtre popup açma
+                'mobiCloseBtn': '.btn-filter-popup-close', // mobilde filtre popup açma
+            }
+        },
+
+        /*  
+            list sort
+        */
+       listSort: [
+        {
+            'ID': '.ems-sort-body .sorts',
+            'prop': {
+                'btn': '[rel]',
+                'mobiBtn': '.btn-sort-popup',
+                'mobiCloseBtn': '.ems-sort .btn-close',
+            }
+        }
+    ],
+
+        /* 
+           liste görünüm
+       */
+        viewer: {
+            'ID': '.ems-sort-body .views',
+            'prop': {
+                'btn': '[rel]'
+            }
+        },
 
         /* 
             kategori swiper
@@ -87,8 +125,8 @@ var SITE_CONFIG = {
             'ID': '.mini-search',
             'prop': {
                 btn: '.mini-search-info', // trigger button
-                clearButton: '.mini-search-sub .sub-close',
-                closeBtn: '.mini-search-overlay', // search close button
+                clearButton: '.mini-search-sub .sub-close', // input içerisini temizleme
+                closeBtn: '.mini-search-overlay, .mini-search-sub .sub-close', // search close button
                 input: '[id$="txtARM_KEYWORD"]', // search input
 
                 // cls
