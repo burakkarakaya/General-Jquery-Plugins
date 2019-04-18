@@ -661,7 +661,7 @@ jQuery.extend(jQuery.easing, {
                         get: function (k) {
                             var b = false,
                                 padding = 50,
-                                con = ID.find(opt['innerClass']),
+                                con = uty.detectEl(ID.find(opt['innerClass'])) ? ID.find(opt['innerClass']) : ID,
                                 o1 = { x: con.offset().left, y: con.offset().top, width: con.width() - padding, height: con.height() },
                                 o2 = { x: k.offset().left, y: k.offset().top, width: k.width(), height: k.height() };
                             if (o1.x < o2.x + o2.width && o1.x + o1.width > o2.x && o1.y < o2.y + o2.height && o1.y + o1.height > o2.y)
@@ -915,6 +915,29 @@ jQuery.extend(jQuery.easing, {
                                     }
                                 });
 
+
+                            accNav
+                                .unbind('click')
+                                .bind('click', function () {
+                                    var ths = $(this),
+                                        rel = ths.parent().attr('rel') || '';
+
+                                    if (rel != '' && _t.clicklable) {
+                                        var target = ID.find(opt['content'] + '[rel="' + rel + '"]'),
+                                            uri = _t.getUri({ ID: ths });
+
+                                        if (target.hasClass(_t.cls['selected']))
+                                            target.add(target.siblings()).removeClass(_t.cls['selected']);
+                                        else
+                                            target.add(ths).addClass(_t.cls['selected']).siblings().removeClass(_t.cls['selected']);
+
+                                        if (uri != '')
+                                            _t.ajx({ ID: target, uri: uri });
+
+                                        _t.updateSwiper(target);
+                                    }
+                                });
+
                             if (!ID.hasClass(_t.cls['scrollerTrigger']))
                                 _t.trigger();
                         },
@@ -1090,6 +1113,7 @@ jQuery.extend(jQuery.easing, {
                 setPos: '', // menuyu kapsayan hedef alanının classı
                 overlay: false,
                 bdyCls: '',
+                bdyCls2: '',
             };
             var options = $.extend(defaults, options);
             return this.each(function () {
@@ -1111,11 +1135,21 @@ jQuery.extend(jQuery.easing, {
                         overlayControls: function (k) {
                             var _t = this;
                             if (o.overlay) {
-                                if (k == 'opened') bdy.addClass(o.bdyCls);
+                                if (k == 'opened') {
+                                    bdy.addClass(o.bdyCls);
+                                    setTimeout(function () {
+                                        bdy.addClass(o.bdyCls2);
+                                    }, 100);
+                                }
                                 else {
                                     var e = el.find('> ul > li' + '.' + o.customClass);
-                                    if (!_t.detectEl(e))
-                                        bdy.removeClass(o.bdyCls);
+                                    if (!_t.detectEl(e)) {
+                                        bdy.removeClass(o.bdyCls2);
+                                        setTimeout(function () {
+                                            bdy.removeClass(o.bdyCls);
+                                        }, 100);
+                                    }
+
                                 }
                             }
                         },
@@ -1432,6 +1466,7 @@ jQuery.extend(jQuery.easing, {
                 // cls
                 ajx: 'mini-search-ajx-loading',
                 ready: 'mini-search-ready',
+                animate: 'mini-search-animate',
                 focused: 'mini-search-focused',
                 keyup: 'mini-search-keyup',
                 result: 'mini-search-result-found',
@@ -1453,16 +1488,23 @@ jQuery.extend(jQuery.easing, {
                         },
                         animate: function (k) {
                             var _t = this;
-                            if (k == 'show')
+                            if (k == 'show') {
                                 bdy.addClass(opt['ready']);
-                            else
-                                bdy.removeClass(opt['ready']);
+                                setTimeout(function () {
+                                    bdy.addClass(opt['animate']);
+                                }, 100);
+                            } else {
+                                bdy.removeClass(opt['animate']);
+                                setTimeout(function () {
+                                    bdy.removeClass(opt['ready']);
+                                }, 300);
+                            }
                         },
                         destroy: function () {
                             var _t = this,
                                 input = $(opt['input']);
 
-                            bdy.removeClass(opt['ready']).removeClass(opt['focused']).removeClass(opt['keyup']).removeClass(opt['noResult']).removeClass(opt['result']);
+                            bdy.removeClass(opt['ready']).removeClass(opt['animate']).removeClass(opt['focused']).removeClass(opt['keyup']).removeClass(opt['noResult']).removeClass(opt['result']);
                             input.val('').blur();
                             if (typeof HideSuggestionsDiv !== 'undefined')
                                 HideSuggestionsDiv();
@@ -1719,7 +1761,8 @@ jQuery.extend(jQuery.easing, {
 
                 // cls
                 loading: 'ajx-loading', // ajx yüklenirken body class
-                popupReady: 'ems-filter-ready' // mobile filtre açılması
+                popupReady: 'ems-filter-ready', // mobile filtre açılması
+                popupAnimate: 'ems-filter-animate'
             };
 
             var option = $.extend(defaults, options);
@@ -1745,7 +1788,8 @@ jQuery.extend(jQuery.easing, {
                         },
                         cls: {
                             loading: opt['loading'],
-                            popupReady: opt['popupReady']
+                            popupReady: opt['popupReady'],
+                            popupAnimate: opt['popupAnimate']
                         },
                         trigger: function (o) {
                             o = o || {};
@@ -1761,10 +1805,17 @@ jQuery.extend(jQuery.easing, {
                         },
                         popup: function (k) {
                             var _t = this;
-                            if (k == 'show')
-                                bdy.addClass(_t.cls['popupReady']);
-                            else
-                                bdy.removeClass(_t.cls['popupReady']);
+                            if (k == 'show') {
+                                bdy.addClass(opt['popupReady']);
+                                setTimeout(function () {
+                                    bdy.addClass(opt['popupAnimate']);
+                                }, 100);
+                            } else {
+                                bdy.removeClass(opt['popupAnimate']);
+                                setTimeout(function () {
+                                    bdy.removeClass(opt['popupReady']);
+                                }, 300);
+                            }
                         },
                         ajx: function (o) {
                             var _t = this, uri = o['uri'];
@@ -1819,7 +1870,7 @@ jQuery.extend(jQuery.easing, {
                             $(_t.el.mobiCloseBtn)
                                 .unbind('click')
                                 .bind('click', function (evt) {
-                                    _t.popup('show');
+                                    _t.popup('hide');
                                 });
 
                             if (history.pushState)
@@ -1853,7 +1904,12 @@ jQuery.extend(jQuery.easing, {
     $.fn.extend({
         minusViewer: function (options, callback) {
             var defaults = {
-                btn: '[rel]'
+                btn: '[rel]',
+                selected: 'selected',
+                defaultSelected: {
+                    mobi: 'view-2',
+                    desktop: 'view-3'
+                }
             };
 
             var option = $.extend(defaults, options);
@@ -1875,7 +1931,7 @@ jQuery.extend(jQuery.easing, {
                             btn: opt['btn']
                         },
                         cls: {
-                            selected: 'link_selected',
+                            selected: opt['selected']
                         },
                         trigger: function (o) {
                             o = o || {};
@@ -1926,7 +1982,9 @@ jQuery.extend(jQuery.easing, {
                             var _t = this,
                                 btn = ID.find(_t.el.btn),
                                 k = _t.cookie({ typ: 'get' }),
-                                ind = $(_t.el.btn + '.' + _t.cls['selected']).index() || 0;
+                                ds = opt['defaultSelected'] || {},
+                                act = uty.visibleControl() ? ds['mobi'] : ds['desktop'] || '',
+                                ind = uty.detectEl($(_t.el.btn + '[rel="' + act + '"]')) ? ($(_t.el.btn + '[rel="' + act + '"]').index() || 0) : ($(_t.el.btn + '.' + _t.cls['selected']).index() || 0);
 
                             if (k != '') {
                                 k = $(_t.el.btn + '[rel="' + k + '"]');
@@ -1964,8 +2022,14 @@ jQuery.extend(jQuery.easing, {
                 drp: '[id$="drpSRT_SPR_AD"]',
                 btn: '[rel]',
 
+                clearBtn: '.btn-sort-clear',
                 mobiBtn: '.btn-sort-popup',
                 mobiCloseBtn: '.btn-sort-popup-close',
+
+                // cls
+                selected: 'link_selected',
+                ready: 'ems-sort-ready',
+                animate: 'ems-sort-animate'
             };
 
             var option = $.extend(defaults, options);
@@ -1985,8 +2049,9 @@ jQuery.extend(jQuery.easing, {
                     main = {
                         param: 'srt',
                         cls: {
-                            selected: 'link_selected',
-                            ready: 'ems-sort-ready'
+                            selected: opt['selected'],
+                            ready: opt['ready'],
+                            animate: opt['animate']
                         },
                         trigger: function (o) {
                             o = o || {};
@@ -1995,21 +2060,35 @@ jQuery.extend(jQuery.easing, {
                         },
                         popup: function (k) {
                             var _t = this;
-                            if (k == 'show')
-                                bdy.addClass(_t.cls['ready']);
-                            else
-                                bdy.removeClass(_t.cls['ready']);
+                            if (k == 'show') {
+                                bdy.addClass(opt['ready']);
+                                setTimeout(function () {
+                                    bdy.addClass(opt['animate']);
+                                }, 100);
+                            } else {
+                                bdy.removeClass(opt['animate']);
+                                setTimeout(function () {
+                                    bdy.removeClass(opt['ready']);
+                                }, 300);
+                            }
                         },
                         set: function (o) {
                             var _t = this,
                                 rel = o['rel'] || '',
+                                typ = o['typ'] || 'add',
                                 uri = '';
+
                             if (rel != '') {
                                 var loc = window.location.search;
-                                if (loc.indexOf(_t.param + '=' + rel) != -1)
+
+                                if (typ == 'add') {
+                                    if (loc.indexOf(_t.param + '=' + rel) != -1)
+                                        uri = minusLoc.remove('?', _t.param);
+                                    else
+                                        uri = minusLoc.put('?', rel, _t.param);
+                                } else
                                     uri = minusLoc.remove('?', _t.param);
-                                else
-                                    uri = minusLoc.put('?', rel, _t.param);
+
 
                                 _t.trigger({ type: 'change_uri', uri: uri });
                             }
@@ -2023,6 +2102,13 @@ jQuery.extend(jQuery.easing, {
                                 .unbind('click')
                                 .bind('click', function () {
                                     _t.set({ rel: $(this).attr('rel') || '' });
+                                });
+
+
+                            $(opt['clearBtn'])
+                                .unbind('click')
+                                .bind('click', function () {
+                                    _t.set({ rel: 'srt', typ: 'remove' });
                                 });
 
                             $(opt['drp'])
@@ -2062,6 +2148,78 @@ jQuery.extend(jQuery.easing, {
                         }
                     };
                 main.init();
+            });
+        }
+    });
+})(jQuery);
+
+/* 
+
+    Custom Lazy Load
+
+*/
+(function ($) {
+    $.fn.extend({
+        minusLazyLoad: function (options, callback) {
+            var defaults = {
+                loaded: 'image-loaded', // nesne yüklendikten sonra gelen class
+                rate: .9,
+            };
+
+            var option = $.extend(defaults, options);
+
+            return this.each(function (e) {
+                var opt = option,
+                    ID = $(this),
+                    _dispatch = function (obj) {
+                        stage.dispatchEvent("CustomEvent", "MINUS_LAZY_LOAD", $.extend({ ID: ID }, obj));
+                    },
+                    _callback = function (obj) {
+                        obj = obj || {};
+                        if (typeof callback !== 'undefined')
+                            callback($.extend({ ID: ID }, obj));
+                    },
+                    main = {
+                        detectPosition: function (ID) {
+                            var _t = this,
+                                o1 = { x: 0, y: wst, width: wt, height: ht * (opt['rate'] || 1) },
+                                o2 = { x: 0, y: ID.offset().top, width: wt, height: ID.height() * (opt['rate'] || 1) },
+                                b = false;
+                            if (o1.x < o2.x + o2.width && o1.x + o1.width > o2.x && o1.y < o2.y + o2.height && o1.y + o1.height > o2.y)
+                                b = true;
+                            return b;
+                        },
+                        adjust: function () {
+                            var _t = this;
+                            if (uty.detectEl(ID)) {
+                                ID
+                                    .each(function () {
+                                        var ths = $(this);
+                                        if (!ths.hasClass(opt['loaded']) && _t.detectPosition(ths)) {
+                                            var src = ths.attr('data-background') || '';
+                                            if (src != '')
+                                                ths.css('background-image', 'url("' + src + '")');
+
+                                            src = ths.attr('data-image-src') || '';
+                                            if (src != '')
+                                                ths.attr('src', src);
+
+                                            ths.addClass(opt['loaded']);
+
+                                            _dispatch({ target: ths });
+                                            _callback({ target: ths });
+                                        }
+                                    });
+                            }
+
+                        }
+                    };
+                main.adjust();
+
+                this.adjust = function () {
+                    main.adjust();
+                };
+
             });
         }
     });

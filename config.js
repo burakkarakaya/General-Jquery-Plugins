@@ -13,18 +13,18 @@ var SITE_CONFIG = {
             url selection 
         */
         urlSelected: [
-            { uri: '/uyeIslem/favorilistem.aspx', elm: '[rel="ems-page-favorites"]', cls: 'selected' },
-            { uri: '/uyeIslem/marketdedektif.aspx', elm: '[rel="ems-page-follow-list"]' },
-            { uri: '/uyeIslem/siparistakip.aspx', elm: '[rel="ems-page-order"]' },
-            { uri: '/uyeIslem/siparisdetay.aspx', elm: '[rel="ems-page-order"]' },
-            { uri: '/uyeIslem/siparisIptal.aspx', elm: '[rel="ems-page-order"]' },
-            { uri: '/uyeIslem/kuponlarim.aspx', elm: '[rel="ems-page-coupon"]' },
-            { uri: '/uyeBilgi/uyeBilgi.aspx', elm: '[rel="ems-page-info"]' },
-            { uri: '/uyebilgi/uyeSifre.aspx', elm: '[rel="ems-page-password"]' },
-            { uri: '/uyebilgi/uyeAdres.aspx', elm: '[rel="ems-page-address"]' },
-            { uri: '/mesaj/mesaj.aspx', elm: '[rel="ems-page-message"]' },
-            { uri: '/mesaj/mesaj_oku.aspx', elm: '[rel="ems-page-message"]' },
-            { uri: '/mesaj/mesaj_gonder.aspx', elm: '[rel="ems-page-message"]' },
+            { uri: '/uyeIslem/favorilistem.aspx', elm: '[rel="ems-member-favorite"]', cls: 'selected' },
+            { uri: '/uyeIslem/marketdedektif.aspx', elm: '[rel="ems-member-follow-list"]' },
+            { uri: '/uyeIslem/siparistakip.aspx', elm: '[rel="ems-member-order"]' },
+            { uri: '/uyeIslem/siparisdetay.aspx', elm: '[rel="ems-member-order"]' },
+            { uri: '/uyeIslem/siparisIptal.aspx', elm: '[rel="ems-member-order"]' },
+            { uri: '/uyeIslem/kuponlarim.aspx', elm: '[rel="ems-member-ticket"]' },
+            { uri: '/uyeBilgi/uyeBilgi.aspx', elm: '[rel="ems-member-info"]' },
+            { uri: '/uyebilgi/uyeSifre.aspx', elm: '[rel="ems-member-password"]' },
+            { uri: '/uyebilgi/uyeAdres.aspx', elm: '[rel="ems-member-address"]' },
+            { uri: '/mesaj/mesaj.aspx', elm: '[rel="ems-member-message"]' },
+            { uri: '/mesaj/mesaj_oku.aspx', elm: '[rel="ems-member-message"]' },
+            { uri: '/mesaj/mesaj_gonder.aspx', elm: '[rel="ems-member-message"]' },
         ],
 
         /* 
@@ -40,7 +40,21 @@ var SITE_CONFIG = {
             {
                 'el': '[id$="lbfUYA_CEPTELEFON"]',
                 'addClass': 'zorunluFont'
-            }
+            },
+            {
+                'el': '[id$="txtUYE_DOGUMTARIHI"]',
+                'attr': { 'autocomplete': 'off', 'readonly': 'true' }
+            },
+
+            {
+                'el': '[id$="txtUYE_KONTROLKODU"]',
+                'attr': { 'maxlength': '6' }
+            },
+
+            {
+                'el': '.mini-bulletin [id$="txtUYE_EMAIL"]',
+                'attr': { 'placeholder': $('[data-target="[rel=\'lbfBultenInput\']"]').text() || '' }
+            }, 
         ],
 
         /* 
@@ -50,7 +64,7 @@ var SITE_CONFIG = {
 
             { 'main': '.mini-lang', 'target': '.mini-lang-append', 'add': 'append', 'clone': true },
             { 'main': '.top-menu', 'target': '.top-menu-append', 'add': 'append', 'clone': true },
-            { 'main': '.popular-search-words', 'target': '.popular-search-words-append', 'add': 'append' },
+            { 'main': '.popular-search-words', 'target': '.popular-search-words-append', 'add': 'append' }
         ]
     },
     plugin: {
@@ -62,26 +76,27 @@ var SITE_CONFIG = {
             'ID': 'body',
             'prop': {
                 'target': '.ems-page-product-list', // ajx ile htmlin dolacağı kapsayici div
-                'btn': '.urunKiyaslamaOzellik_ozellik a, .menuKategori li > a, .urunPaging_pageNavigation a, .ozellikSecimGrup a', // ajx button olacak tüm nesneler buraya tanımlanır
+                'btn': '.urunKiyaslamaOzellik_ozellik a, .menuKategori li:not(".no-ajx") > a, .urunPaging_pageNavigation a, .ozellikSecimGrup a', // ajx button olacak tüm nesneler buraya tanımlanır
 
                 'mobiBtn': '.btn-filter-popup', // mobilde filtre popup açma
-                'mobiCloseBtn': '.btn-filter-popup-close', // mobilde filtre popup açma
+                'mobiCloseBtn': '.kutuDefault.kutuOzellikFiltre .btn-close, #pnlSecimiDarat .kutuFooterOzellikFiltre .filter-apply', // mobilde filtre popup açma
             }
         },
 
         /*  
             list sort
         */
-       listSort: [
-        {
-            'ID': '.ems-sort-body .sorts',
-            'prop': {
-                'btn': '[rel]',
-                'mobiBtn': '.btn-sort-popup',
-                'mobiCloseBtn': '.ems-sort .btn-close',
+        listSort: [
+            {
+                'ID': '.ems-sort-body .sorts',
+                'prop': {
+                    'btn': '[rel]',
+                    'mobiBtn': '.btn-sort-popup',
+                    'mobiCloseBtn': '.ems-sort .btn-close, .sort-apply .btn',
+                    'clearBtn': '.sort-clear > a'
+                }
             }
-        }
-    ],
+        ],
 
         /* 
            liste görünüm
@@ -89,7 +104,12 @@ var SITE_CONFIG = {
         viewer: {
             'ID': '.ems-sort-body .views',
             'prop': {
-                'btn': '[rel]'
+                'btn': '[rel]',
+                'selected': 'link_selected',
+                'defaultSelected': {
+                    'mobi': 'view-2',
+                    'desktop': 'view-3'
+                }
             }
         },
 
@@ -124,7 +144,7 @@ var SITE_CONFIG = {
         customSearch: {
             'ID': '.mini-search',
             'prop': {
-                btn: '.mini-search-info', // trigger button
+                btn: '.mini-search-info, .header-mobile .open-search', // trigger button
                 clearButton: '.mini-search-sub .sub-close', // input içerisini temizleme
                 closeBtn: '.mini-search-overlay, .mini-search-sub .sub-close', // search close button
                 input: '[id$="txtARM_KEYWORD"]', // search input
@@ -132,6 +152,7 @@ var SITE_CONFIG = {
                 // cls
                 ajx: 'mini-search-ajx-loading',
                 ready: 'mini-search-ready',
+                animate: 'mini-search-animate',
                 focused: 'mini-search-focused',
                 keyup: 'mini-search-keyup',
                 result: 'mini-search-result-found',
@@ -151,6 +172,7 @@ var SITE_CONFIG = {
                     'type': isMobile ? 'click' : 'click',
                     'customClass': 'ems-lang-opened',
                     'bdyCls': 'mini-lang-ready',
+                    'bdyCls2': 'mini-lang-animate',
                     'closedBtn': '.mini-lang-overlay',
                     'overlay': true,
                     'openedDelay': 222,
@@ -164,6 +186,7 @@ var SITE_CONFIG = {
                     'type': isMobile ? 'click' : 'click',
                     'customClass': 'ems-cart-opened',
                     'bdyCls': 'mini-cart-ready',
+                    'bdyCls2': 'mini-cart-animate',
                     'closedBtn': '.mini-cart .mini-cart-overlay, .mini-cart .sub-close',
                     'overlay': true,
                     'openedDelay': 222
@@ -177,6 +200,7 @@ var SITE_CONFIG = {
                     'type': isMobile ? 'click' : 'click',
                     'customClass': 'ems-user-opened',
                     'bdyCls': 'mini-user-ready',
+                    'bdyCls2': 'mini-user-animate',
                     'closedBtn': '#validateLogin .sub-close, #validateLogin .mini-user-overlay',
                     'overlay': true,
                     'openedDelay': 222
@@ -205,7 +229,8 @@ var SITE_CONFIG = {
                     'bdyClicked': true,
                     'eventType': isMobile ? 'click' : 'hover',
                     'overlay': true,
-                    'bdyCls': 'main-menu-ready',
+                    'bdyCls': 'menu-ready',
+                    'bdyCls2': 'menu-animate',
                     'items': 'ul > li'
                 }
             }
@@ -251,6 +276,8 @@ var SITE_CONFIG = {
                 preloadImages: false,
                 lazyLoading: true,
                 slidesPerView: 3,
+                centeredSlides: false,
+                loop: false,
                 pagination: {
                     el: '.swiper-pagination',
                     clickable: true,
@@ -259,6 +286,13 @@ var SITE_CONFIG = {
                     nextEl: '.swiper-button-next',
                     prevEl: '.swiper-button-prev',
                 },
+                breakpoints: {
+                    640: {
+                        slidesPerView: 'auto',
+                        centeredSlides: true,
+                        loop: false
+                    }
+                }
             },
 
             widgetAuto: {

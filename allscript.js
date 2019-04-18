@@ -383,6 +383,44 @@ var bdy = $('body'),
     },
     plugin = {
         /* 
+            Minus Lazy Load
+        */
+        lazyLoad: {
+            el: {
+                con: '[data-background]:not("image-loaded"), [data-image-src]:not("image-loaded")',
+            },
+            cls: { active: 'ems-lazy-load-active' },
+            set: function (ID) {
+                var _t = this;
+                if (!ID.hasClass(_t['cls']['active'])) {
+                    ID.addClass(_t['cls']['active']);
+                    ID.minusLazyLoad();
+                }
+            },
+            adjust: function () {
+                var _t = this, el = $(_t.el.con)
+                if (uty.detectEl(el))
+                    el.each(function () {
+                        var ths = $(this);
+                        if (ths.hasClass(_t.cls['active'])) {
+                            ths = ths.get(0);
+                            if (typeof ths.adjust !== 'undefined')
+                                ths.adjust();
+                        }
+                    });
+            },
+            init: function () {
+                var _t = this,
+                    con = $(_t.el.con);
+                if (uty.detectEl(con))
+                    con
+                        .each(function () {
+                            _t.set($(this));
+                        });
+            }
+        },
+
+        /* 
             kategori filtre
         */
         categoryFilter: {
@@ -397,7 +435,7 @@ var bdy = $('body'),
                     }
                 }
             },
-            setURI: function(o){
+            setURI: function (o) {
                 var _t = this, el = $(_t.arr['ID'])
                 if (uty.detectEl(el))
                     el.each(function () {
@@ -713,8 +751,8 @@ var bdy = $('body'),
                         var ths = $(this);
                         if (ths.hasClass(_t.cls['active'])) {
                             ths = ths.get(0);
-                            if (typeof ths.adjust !== 'undefined')
-                                ths.adjust();
+                            /*if (typeof ths.adjust !== 'undefined')
+                                ths.adjust();*/
                         }
                     });
             },
@@ -786,12 +824,17 @@ var bdy = $('body'),
         },
         adjust: function () {
             var _t = this;
+            _t.swiper.adjust();
+        },
+        onScroll: function(){
+            var _t = this;
+            _t.lazyLoad.adjust();
             _t.systemWidget.adjust();
             _t.tabMenu.adjust();
-            _t.swiper.adjust();
         },
         init: function () {
             var _t = this;
+            _t.lazyLoad.init();
             _t.categoryFilter.init();
             _t.listSort.init();
             _t.viewer.init();
@@ -858,10 +901,11 @@ var bdy = $('body'),
 
             plugin.adjust();
             resetDom.adjust();
+            stage.dispatchEvent("CustomEvent", "EVENTS_ON_RESIZE");
         },
 
         onResizeStop: function () {
-
+            stage.dispatchEvent("CustomEvent", "EVENTS_ON_RESIZE_STOP");
         },
 
         onScroll: function () {
@@ -869,12 +913,12 @@ var bdy = $('body'),
             sRatio = wst / (doc.height() - ht);
 
 
-            plugin.adjust();
-
+            plugin.onScroll();
+            stage.dispatchEvent("CustomEvent", "EVENTS_ON_SCROLL");
         },
 
         onScrollStop: function () {
-
+            stage.dispatchEvent("CustomEvent", "EVENTS_ON_SCROLL_STOP");
         },
         init: function () {
             var _t = this;
@@ -894,79 +938,6 @@ var bdy = $('body'),
         events.init();
     };
 
-initialize();
-
-
-// DISPATCHER
-
-/* 
-    Search
-*/
-function onSearchReady() {
-    plugin.customSearch.searchReady();
-}
-
-function onSearchComplete() {
-    plugin.customSearch.searchComplete();
-}
-stage.addEventListener("CustomEvent", [{ type: "aramaSonucReady", handler: "onSearchReady" }]);
-stage.addEventListener("CustomEvent", [{ type: "aramaSonucDoldur", handler: "onSearchComplete" }]);
-
-/* 
-    System Widget yüklendikten sonra teiklenir
-*/
-function onSystemWidgetLoaded(o) {
-    var ID = o['ID'] || '',
-        type = o['type'] || '';
-    if (type == 'success') {
-        uty.addSwiperClass(ID)
-        plugin.swiper.set(ID);
-    }
-}
-stage.addEventListener("CustomEvent", [{ type: "SYSTEM_WIDGET_LOADED", handler: "onSystemWidgetLoaded" }]);
-
-/* 
-    ajx tab menu yüklendikten sonra tetiklenir
-*/
-function onAjxTabLoaded(o) {
-    var ID = o['ID'] || '',
-        target = o['target'] || '',
-        type = o['type'] || '';
-    if (type == 'success') {
-        uty.addSwiperClass(target.parents('[data-swiper]').eq(0));
-        plugin.swiper.set(target.parents('[data-swiper]').eq(0));
-    }
-}
-stage.addEventListener("CustomEvent", [{ type: "AJX_TAB_LOADED", handler: "onAjxTabLoaded" }]);
-
-/* 
-    kategori filter yüklenirse
-*/
-function onListLoaded(o) {
-    var ID = o['ID'] || '',
-        target = o['target'] || '',
-        type = o['type'] || '';
-
-    if (type == 'success') {
-        /* 
-            filtre yüklendikten sonra tetiklenecek pluginler buraya tanımlanacak
-        */
-        uty.pageScroll({ scrollTop: 0 });
-        plugin.listSort.init();
-        plugin.viewer.init();
-        plugin.catSwiper.init();
-    }
-}
-stage.addEventListener("CustomEvent", [{ type: "LIST_LOADED", handler: "onListLoaded" }]);
-
-/* 
-    kategori list sorts
-*/
-function onSortListClicked(o) {
-    var ID = o['ID'] || '',
-        type = o['type'] || '';
-
-    if (type == 'change_uri')
-        plugin.categoryFilter.setURI({ uri: o['uri'] || '' });
-}
-stage.addEventListener("CustomEvent", [{ type: "SORT_LIST_CLICKED", handler: "onSortListClicked" }]);
+doc.ready(function(){
+    initialize();
+});
