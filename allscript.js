@@ -74,25 +74,6 @@ var bdy = $('body'),
                     callback();
             });
         },
-        lazyLoad: function (o, callback) {
-            o = o || {};
-            var _t = this,
-                target = o['target'] || '.lazy',
-                container = o['container'] || window,
-                ID = $(o['ID']).find(target);
-
-            if (_t.detectEl(ID))
-                ID
-                    .lazyload({
-                        effect: 'fadeIn',
-                        container: container,
-                        load: function () {
-                            $(this)
-                                .removeClass('lazy')
-                                .addClass('loaded');
-                        }
-                    });
-        },
         unVeil: function (o) {
             o = o || {};
             var _t = this,
@@ -207,6 +188,51 @@ var bdy = $('body'),
             if (o1.x < o2.x + o2.width && o1.x + o1.width > o2.x && o1.y < o2.y + o2.height && o1.y + o1.height > o2.y)
                 b = true;
             return b;
+        },
+        lazyLoad: function (o) {
+            o = o || {};
+            var ID = o['ID'],
+                cls = 'image-loaded',
+                customCls = ID.attr('data-cls') || '',
+                src = ID.attr('data-background') || '';
+
+            /* 
+                amaç swiperın sadece desktopta veya mobilde çalıştığı durumların tersi durumlarda swiperı tetiklemek
+            */    
+            if( ID.hasClass('lazy-swiper') ) return false; // sadece swiper tetiklesin
+            if( ID.hasClass('lazy-mobi-swiper') && !uty.visibleControl() ) return false; // ya swiper tetiklesin ya da sadece desktopda tetiklensin
+            if( ID.hasClass('lazy-desktop-swiper') && uty.visibleControl() ) return false; // ya swiper tetiklesin ya da sadece mobilde tetiklensin
+
+            if (ID.hasClass(cls)) return false;
+
+            if (src != '')
+                ID.css('background-image', 'url("' + src + '")');
+
+            src = ID.attr('data-image-src') || ID.attr('data-original') || '';
+            if (src != '')
+                ID.attr('src', src);
+
+            if (ID.hasClass('lazy-picture'))
+                ID.attr('media', '(max-width:0)').removeClass('lazy-picture');
+
+            ID.addClass(cls).addClass(customCls);
+        },
+        lazyImage: function (o) {
+            /* 
+                data-image-src
+                data-background
+                lazy-picture
+            */
+            o = o || {};
+            var _t = this,
+                ID = o['ID'],
+                img = ID.find('[data-image-src], [data-background], .lazy-picture');
+            
+            if (uty.detectEl(img))
+                img
+                    .each(function () {
+                        _t.lazyLoad({ ID: $(this) });
+                    });
         },
         Cookies: function (o) {
             var typ = o['typ'] || '', name = o['name'] || '';
@@ -387,7 +413,7 @@ var bdy = $('body'),
         */
         lazyLoad: {
             el: {
-                con: '[data-background]:not("image-loaded"), [data-image-src]:not("image-loaded")',
+                con: '[data-background]:visible:not(".image-loaded"):not(".lazy-swiper"), [data-image-src]:visible:not(".image-loaded"):not(".lazy-swiper"), .lazy-picture:visible:not(".image-loaded"):not(".lazy-swiper")',
             },
             cls: { active: 'ems-lazy-load-active' },
             set: function (ID) {
@@ -826,7 +852,7 @@ var bdy = $('body'),
             var _t = this;
             _t.swiper.adjust();
         },
-        onScroll: function(){
+        onScroll: function () {
             var _t = this;
             _t.lazyLoad.adjust();
             _t.systemWidget.adjust();
@@ -891,7 +917,9 @@ var bdy = $('body'),
 
         bdyClicked: function () {
             $('body, html').bind('click touchstart', function (e) {
-
+                var m = $('.mobi-dropdown');
+                if (!m.is(e.target) && m.has(e.target).length === 0)
+                    m.removeClass('opened');
             });
         },
 
@@ -938,6 +966,7 @@ var bdy = $('body'),
         events.init();
     };
 
-doc.ready(function(){
-    initialize();
-});
+win
+    .load(function () {
+        initialize();
+    });

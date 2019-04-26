@@ -323,7 +323,7 @@ var footerAnimation = {
         var _t = this,
             target = $(_t.el.target);
         if (uty.detectEl(target)) {
-            var _max = 75, // max büyüyeceği miktar
+            var _max = 60, // max büyüyeceği miktar
                 _shift = 100,
                 s = wst + ht,
                 targetHeight = target.height() - _shift,
@@ -373,7 +373,7 @@ var footerAnimation = {
 (function () {
     var con = $('.mobi-dropdown'),
         slc = con.find('.selected'),
-        hdr = con.find('> span'),
+        hdr = con.find('> .mobi-dropdown-header'),
         cls = 'opened';
 
     if (uty.detectEl(slc))
@@ -404,6 +404,54 @@ var footerAnimation = {
                     val = uty.trimText(ths.val() || '');
                 if (val == '')
                     con.removeClass(cls);
+            });
+}());
+
+
+/* 
+    ön bilgilendirme formu
+*/
+(function () {
+    var elm = $('.tableTitleSiparisOnBilgilendirmeForm'),
+        cls = {
+            form1Ready: 'ems-form1-ready',
+            form1Animate: 'ems-form1-animate',
+
+            form2Ready: 'ems-form2-ready',
+            form2Animate: 'ems-form2-animate'
+        };
+
+    if (uty.detectEl(elm))
+        elm
+            .bind('click', function () {
+                if (bdy.hasClass(cls['form1Ready']))
+                    uty.cssClass({ 'ID': 'body', 'delay': 300, 'type': 'remove', 'cls': [cls['form1Animate'], cls['form1Ready']] });
+                else
+                    uty.cssClass({ 'ID': 'body', 'delay': 100, 'type': 'add', 'cls': [cls['form1Ready'], cls['form1Animate']] });
+            });
+
+    elm = $('.tableTitleSiparisOnaySatisSozlesme');
+    if (uty.detectEl(elm))
+        elm
+            .bind('click', function () {
+                if (bdy.hasClass(cls['form2Ready']))
+                    uty.cssClass({ 'ID': 'body', 'delay': 300, 'type': 'remove', 'cls': [cls['form2Animate'], cls['form2Ready']] });
+                else
+                    uty.cssClass({ 'ID': 'body', 'delay': 100, 'type': 'add', 'cls': [cls['form2Ready'], cls['form2Animate']] });
+            });
+
+    elm = $('.onBilgilendirmeFormMetin .agreement-close');
+    if (uty.detectEl(elm))
+        elm
+            .bind('click', function () {
+                uty.cssClass({ 'ID': 'body', 'delay': 300, 'type': 'remove', 'cls': [cls['form1Animate'], cls['form1Ready']] });
+            });
+
+    elm = $('.siparisOnaySozlesmeMetin .agreement-close');
+    if (uty.detectEl(elm))
+        elm
+            .bind('click', function () {
+                uty.cssClass({ 'ID': 'body', 'delay': 300, 'type': 'remove', 'cls': [cls['form2Animate'], cls['form2Ready']] });
             });
 }());
 
@@ -482,6 +530,8 @@ function onListLoaded(o) {
         plugin.listSort.init();
         plugin.viewer.init();
         plugin.catSwiper.init();
+
+        $("img.lazyload").unveil();
     }
 }
 stage.addEventListener("CustomEvent", [{ type: "LIST_LOADED", handler: "onListLoaded" }]);
