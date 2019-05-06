@@ -108,6 +108,9 @@ form: [
 # Plugins
 ### Lazy Load
 ```HTML
+<!-- 
+    NOT: lazyload tetiklenmesi için elementler gizli olmamalı yani ekranda gözükenler üzerinde işe yarayacak. Display: none olanlarda işe yaramayacak. 
+-->
 
 <!-- 
     picture tag kullanılmak isteniyorsa 
