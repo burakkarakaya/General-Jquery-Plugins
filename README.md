@@ -106,6 +106,27 @@ form: [
 ```
 
 # Plugins
+### Lazy Load
+```HTML
+
+<!-- 
+    picture tag kullanılmak isteniyorsa 
+    NOT: burada  <source class="lazy-picture" media="(max-width:5000px)" srcset="/images/frontend/placeholder.gif"></source> çok önemli.
+-->
+<picture>
+    <source class="lazy-picture" media="(max-width:5000px)" srcset="/images/frontend/placeholder.gif"></source>
+    <source srcset="/upload/banner/menu/koleksiyon-adidas.jpg 1x, /upload/banner/menu/koleksiyon-adidas.jpg 2x" media="(max-width: 960px)"></source>
+    <source srcset="/upload/banner/menu/koleksiyon-adidas.jpg" media="(min-width: 961px)"></source>
+    <img src="/upload/banner/menu/koleksiyon-adidas.jpg" /> 
+</picture>
+
+<!-- image tag kullanılmak isteniyorsa -->
+<img class="img" data-image-src="/upload/banner/menu/kadin.png" />
+
+<!-- background kullanılacaksa -->
+<div data-background="/images/frontend/design-uniform-bg.png"></div>
+
+```
 
 ### Menu
 ```HTML
