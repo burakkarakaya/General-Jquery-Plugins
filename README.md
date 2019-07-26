@@ -124,7 +124,7 @@ form: [
 </picture>
 
 <!-- image tag kullanılmak isteniyorsa -->
-<img class="img" data-image-src="/upload/banner/menu/kadin.png" />
+<img data-image-src="/upload/banner/menu/kadin.png" />
 
 <!-- background kullanılacaksa -->
 <div data-background="/images/frontend/design-uniform-bg.png"></div>
