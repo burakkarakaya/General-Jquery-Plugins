@@ -213,7 +213,7 @@ ex: https://kartalyuvasi.proj-e.com/admin/moduls/export/exportclient_guncelle.as
 
 ```
 
-#### 8- Lazyload video yapısı için burada önemli olan videonun ilk anda yüklenmemesi için preload="none" ve iosta videonun olduğu yerde gözükmesi için playsinline="true" parametrelerinin eklenmesi gerekir. Ayrıca autoplay özelliğini eklenmemesi lazım.
+#### 8- Lazyload video yapısı için burada önemli olan class="is-scrolling" eklenmesi ve videonun ilk anda yüklenmemesi için preload="none", iosta videonun olduğu yerde gözükmesi için playsinline="true" parametrelerinin eklenmesi gerekir. Ayrıca autoplay özelliğini eklenmemesi lazım.
 
 ```HTML
 <video 
