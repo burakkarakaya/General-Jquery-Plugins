@@ -44,12 +44,14 @@ genel.css
 2- PWA için manifest.json hazılanmalı
 
 a. Dil dosya yönetimi - site bilgilerine eklenecek kod.
+
 ex: https://kartalyuvasi.proj-e.com/admin/moduls/mlng/lngFile_guncelle.aspx?ID=868&
 ```HTML
 <link rel="manifest" href="/manifest.json">
 ```
 
 b. E-MOS script içerisine eklenecek örnek kod
+
 ex: https://kartalyuvasi.proj-e.com/admin/moduls/export/exportclient_guncelle.aspx?ID=3335&
 
 ```JSON
