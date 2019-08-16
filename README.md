@@ -148,6 +148,26 @@ self.addEventListener("fetch", function(event) {
   });
 ```
 
+#### 4- Özel fontlar yüklenirken optimizasyon yapılmalı bunun içinde font-display özelliği kullanılmalıdır.
+
+ex: https://fatihhayrioglu.com/font-display-ozelligi/
+
+
+```CSS
+@font-face {
+  font-family: "din";
+  src: url(/styles/fonts/din/DINPro-Bold.woff2) format("woff2"), url(/styles/fonts/din/DINPro-Bold.woff) format("woff"), url(/styles/fonts/din/DINPro-Bold.ttf) format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+.btnDefault{ font-family: din, arial, sans-serif; }
+
+```
+
+
 # Management
 
 ### Multi Languages
