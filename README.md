@@ -252,11 +252,11 @@ data-uri paremetresinde kullanabileceğimiz user controller.
 
 /usercontrols/kutu/ajxUrunTab.aspx?lang={{lang}}&tip=yeniurun&ps=10&rp=1&tur=sepetli
 
-/usercontrols/kutu/ajxUrunTab.aspx?lang={{lang}}&kat={{cat}}&tip=onecikan&ps=100&rp=1&tur=sepetli
+/usercontrols/kutu/ajxUrunTab.aspx?lang={{lang}}&kat={{prdCat}}&tip=onecikan&ps=100&rp=1&tur=sepetli
 
 /usercontrols/urunDetay/ascSonGezilenUrun_ajx.aspx?lang={{lang}}&listeTuru=sepetli&urunSayisi=10&repeatColumns=1&resimTipi=thumb
 
-/usercontrols/urunDetay/ajxIlgiliUrun.aspx?lang={{lang}}&urn={{code}}&ps=100&rp=1
+/usercontrols/urunDetay/ajxIlgiliUrun.aspx?lang={{lang}}&urn={{prdCode}}&ps=100&rp=1
 
 /usercontrols/kutu/ajxUrunTab.aspx?lang={{lang}}&tip=seciliurun&ps=100&rp=1&ukods={{urn}}
 
@@ -264,7 +264,9 @@ NOT:
 
 {{lang}}: kısmı aktif dilin değerini alıyor. 
 
-{{cat}}: <div data-cat="24666" class="system-widget widget swiper-container scroller-trigger" data-uri="/urun_liste.aspx?kat={{cat}}&lang={{lang}}&ps=8"></div> burada div üzerinde data-cat attribute görürse onun değerini alır bulamazsa bu sefer urlString de kat geçiyorsa onun değerini alır. Yani ürün listede data-cat eklemeyerek sadece urlStringden okuyarak dinamik bir şekilde widgetı tetikletebilirsiniz. Ürün detay, ana sayfa gibi yerlerde data-cat ile belirlediğiniz kategorilerden ürün çekmesini sağlayabilirsiniz.
+{{prdCat}}: <div data-cat="24666" class="system-widget widget swiper-container scroller-trigger" data-uri="/urun_liste.aspx?kat={{prdCat}}&lang={{lang}}&ps=8"></div> burada div üzerinde data-cat attribute görürse onun değerini alır bulamazsa bu sefer urlString de kat geçiyorsa onun değerini alır. Yani ürün listede data-cat eklemeyerek sadece urlStringden okuyarak dinamik bir şekilde widgetı tetikletebilirsiniz. Ürün detay, ana sayfa gibi yerlerde data-cat ile belirlediğiniz kategorilerden ürün çekmesini sağlayabilirsiniz.
+
+{{prdCode}}: <div data-code="889977" class="system-widget widget swiper-container scroller-trigger" data-uri="/usercontrols/urunDetay/ajxIlgiliUrun.aspx?lang={{lang}}&urn={{prdCode}}&ps=100&rp=1"></div> burada div üzerinde data-code attribute görürse onun değerini alır bulamazsa ve ürün detaydaysa hdnURN_KOD değerini alır.
 
 ```
 
