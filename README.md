@@ -78,6 +78,75 @@ ex: https://kartalyuvasi.proj-e.com/admin/moduls/export/exportclient_guncelle.as
 }
 ```
 
+3. PWA için Service Worker eklenmeli
+
+a. Dil dosya yönetimi - site bilgilerine eklenecek kod.
+
+ex: https://kartalyuvasi.proj-e.com/admin/moduls/mlng/lngFile_guncelle.aspx?ID=868&
+
+```HTML
+<script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js').then(function(registration) {
+          console.log('Registration was successful');
+        }, function(err) {
+            console.log('registration failed :(');
+        });
+      });
+    }
+</script>
+```
+b. E-MOS script içerisine eklenecek örnek kod
+
+ex: https://kartalyuvasi.proj-e.com/admin/moduls/export/exportclient_guncelle.aspx?ID=3334&
+
+```JS
+var CACHE_NAME = 'kartal-yuvasi-v1.2';
+var urlsToCache = [
+  '/',
+  '/styles/fonts/fira/FiraSans-Regular.woff2',
+  '/styles/fonts/din/DINPro-Light.woff2',
+  '/styles/fonts/din/DINPro-Bold.woff2',
+  '/styles/fonts/din/DINPro-CondensedRegular.woff2',
+  '/styles/fonts/din/DINPro-CondensedBold.woff2',
+  '/styles/js/libs/TweenMax.min.js',
+  '/styles/js/libs/ScrollMagic.js',
+  '/styles/js/libs/animation.gsap.js',
+  '/styles/js/libs/debug.addIndicators.js',
+  '/userControls/kutu/search_suggest.min.js',
+  '/styles/js/uniform.js',
+  '/styles/genel.css'
+];
+
+self.addEventListener("install", function(event) {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(function(cache) {
+      return cache.addAll(urlsToCache);
+    })
+  );
+});
+self.addEventListener('activate', function(event) {
+    event.waitUntil(
+      caches.keys().then(function(cacheNames) {
+        return Promise.all(
+          cacheNames.map(function(cacheName) {
+            if (cacheName != CACHE_NAME) {
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      })
+    );
+  });
+self.addEventListener("fetch", function(event) {
+    event.respondWith(
+      fetch(event.request).catch(function() {
+        return caches.match(event.request);
+      })
+    );
+  });
+```
 
 # Management
 
