@@ -78,8 +78,7 @@ ex: https://kartalyuvasi.proj-e.com/admin/moduls/export/exportclient_guncelle.as
 }
 ```
 
-
-3. PWA için Service Worker eklenmeli
+3- PWA için Service Worker eklenmeli
 
 a. Dil dosya yönetimi - site bilgilerine eklenecek kod.
 
