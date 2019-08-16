@@ -175,6 +175,34 @@ ex: https://kartalyuvasi.proj-e.com/admin/moduls/export/exportclient_guncelle.as
 
 ex: https://kartalyuvasi.proj-e.com/admin/moduls/export/exportclient_guncelle.aspx?ID=3346&
 
+#### 7- Lazyload yapısı için kullanılması gereken html yapıları
+
+```HTML
+<!-- 
+    NOT: lazyload tetiklenmesi için elementler gizli olmamalı yani ekranda gözükenler üzerinde işe yarayacak. Display: none olanlarda işe yaramayacak. 
+-->
+
+<!-- 
+    picture tag kullanılmak isteniyorsa 
+    NOT: burada  <source class="lazy-picture" media="(max-width:5000px)" srcset="/images/frontend/placeholder.gif"></source> çok önemli.
+-->
+<picture>
+    <source class="lazy-picture" media="(max-width:5000px)" srcset="/images/frontend/placeholder.gif"></source>
+    <source srcset="/upload/banner/menu/koleksiyon-adidas.jpg 1x, /upload/banner/menu/koleksiyon-adidas.jpg 2x" media="(max-width: 960px)"></source>
+    <source srcset="/upload/banner/menu/koleksiyon-adidas.jpg" media="(min-width: 961px)"></source>
+    <img src="/upload/banner/menu/koleksiyon-adidas.jpg" /> 
+</picture>
+
+<!-- image tag kullanılmak isteniyorsa -->
+<img data-image-src="/upload/banner/menu/kadin.png" />
+
+<!-- background kullanılacaksa -->
+<div data-background="/images/frontend/design-uniform-bg.png"></div>
+
+```
+
+
+
 # Management
 
 ### Multi Languages
