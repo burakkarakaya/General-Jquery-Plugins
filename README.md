@@ -1,6 +1,6 @@
 # Page Speed Kuralları
 
-1- JS ve Css sıkıştırmaya konulmalı Burada dikkat edilmesi gereken ilk anda yüklenmesi gerekli olan jsler senkron, kalan jsler asenkron seçilmeli. 
+#### 1- JS ve Css sıkıştırmaya konulmalı Burada dikkat edilmesi gereken ilk anda yüklenmesi gerekli olan jsler senkron, kalan jsler asenkron seçilmeli. 
 
 ex: https://kartalyuvasi.proj-e.com/admin/moduls/scriptManager/scriptFileManager_liste.aspx?ps=80
 
@@ -41,7 +41,7 @@ custom.js
 genel.css
 ```
 
-2- PWA için manifest.json hazılanmalı
+#### 2- PWA için manifest.json hazılanmalı
 
 a. Dil dosya yönetimi - site bilgilerine eklenecek kod.
 
@@ -78,7 +78,7 @@ ex: https://kartalyuvasi.proj-e.com/admin/moduls/export/exportclient_guncelle.as
 }
 ```
 
-3- PWA için Service Worker eklenmeli
+#### 3- PWA için Service Worker eklenmeli
 
 a. Dil dosya yönetimi - site bilgilerine eklenecek kod.
 
