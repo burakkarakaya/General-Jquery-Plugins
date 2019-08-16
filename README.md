@@ -1,15 +1,24 @@
-#Page Speed Kuralları
+# Page Speed Kuralları
 
-1- JS ve Css sıkıştırmaya konulmalı Burada dikkat edilmesi gereken ilk anda yüklenmesi gerekli olan jsler senkron seçilmesi, kalan jsler asenkron seçilmeli. ex: https://kartalyuvasi.proj-e.com/admin/moduls/scriptManager/scriptFileManager_liste.aspx?ps=80
+1- JS ve Css sıkıştırmaya konulmalı Burada dikkat edilmesi gereken ilk anda yüklenmesi gerekli olan jsler senkron seçilmesi, kalan jsler asenkron seçilmeli. 
 
-###### Senkron
+ex: https://kartalyuvasi.proj-e.com/admin/moduls/scriptManager/scriptFileManager_liste.aspx?ps=80
+
+```HTML
+/*
+    SENKRON OLACAKLAR
+*/
 jquery-base.min.js
 ascMustScripts.js
 customEvents-99.1.0.min.js
 unveil-lazyload.js
 emos.css
+```
 
-###### Asenkron
+```HTML
+/*
+    ASENKRON OLACAKLAR
+*/
 jquery.cookie.js
 cartScripts.js
 popupDimensions.js
@@ -28,7 +37,7 @@ config.js
 allScripts.js
 custom.js
 genel.css
-
+```
 
 # Management
 
