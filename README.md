@@ -213,6 +213,19 @@ ex: https://kartalyuvasi.proj-e.com/admin/moduls/export/exportclient_guncelle.as
 
 ```
 
+#### 8- Lazyload video yapısı için burada önemli olan videonun ilk anda yüklenmemesi için preload="none" ve iosta videonun olduğu yerde gözükmesi için playsinline="true" parametrelerinin eklenmesi gerekir. Ayrıca autoplay özelliğini eklenmemesi lazım.
+
+```HTML
+<video 
+class="is-scrolling" 
+src="//player.vimeo.com/external/348070064.sd.mp4?s=fd02b2e7c50467ca51268998272bb0532592b543&profile_id=165"
+preload="none" 
+muted="true" 
+playsinline="true" 
+loop="true">
+</video>
+```
+
 
 
 # Management
