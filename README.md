@@ -226,6 +226,31 @@ loop="true">
 </video>
 ```
 
+```HTML
+
+<!--
+    NOT: Video swiper içerisinde kullanılacaksa aşağıdaki gibi bir html yapısında olması gerekmektedir. İlgili slide aktif olduğu zaman video otomatikman oynamaya başlayacaktır.
+-->
+
+<li class="swiper-slide">
+    <div class="slide-video">
+     <video 
+            src="https://player.vimeo.com/external/347762525.hd.mp4?s=c6e7f2ca6a1a1baa8bbda4fcf71124f32fa2520b&profile_id=175"
+            poster="/UPLOAD/BANNERS/homepage-slider/bt-design-dion-video-cover.png" 
+            preload="none" 
+            autobuffer="autobuffer" 
+            preload="none" 
+            muted="true" 
+            playsinline="true" 
+            loop="true" 
+            class="video-player">
+        </video>
+    </div>
+    <a href="javascript:void(0);" class="slide-video-btn"></a>
+</li>
+
+```
+
 #### 9- System widgetları ilk anda yüklenmemesi scroll ettikten sonra yüklenmeleri için system widget "scroller-trigger" classı eklenmeli
 
 ``` HTML
