@@ -167,6 +167,13 @@ ex: https://fatihhayrioglu.com/font-display-ozelligi/
 
 ```
 
+#### 5- CSS in asenkron yüklendiği durumlarda sitenin genel kapsayıcısı, header kısmı için appshell.css hazırlanmalı ve kaynak koda eklenmelidir.
+
+ex: https://kartalyuvasi.proj-e.com/admin/moduls/export/exportclient_guncelle.aspx?ID=3323&
+
+#### 6- CSS ve JS asenkron olduğu durumlarda asenkronu desteklemeyen browserlarda LoadCSS.js kaynak koda gömülmeli.
+
+ex: https://kartalyuvasi.proj-e.com/admin/moduls/export/exportclient_guncelle.aspx?ID=3346&
 
 # Management
 
