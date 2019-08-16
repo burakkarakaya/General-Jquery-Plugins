@@ -8,6 +8,7 @@ ex: https://kartalyuvasi.proj-e.com/admin/moduls/scriptManager/scriptFileManager
 /*
     SENKRON OLACAKLAR
 */
+
 jquery-base.min.js
 ascMustScripts.js
 customEvents-99.1.0.min.js
@@ -19,6 +20,7 @@ emos.css
 /*
     ASENKRON OLACAKLAR
 */
+
 jquery.cookie.js
 cartScripts.js
 popupDimensions.js
