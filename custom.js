@@ -43,6 +43,22 @@ var miniCart = {
 
 
         _t.append();
+        _t.custom();
+    },
+    custom: function () {
+        /* 
+            mini sepet ile alakalı özel durumları burada belirtiriz
+        */
+        var _t = this,
+            elm = $('.kutuSepet_icerik .cart-prd-discount');
+        if (uty.detectEl(elm))
+            elm
+                .each(function () {
+                    var ths = $(this),
+                        k = (ths.find('.amount').text() || '').replace(/\%/g, '');
+                    if (k != '' && k != 0)
+                        ths.parents('.ems-grid-row').addClass('ems-show-discount');
+                });
     },
     append: function () {
         management.append.init([
@@ -60,6 +76,9 @@ function cartAmound() {
 }
 function cartAdd() {
     miniCart.add();
+
+    if (uty.detectEl($('.ems-page-order')))
+        window.location.href = window.location.href;
 }
 cartAmound();
 
@@ -106,6 +125,13 @@ var login = {
 
         }
 
+        /* 
+            mini login error
+        */
+        setTimeout(function () {
+            if (uty.detectEl($(_t.el.errLogin)) && !uty.detectEl($(_t.el.tab)))
+                uty.cssClass({ 'ID': 'body', 'delay': 100, 'type': 'add', 'cls': ['mini-user-ready', 'mini-user-animate'] });
+        }, 1000);
     },
     addEvent: function () {
 
@@ -119,7 +145,12 @@ var login = {
 
 login.init();
 
-function onUyeLogin() { }
+function onUyeLogin() {
+    var k = $('[id$="imgUYE_PROFILFOTO"]').attr('src') || '',
+        target = $('.member-top-info-media > img');
+    if (k != '' && uty.detectEl(target))
+        target.attr('src', k);
+}
 onUyeLogin();
 stage.addEventListener("CustomEvent", [{ type: "uyeLogin", handler: "onUyeLogin" }]);
 
@@ -202,6 +233,101 @@ var mobiMenu = {
 };
 
 mobiMenu.init();
+
+/* 
+    kredi kart
+*/
+var crediCart = {
+    el: {
+        wrp: '.ems-card-wrapper',
+        container: '.card-wrapper',
+        target: '.ems-pay-type',
+        card: '.jp-card-container .jp-card',
+
+        inputName: '[id$="txtKKARTISIM"]',
+        inputCVC: '[id$="txtKKARTCVCNO"]',
+        inputNumber: '[id$="txtKKARTNO"]',
+        inputExpiry: '[id$="drpKSA_SPR_ID"], [id$="drpKSY_SPR_ID"]',
+
+        targetInputName: '[id="card-name"]',
+        targetInputCVC: '[id="card-cvc"]',
+        targetInputNumber: '[id="card-number"]',
+        targetInputExpiry: '[id="card-expiry"]'
+    },
+    cls: { flipped: 'jp-card-flipped' },
+    template: '<div class="ems-card-wrapper"><div class="card-wrapper"></div><div class="ems-hidden"><input type="text" name="number" id="card-number"><input type="text" name="first-name" id="card-name"/><input type="text" name="expiry" id="card-expiry"/><input type="text" name="cvc" id="card-cvc"/></div></div>',
+    set: function (o) {
+        var _t = this,
+            ID = o['ID'],
+            target = o['target'],
+            evt = document.createEvent('HTMLEvents');
+        evt.initEvent('keyup', false, true);
+
+        setTimeout(function () {
+            target
+                .val(o['val'] || ID.val() || '')
+                .get(0).dispatchEvent(evt);
+        }, 1);
+    },
+    addEvent: function () {
+        var _t = this;
+
+        $(_t.el.inputName)
+            .bind('keyup', function () {
+                _t.set({ ID: $(this), target: $(_t.el.targetInputName) });
+            });
+
+        $(_t.el.inputCVC)
+            .bind('keyup', function () {
+                _t.set({ ID: $(this), target: $(_t.el.targetInputCVC) });
+            })
+            .bind('focus', function () { $(_t.el.card).addClass(_t.cls['flipped']); })
+            .bind('blur', function () { $(_t.el.card).removeClass(_t.cls['flipped']); });
+
+        $(_t.el.inputNumber)
+            .bind('keyup', function () {
+                _t.set({ ID: $(this), target: $(_t.el.targetInputNumber) });
+            });
+
+        $(_t.el.inputExpiry)
+            .bind('change', function () {
+                _t.set({ val: $(_t.el.inputExpiry).map(function () { return $(this).val() }).get().join(' / '), target: $(_t.el.targetInputExpiry) });
+            })
+            .change();
+    },
+    initPlugins: function () {
+        var _t = this;
+        $.getScript('/styles/js/card.js', function () {
+            $(_t.el.wrp).card({
+                container: _t.el.container,
+                formSelectors: {
+                    numberInput: _t.el.targetInputNumber,
+                    expiryInput: _t.el.targetInputExpiry,
+                    cvcInput: _t.el.targetInputCVC,
+                    nameInput: _t.el.targetInputName
+                },
+                placeholders: {
+                    name: translation['crediCartName'] || 'ADINIZ SOYADINIZ'
+                }
+            });
+            _t.addEvent();
+        });
+    },
+    add: function () {
+        var _t = this;
+        $('.tableOdemeBilgiKrediKarti').before(_t.template);
+    },
+    init: function () {
+        var _t = this;
+        if (uty.detectEl($(_t.el.target)) && uty.detectEl($(_t.el.inputName))) {
+            _t.add();
+            _t.initPlugins();
+        }
+    }
+};
+
+crediCart.init();
+
 
 /* 
     mobilde doğum tarihi alanı kapat butonu
@@ -304,7 +430,7 @@ customBrandCrump.init();
 
 ////////////////////////////////// <PAGE DETAIL>
 (function () {
-    var elm = $('.dropdown-trigger');
+    var elm = $('.ems-page-product-detail .dropdown-trigger');
     if (uty.detectEl(elm))
         elm.get(0).click();
 }());
@@ -323,7 +449,7 @@ var footerAnimation = {
         var _t = this,
             target = $(_t.el.target);
         if (uty.detectEl(target)) {
-            var _max = 60, // max büyüyeceği miktar
+            var _max = 20, // max büyüyeceği miktar
                 _shift = 100,
                 s = wst + ht,
                 targetHeight = target.height() - _shift,
@@ -367,9 +493,8 @@ var footerAnimation = {
 }());
 
 /*  
-    mobi dropdown
+    mobi dropdown üyelik
 */
-
 (function () {
     var con = $('.mobi-dropdown'),
         slc = con.find('.selected'),
@@ -383,6 +508,41 @@ var footerAnimation = {
                 $(this).parent().toggleClass(cls);
             });
 
+}());
+
+/*  
+    mobi dropdown kurumsal
+*/
+(function () {
+    var con = $('.kutuSolMenuTree .mobi-dropdown');
+
+    if (uty.detectEl(con)) {
+        con.prepend('<div class="mobi-dropdown-header ems-flex ems-flex-middle obj-mobile"></div>');
+
+        var slc = con.find('.act'),
+            hdr = con.find('> .mobi-dropdown-header'),
+            cls = 'opened';
+
+        if (uty.detectEl(slc))
+            hdr
+                .html(slc.find('a').html() || '')
+                .bind('click', function () {
+                    $(this).parent().toggleClass(cls);
+                });
+    }
+}());
+
+/*  
+    kur modulu
+*/
+(function () {
+    var con = $('.mini-exchange-sub');
+
+    if (uty.detectEl(con)) {
+        management.append.set({ 'main': '.mini-exchange-sub > ul', 'target': '.inner-mini-exchange-sub .ems-form-obj', 'add': 'append', 'clone': true });
+        uty.convertHtmlDropdown({ ID: '.inner-mini-exchange-sub .ems-form-obj' });
+        uty.convertHtmlDropdown({ ID: '.inner-mini-lang-sub .ems-form-obj' });
+    }
 }());
 
 /* 
@@ -455,6 +615,280 @@ var footerAnimation = {
             });
 }());
 
+/* 
+
+    beden rehberi
+
+*/
+
+(function () {
+    var btn = $('.open-size-guide'),
+        cls = {
+            ready: 'mini-size-guide-ready',
+            animate: 'mini-size-guide-animate'
+        };
+    if (uty.detectEl(btn)) {
+        btn
+            .unbind('click')
+            .bind('click', function () {
+                if (bdy.hasClass(cls['ready']))
+                    uty.cssClass({ 'ID': 'body', 'delay': 300, 'type': 'remove', 'cls': [cls['animate'], cls['ready']] });
+                else
+                    uty.cssClass({ 'ID': 'body', 'delay': 100, 'type': 'add', 'cls': [cls['ready'], cls['animate']] });
+            });
+
+        $('.mini-size-guide-overlay, .mini-size-guide-sub .sub-close')
+            .bind('click', function () {
+                uty.cssClass({ 'ID': 'body', 'delay': 300, 'type': 'remove', 'cls': [cls['animate'], cls['ready']] });
+            });
+    }
+}());
+
+/* 
+    ürün detay ürün adeti dropdown
+*/
+function counterOption(o) {
+    o = o || {};
+    var ID = o['ID'],
+        val = ID.val() || 1,
+        total = o['total'] || 20,
+        lbl = (translation['lblURN_ADET'] || 'ADET: {{val}}'),
+        temp = {
+            wrp: '<select onchange="var ths = $( this ), input = ths.parents(\'.sStylerWrp_select\').siblings(\'input\'); input.val( ths.val() );" class="counter-drp dropdown">{{option}}</select>',
+            option: '<option value="{{val}}">{{text}}</option>'
+        },
+        htm = '';
+
+    for (var i = 1; i <= total; ++i)
+        htm += temp['option'].replace(/{{val}}/g, i).replace(/{{text}}/g, (lbl.replace(/{{val}}/g, i)));
+
+    if (val > total)
+        htm += temp['option'].replace(/{{val}}/g, val).replace(/{{text}}/g, (lbl.replace(/{{val}}/g, val)));
+
+    htm = temp['wrp'].replace(/{{option}}/g, htm);
+
+    ID.before(htm);
+
+    ID = ID.siblings('.counter-drp');
+    ID.val(val);
+    ID.iStyler({
+        wrapper: true,
+        passiveIco: '<svg class="icon icon-select"><use xlink:href="#icon-select"></use></svg>',
+        activeIco: '<svg class="icon icon-select-active"><use xlink:href="#icon-select-active"></use></svg>',
+        customClass: ''
+    });
+}
+
+(function () {
+    var elm = $('.urunDetay [id$="txtURN_ADET"]');
+    if (uty.detectEl(elm))
+        elm
+            .each(function () {
+                counterOption({ ID: $(this) });
+            });
+}());
+
+/* 
+    sıkça sorulan sorular
+*/
+(function () {
+    var elm = $('.icerikTemplateListeItem'),
+        cls = 'selected';
+    if (uty.detectEl(elm))
+        elm
+            .find('.ems-tab-inner-header')
+            .bind('click', function () {
+                var ths = $(this),
+                    prts = ths.parents('.icerikTemplateListeItem').eq(0);
+                if (prts.hasClass(cls))
+                    elm.removeClass(cls);
+                else {
+                    elm.removeClass(cls);
+                    prts.addClass(cls);
+                }
+            });
+}());
+
+/* 
+    header kur/dil
+*/
+(function () {
+    var elm = $('.mini-lang');
+    if (uty.detectEl(elm))
+        elm
+            .each(function () {
+                var ths = $(this),
+                    lng = ths.find('.inner-mini-lang-sub a.selected').html() || '',
+                    currency = ths.find('.inner-mini-exchange-sub .selected').text() || '';
+
+                //ths.find('.sel-lang').html(lng);
+                ths.find('.sel-currency').add($('.ems-sub-menu .sel-currency')).html(currency);
+            });
+}());
+
+/*  
+    favorilerim beden seçimi
+*/
+(function () {
+    var elm = $('.ems-grid-table-favorite');
+    if (uty.detectEl(elm))
+        elm
+            .find('.urunListe_secenek1')
+            .addClass('dropdown')
+            .find('.dropdown-trigger')
+            .addClass('dropdown-header')
+            .bind('click', function () {
+                var ths = $(this);
+                ths.parents('.dropdown').eq(0).toggleClass('opened');
+            })
+}());
+
+/*
+    video player
+*/
+(function () {
+    var elm = $('.ems-video-player'),
+        cls = { play: 'is-play' };
+    if (uty.detectEl(elm))
+        elm
+            .find('.i-play')
+            .unbind('click')
+            .bind('click', function () {
+                var ths = $(this),
+                    prt = ths.parents('.ems-video-player');
+
+                if (prt.hasClass(cls['play']))
+                    prt.removeClass(cls['play']).find('video').get(0).pause();
+                else
+                    prt.addClass(cls['play']).find('video').get(0).play();
+            });
+}());
+
+/* 
+    hediye çeki
+*/
+(function () {
+    var elm = $('.giftCardList li a');
+    if (uty.detectEl(elm))
+        elm
+            .bind('click', function () {
+                $('.ems-page-gift-card-grid .card-price').html(($(this).html() || '').trim());
+            })
+}());
+
+/* 
+    counter
+*/
+(function () {
+    var elm = $('[data-countdown]'),
+        control = function () {
+            setTimeout(function () {
+                var el = $('.countdown-container');
+                if (uty.detectEl(el))
+                    el
+                        .each(function () {
+                            var ths = $(this),
+                                c = ths.find('[data-countdown]'),
+                                k = ths.find('.end-countdown[data-countdown]');
+                            if (c.length == k.length)
+                                ths.addClass('ems-none');
+                        });
+            }, 1000);
+        },
+        counter = function (o) {
+            o = o || {};
+            var ID = o['ID'],
+                time = o['time'],
+                update = function () {
+                    var k = ID.parents('[data-swiper]');
+                    if (uty.detectEl(k)) {
+                        k = k.get(0);
+                        if (typeof k.update !== 'undefined')
+                            k.update();
+                    }
+
+                };
+
+            ID
+                .countdown({
+                    padZeroes: true,
+                    until: time,
+                    alwaysExpire: true,
+                    onExpiry: function () {
+                        ID.parents('[data-countdown]').addClass('end-countdown');
+                        update();
+                    },
+                    onTick: function () {
+                        ID.parents('[data-countdown]').addClass('start-countdown');
+                    }
+                });
+        };
+    if (elm.length > 0) {
+        elm
+            .each(function () {
+                var ths = $(this),
+                    c = (ths.attr('data-countdown') || '').trim(),
+                    d = new Date(c),
+                    cd = ths.find('.countdown');
+                if (uty.detectEl(cd) && c != '')
+                    counter({ ID: cd, time: d });
+            });
+        control();
+    }
+}());
+
+/* 
+    sepet ekstra poşet
+*/
+(function () {
+    var elm = $('.ems-tab-checkbox');
+    if (uty.detectEl(elm))
+        elm
+            .find('.ems-tab-checkbox-header input')
+            .bind('change', function () {
+                var ths = $(this),
+                    prts = ths.parents('.ems-tab-checkbox');
+                setTimeout(function () {
+                    if (ths.is(':checked'))
+                        prts.addClass('opened');
+                    else
+                        prts.removeClass('opened');
+                }, 10);
+            })
+}());
+
+/* 
+    katalog tab
+*/
+(function () {
+    var elm = $('.catalog-tab');
+    if (uty.detectEl(elm))
+        elm
+            .find('.ems-tab-header a')
+            .bind('click', function () {
+                var ths = $(this),
+                    rel = ths.attr('rel') || '',
+                    frm = elm.find('.ems-tab-content [rel="' + rel + '"] iframe');
+
+                if (uty.detectEl(frm) && !frm.hasClass('loaded'))
+                    frm.attr('src', frm.attr('data-src') || '').addClass('loaded');
+            })
+            .eq(0)
+            .click();
+}());
+
+/* 
+    başa dön
+*/
+(function () {
+    var elm = $('.btn-page-top');
+    if (uty.detectEl(elm))
+        elm
+            .bind('click', function (evt) {
+                evt.preventDefault();
+                uty.pageScroll({ scrollTop: 0 });
+            });
+}());
 
 // DISPATCHER
 
@@ -491,8 +925,27 @@ function onSystemWidgetLoaded(o) {
     var ID = o['ID'] || '',
         type = o['type'] || '';
     if (type == 'success') {
-        uty.addSwiperClass(ID)
-        plugin.swiper.set(ID);
+
+        if (ID.hasClass('not-trigger')) {
+            var elm = ID.find('.lazy, .lazy-load, .lazy-back-load, .lazyload, .lazy-swiper, .lazy-mobi-swiper, .lazy-desktop-swiper').removeClass('lazy-swiper lazy-mobi-swiper lazy-desktop-swiper');
+            elm
+                .each(function () {
+                    uty.lazyLoad({ ID: $(this) });
+                });
+        } else {
+            uty.addSwiperClass(ID)
+            plugin.swiper.set(ID);
+        }
+
+        /*
+            sepet sayfası dropdown
+        */
+        var elm = ID.find('[id$="txtURN_ADET"]');
+        if (uty.detectEl(elm))
+            elm
+                .each(function () {
+                    counterOption({ ID: $(this) });
+                });
     }
 }
 stage.addEventListener("CustomEvent", [{ type: "SYSTEM_WIDGET_LOADED", handler: "onSystemWidgetLoaded" }]);
@@ -532,6 +985,31 @@ function onListLoaded(o) {
         plugin.catSwiper.init();
 
         $("img.lazyload").unveil();
+
+        /* 
+            lazy load
+        */
+        plugin.lazyLoad.init();
+
+        /* 
+            swiper
+        */
+        plugin.swiper.init();
+
+        /* 
+            liste sayfası özel durumlar buraya yazılır
+        */
+
+        var elm = $('.ems-page-product-list .category-top-banner');
+        if (uty.detectEl(elm))
+            bdy.addClass('nav-type2');
+        else
+            bdy.removeClass('nav-type2');
+
+        /* 
+            system widget
+        */
+        plugin.systemWidget.init();
     }
 }
 stage.addEventListener("CustomEvent", [{ type: "LIST_LOADED", handler: "onListLoaded" }]);
@@ -547,3 +1025,284 @@ function onSortListClicked(o) {
         plugin.categoryFilter.setURI({ uri: o['uri'] || '' });
 }
 stage.addEventListener("CustomEvent", [{ type: "SORT_LIST_CLICKED", handler: "onSortListClicked" }]);
+
+
+/* 
+    favoriye ekle ve favori group
+*/
+var addToFavorites = {
+    el: {
+        wrp: '.ems-page-product-detail', // favoriye ekleme özelliğinin olacağı 
+        allow: '.ems-page-member-favorites',
+        favBtn: '.btnFavoriEkle',
+        pageDetail: '.ems-page-product-detail',
+
+        pageDetailName: '.ems-prdd-name'
+    },
+    cls: {
+        selected: 'selected',
+        ajx: 'ajx-fav',
+    },
+    data: null,
+    uri: {
+        favGroup: '/popup/popup_favori.aspx?urn={{urn}}&uyrKod={{uyrKod}}&type=favoriGrup&lang={{lang}}',
+        addFavorite: '/WebServices/dataService.aspx/addFavorite',
+        member: '/member-fav-ajx.html'
+    },
+    getUri: function (o) {
+        o = o || {};
+        var _t = this,
+            type = o['type'] || '',
+            uyrCode = o['uyrKod'] || '',
+            prdCode = o['prdCode'] || $('[id$="hdnURN_KOD"]').eq(0).val() || '';
+
+        return _t.uri[type]
+            .replace(/{{lang}}/g, lang)
+            .replace(/{{urn}}/g, prdCode)
+            .replace(/{{uyrKod}}/g, uyrCode);
+    },
+    setFavGroup: function (o) {
+        var _t = this,
+            uyrKod = o['d']['Data']['uyr'] || '';
+        bdy.minusPopup({ type: 'iframe', content: _t.getUri({ type: 'favGroup', uyrKod: uyrKod }), openWith: 'auto', width: 425, height: 550, customClass: 'fav-group-popup' });
+    },
+    setMessage: function (o) {
+        var name = o['name'] || '', typ = o['typ'] || 'add', msg = translation['addFav'] || '{{name}} favorinize eklenmiştir.';
+        if (typ == 'remove')
+            msg = translation['removeFav'] || '{{name}} favorinizden çıkartılmıştır.';
+
+        msg = msg.replace(/{{name}}/g, name);
+
+        if (typ == 'add')
+            toastr.success(msg, '');
+        else
+            toastr.error(msg, '');
+    },
+    clicked: function (k) {
+
+        if (!uty.isLogin()) {
+            window.location.href = '/login.aspx?lang=' + lang;
+            return false;
+        }
+
+        var _t = this,
+            ths = $(k),
+            prt = ths.parents('li').eq(0),
+            obj = {},
+            typ = '',
+            id = ths.attr('data-prd-code') || '',
+            name = uty.trimText(prt.find('.ems-prd-name').text() || '');
+
+        /* 
+            ürün detay özel
+        */
+        if (uty.detectEl($(_t.el.pageDetail)))
+            name = uty.trimText($(_t.el.pageDetailName).text() || '');
+
+        if (id == '') return false;
+
+        if (ths.hasClass(_t.cls['selected'])) {
+            typ = 'remove';
+            ths.add($('[data-prd-code="' + id + '"]')).removeClass(_t.cls['selected']);
+            _t.set({ typ: 'remove', id: id });
+        } else {
+            typ = 'add';
+            ths.add($('[data-prd-code="' + id + '"]')).addClass(_t.cls['selected']);
+            _t.set({ typ: 'add', id: id });
+        }
+
+        obj['cups'] = '';
+        obj['urnKod'] = id;
+        obj['type'] = typ;
+        obj['name'] = name;
+
+        prt.addClass(_t.cls['ajx']);
+        pageMethod(_t.getUri({ type: 'addFavorite' }), decodeURIComponent(JSON.stringify(obj)), function success(o) {
+            prt.removeClass(_t.cls['ajx']);
+            _t.setMessage({ name: name, typ: typ });
+            /*if (typ == 'add')
+                _t.setFavGroup(o);*/
+        });
+    },
+    set: function (o) {
+        var _t = this, typ = o['typ'] || '';
+        if (_t.data != null) {
+            if (typ == 'add') _t.data[o['id']] = 1;
+            else _t.data[o['id']] = 0;
+            uty.Cookies({ typ: 'set', name: 'prdFav', value: JSON.stringify(_t.data) });
+        }
+    },
+    check: function () {
+        var _t = this;
+        if (_t.data != null) {
+            $.each(_t.data, function (i, k) {
+                if (k != 0) {
+                    var e = $('[data-prd-code="' + i + '"]');
+                    if (uty.detectEl(e))
+                        e.addClass(_t.cls['selected']);
+                }
+            });
+        }
+    },
+    ajx: function () {
+        var _t = this;
+        uty.ajx({ uri: _t.getUri({ type: 'member' }) }, function (d) {
+            if (d['type'] == 'success') {
+                var val = d['val'];
+                if (uty.cleanText(val).length > 0) {
+                    _t.data = JSON.parse(val);
+                    uty.Cookies({ typ: 'set', name: 'prdFav', value: val });
+                    _t.check();
+                }
+            }
+        });
+    },
+    addEvent: function () {
+        var _t = this,
+            favBtn = $(_t.el.favBtn);
+        if (uty.detectEl(favBtn))
+            favBtn
+                .attr('href', 'javascript:void(0);')
+                .attr('onclick', 'addToFavorites.clicked(this);')
+                .attr('data-prd-code', $('[id$="hdnURN_KOD"]').val());
+    },
+    init: function () {
+        var _t = this;
+        _t.addEvent();
+        if (uty.detectEl($(_t.el.wrp)) && uty.isLogin()) {
+            if (uty.detectEl($(_t.el.allow))) {
+                _t.ajx();
+                return false;
+            }
+            var k = uty.Cookies({ typ: 'get', name: 'prdFav' }) || '';
+            if (k != '') {
+                _t.data = JSON.parse(k);
+                _t.check();
+            } else
+                _t.ajx();
+        }
+    }
+};
+addToFavorites.init();
+
+/* 
+    stoktaki mağazalar
+*/
+var storeStock = {
+    mapLoaded: false,
+    el: {
+        wrp: '.ems-find-store',
+        btn: '.ems-page-product-detail [id$="lbfURN_URUNKODU"] > a',
+        closeBtn: '#findStoreCloseBtn, .ems-find-store-overlay',
+        listBtn: '#findStoreBtn',
+        size: '#size',
+        city: '#city',
+        content: '#findStoreContent',
+        resultCount: '.secSonuc',
+        list: '.pServisListe'
+    },
+    cls: {
+        ready: 'ems-find-store-ready',
+        animate: 'ems-find-store-animate',
+        noResult: 'ems-no-result',
+        resultFound: 'ems-result-found',
+        loading: 'find-store-ajx-loading'
+    },
+    uri: '/get-stores-exp.html?Plate={{plate}}&Barcode={{barcode}}',
+    getURI: function () {
+        var _t = this;
+        return _t.uri.replace(/{{plate}}/g, $(_t.el.city).val() || 0).replace(/{{barcode}}/g, $(_t.el.size).val() || 0);
+    },
+    animate: function (k) {
+        var _t = this;
+        if (k == 'show')
+            uty.cssClass({ 'ID': 'body', 'delay': 100, 'type': 'add', 'cls': [_t.cls['ready'], _t.cls['animate']] });
+        else
+            uty.cssClass({ 'ID': 'body', 'delay': 444, 'type': 'remove', 'cls': [_t.cls['animate'], _t.cls['ready']] });
+    },
+    addEvent: function () {
+        var _t = this,
+            clicklable = true,
+            wrp = $(_t.el.wrp);
+
+        $(_t.el.btn)
+            .unbind('click')
+            .bind('click', function () {
+                _t.mapPlugins();
+                _t.animate('show');
+            });
+
+        $(_t.el.closeBtn)
+            .unbind('click')
+            .bind('click', function () {
+                _t.animate('hide');
+                setTimeout(function () {
+                    wrp.removeClass(_t.cls['noResult']).removeClass(_t.cls['resultFound']);
+                }, 444);
+
+            });
+
+        $(_t.el.listBtn)
+            .unbind('click')
+            .bind('click', function () {
+                var size = $(_t.el.size).val() || 0,
+                    city = $(_t.el.city).val() || 0,
+                    msg = [];
+
+                if (size == 0)
+                    msg.push(translation['errorSizeAlert'] || 'Lütfen beden seçiniz');
+
+                if (city == 0)
+                    msg.push(translation['errorCityAlert'] || 'Lütfen şehir seçiniz');
+
+                if (msg.length > 0)
+                    alert(msg.join('\n'));
+                else {
+                    if (clicklable) {
+                        clicklable = false;
+                        wrp.addClass(_t.cls['loading']);
+                        uty.ajx({ uri: _t.getURI() }, function (d) {
+                            if (d['type'] == 'success') {
+                                d = (d['val'] || '').trim();
+                                $(_t.el.content).html(d);
+
+                                if (d == '')
+                                    wrp.addClass(_t.cls['noResult']).removeClass(_t.cls['resultFound']);
+                                else
+                                    wrp.removeClass(_t.cls['noResult']).addClass(_t.cls['resultFound']);
+                            }
+                            wrp.removeClass(_t.cls['loading']);
+                            clicklable = true;
+
+                            /* 
+                            
+                            */
+                            if (_t.mapLoaded) {
+                                customContent.changeHtml();
+                                wrp.find(_t.el.resultCount).text(wrp.find(_t.el.list).length);
+                            }
+                        });
+                    }
+                }
+
+
+            });
+    },
+    mapPlugins: function () {
+        var _t = this;
+        if ($('script[src*="//maps.google.com/"]').length == 0) {
+            $.getScript('//maps.google.com/maps/api/js?sensor=true&key=AIzaSyDktunNtvwuVvGEA6LSVfQoiRsptLStTgc', function () {
+                $.getScript('/styles/js/map-new.js', function () {
+                    _t.mapLoaded = true;
+                    console.log('map yüklendi');
+                });
+            });
+        }
+    },
+    init: function () {
+        var _t = this;
+        if (uty.detectEl($(_t.el.btn)))
+            _t.addEvent();
+    }
+};
+storeStock.init();

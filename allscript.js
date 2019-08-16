@@ -182,8 +182,9 @@ var bdy = $('body'),
             o = o || {};
             var ID = o['ID'],
                 rate = o['rate'] || 1,
-                o1 = { x: 0, y: wst, width: wt, height: ht * rate },
-                o2 = { x: 0, y: ID.offset().top, width: wt, height: ID.height() * rate },
+                _min = ht,
+                o1 = { x: 0, y: wst, width: wt, height: (ht * rate) || _min },
+                o2 = { x: 0, y: ID.offset().top, width: wt, height: (ID.height() * rate) || _min },
                 b = false;
             if (o1.x < o2.x + o2.width && o1.x + o1.width > o2.x && o1.y < o2.y + o2.height && o1.y + o1.height > o2.y)
                 b = true;
@@ -198,10 +199,10 @@ var bdy = $('body'),
 
             /* 
                 amaç swiperın sadece desktopta veya mobilde çalıştığı durumların tersi durumlarda swiperı tetiklemek
-            */    
-            if( ID.hasClass('lazy-swiper') ) return false; // sadece swiper tetiklesin
-            if( ID.hasClass('lazy-mobi-swiper') && !uty.visibleControl() ) return false; // ya swiper tetiklesin ya da sadece desktopda tetiklensin
-            if( ID.hasClass('lazy-desktop-swiper') && uty.visibleControl() ) return false; // ya swiper tetiklesin ya da sadece mobilde tetiklensin
+            */
+            if (ID.hasClass('lazy-swiper')) return false; // sadece swiper tetiklesin
+            if (ID.hasClass('lazy-mobi-swiper') && !uty.visibleControl()) return false; // ya swiper tetiklesin ya da sadece desktopda tetiklensin
+            if (ID.hasClass('lazy-desktop-swiper') && uty.visibleControl()) return false; // ya swiper tetiklesin ya da sadece mobilde tetiklensin
 
             if (ID.hasClass(cls)) return false;
 
@@ -227,7 +228,7 @@ var bdy = $('body'),
             var _t = this,
                 ID = o['ID'],
                 img = ID.find('[data-image-src], [data-background], .lazy-picture');
-            
+
             if (uty.detectEl(img))
                 img
                     .each(function () {
@@ -252,6 +253,41 @@ var bdy = $('body'),
                 .addClass('swiper-wrapper')
                 .find('> li')
                 .addClass('swiper-slide');
+        },
+        convertHtmlDropdown: function (o) {
+            o = o || {};
+            var ID = $(o['ID']),
+                cls = o['cls'] || 'opened',
+                wrpCls = o['wrpCls'] || '', // kapsayıcısına verilecek ekstra class
+                hdrCls = o['hdrCls'] || '', // header verilecek ekstra class
+                activeCls = o['activeCls'] || '.selected'; //hedef nesne içerisinde seçili olan element
+
+            /* 
+                add html
+            */
+            ID
+                .addClass('dropdown ' + wrpCls)
+                .prepend('<div class="dropdown-header ' + hdrCls + '"></div>');
+
+            var active = ID.find(activeCls).html() || '';
+            ID
+                .find('.dropdown-header')
+                .html(active);
+
+            /* 
+                add event
+            */
+            ID
+                .find('.dropdown-header')
+                .unbind('click')
+                .bind('click', function () {
+                    ID.toggleClass(cls);
+                })
+                .find('a')
+                .unbind('click')
+                .bind('click', function (evt) {
+                    evt.preventDefault();
+                });
         }
     },
     management = {
@@ -303,7 +339,7 @@ var bdy = $('body'),
                         });
 
                     if (removeAttr != '')
-                        $.each(attr, function (i, k) {
+                        $.each(removeAttr, function (i, k) {
                             el.removeAttr(k);
                         });
 
@@ -390,6 +426,7 @@ var bdy = $('body'),
                     else if (type == 'before') target.before(e);
                     else if (type == 'after') target.after(e);
                     else if (type == 'html') target.html(e.html() || '');
+                    else if (type == 'insideAppend') target.append(e.html() || '');
                     else target.append(e);
                 }
             },
@@ -409,10 +446,134 @@ var bdy = $('body'),
     },
     plugin = {
         /* 
+            zoom gallery
+        */
+        zoomGallery: {
+            arr: GET_CONFIG({ group: 'plugin', key: 'zoomGallery' }),
+            cls: { active: 'ems-zoomgallery-active' },
+            set: function (o) {
+                var _t = this, ID = $(o['ID']);
+                if (uty.detectEl(ID)) {
+                    if (!ID.hasClass(_t['cls']['active'])) {
+                        ID.addClass(_t['cls']['active']);
+                        ID.minusZoomGallery(o['prop'] || {});
+                    }
+                }
+            },
+            init: function () {
+                var _t = this;
+                _t.set(_t.arr);
+            }
+        },
+
+        /* 
+            social Share
+        */
+        socialShare: {
+            arr: GET_CONFIG({ group: 'plugin', key: 'socialShare' }),
+            cls: { active: 'ems-socialshare-active' },
+            set: function (o) {
+                var _t = this, ID = $(o['ID']);
+                if (uty.detectEl(ID)) {
+                    if (!ID.hasClass(_t['cls']['active'])) {
+                        ID.addClass(_t['cls']['active']);
+                        ID.minusSocialShare(o['prop'] || {});
+                    }
+                }
+            },
+            init: function () {
+                var _t = this;
+                _t.set(_t.arr);
+            }
+        },
+
+        /* 
+            load more button
+        */
+        loadMoreButton: {
+            arr: GET_CONFIG({ group: 'plugin', key: 'loadMoreButton' }),
+            cls: { active: 'ems-loadmorebutton-active' },
+            set: function (o) {
+                var _t = this, ID = $(o['ID']);
+                if (uty.detectEl(ID)) {
+                    if (!ID.hasClass(_t['cls']['active'])) {
+                        ID.addClass(_t['cls']['active']);
+                        ID.minusLoadMoreButton(o['prop'] || {});
+                    }
+                }
+            },
+            init: function () {
+                var _t = this;
+                _t.set(_t.arr);
+            }
+        },
+
+        /* 
+            counter
+        */
+        counter: {
+            arr: GET_CONFIG({ group: 'plugin', key: 'counter' }),
+            cls: { active: 'ems-counter-active' },
+            set: function (o) {
+                var _t = this, ID = $(o['ID']);
+                if (uty.detectEl(ID)) {
+                    if (!ID.hasClass(_t['cls']['active'])) {
+                        ID.addClass(_t['cls']['active']);
+                        ID.minusCounter(o['prop'] || {});
+                    }
+                }
+            },
+            init: function () {
+                var _t = this;
+                _t.set(_t.arr);
+            }
+        },
+
+        /* 
+            Minus HTML5 Video
+        */
+        html5Video: {
+            el: {
+                con: 'video'
+            },
+            cls: { active: 'ems-video-active' },
+            set: function (ID) {
+                var _t = this;
+                if (!ID.hasClass(_t['cls']['active'])) {
+                    ID.addClass(_t['cls']['active']);
+                    ID.minusHTML5Video();
+                }
+            },
+            adjust: function () {
+                var _t = this, el = $(_t.el.con)
+                if (uty.detectEl(el))
+                    el.each(function () {
+                        var ths = $(this);
+                        if (ths.hasClass(_t.cls['active'])) {
+                            ths = ths.get(0);
+                            if (typeof ths.adjust !== 'undefined')
+                                ths.adjust();
+                        }
+                    });
+            },
+            init: function () {
+                var _t = this,
+                    con = $(_t.el.con);
+
+                if (uty.detectEl(con))
+                    con
+                        .each(function () {
+                            _t.set($(this));
+                        });
+            }
+        },
+
+        /* 
             Minus Lazy Load
         */
         lazyLoad: {
             el: {
+                not: '.not-trigger[data-swiper]',
                 con: '[data-background]:visible:not(".image-loaded"):not(".lazy-swiper"), [data-image-src]:visible:not(".image-loaded"):not(".lazy-swiper"), .lazy-picture:visible:not(".image-loaded"):not(".lazy-swiper")',
             },
             cls: { active: 'ems-lazy-load-active' },
@@ -437,12 +598,30 @@ var bdy = $('body'),
             },
             init: function () {
                 var _t = this,
-                    con = $(_t.el.con);
+                    con = $(_t.el.con),
+                    not = $(_t.el.not);
+
                 if (uty.detectEl(con))
                     con
                         .each(function () {
                             _t.set($(this));
                         });
+
+
+                /* 
+                    swiper tetiklenmediği durumlarda içerisindeki resimlerde lazyload tetiklemek
+                */
+                if (uty.detectEl(not)) {
+                    not
+                        .find('.lazy-swiper')
+                        .removeClass('lazy-swiper');
+
+                    not
+                        .find(_t.el.con)
+                        .each(function () {
+                            _t.set($(this));
+                        });
+                }
             }
         },
 
@@ -464,6 +643,7 @@ var bdy = $('body'),
             setURI: function (o) {
                 var _t = this, el = $(_t.arr['ID'])
                 if (uty.detectEl(el))
+
                     el.each(function () {
                         var ths = $(this);
                         if (ths.hasClass(_t.cls['active'])) {
@@ -837,10 +1017,14 @@ var bdy = $('body'),
                 var _t = this,
                     ID = $(o['ID']),
                     prop = o['prop'] || {};
-                if (uty.detectEl(ID) && !ID.hasClass(_t.cls['active']))
-                    ID
-                        .addClass(_t.cls['active'])
-                        .iStyler(prop);
+                ID.each(function () {
+                    var ths = $(this);
+                    if (uty.detectEl(ths) && !ths.hasClass(_t.cls['active']))
+                        ths
+                            .addClass(_t.cls['active'])
+                            .iStyler(prop);
+                })
+
             },
             init: function () {
                 var _t = this, arr = _t.arr;
@@ -851,15 +1035,23 @@ var bdy = $('body'),
         adjust: function () {
             var _t = this;
             _t.swiper.adjust();
+            _t.html5Video.adjust();
+            _t.lazyLoad.adjust();
         },
         onScroll: function () {
             var _t = this;
+            _t.html5Video.adjust();
             _t.lazyLoad.adjust();
             _t.systemWidget.adjust();
             _t.tabMenu.adjust();
         },
         init: function () {
             var _t = this;
+            _t.html5Video.init();
+            _t.zoomGallery.init();
+            _t.socialShare.init();
+            _t.loadMoreButton.init();
+            _t.counter.init();
             _t.lazyLoad.init();
             _t.categoryFilter.init();
             _t.listSort.init();
@@ -917,7 +1109,7 @@ var bdy = $('body'),
 
         bdyClicked: function () {
             $('body, html').bind('click touchstart', function (e) {
-                var m = $('.mobi-dropdown');
+                var m = $('.mobi-dropdown, .dropdown');
                 if (!m.is(e.target) && m.has(e.target).length === 0)
                     m.removeClass('opened');
             });
@@ -966,7 +1158,4 @@ var bdy = $('body'),
         events.init();
     };
 
-win
-    .load(function () {
-        initialize();
-    });
+initialize();
