@@ -179,12 +179,12 @@ ex: https://kartalyuvasi.proj-e.com/admin/moduls/export/exportclient_guncelle.as
 
 ```HTML
 <!-- 
-    NOT: lazyload tetiklenmesi için elementler gizli olmamalı yani ekranda gözükenler üzerinde işe yarayacak. Display: none olanlarda işe yaramayacak. 
--->
 
-<!-- 
-    picture tag kullanılmak isteniyorsa 
-    NOT: burada  <source class="lazy-picture" media="(max-width:5000px)" srcset="/images/frontend/placeholder.gif"></source> çok önemli.
+    NOTLAR: 
+    a. lazyload tetiklenmesi için elementler gizli olmamalı yani ekranda gözükenler üzerinde işe yarayacak. Display: none olanlarda işe yaramayacak. 
+
+    b. picture tag kullanılmak isteniyorsa burada <source class="lazy-picture" media="(max-width:5000px)" srcset="/images/frontend/placeholder.gif"></source> çok önemli yani ilk anda browser burda tanımladığın src'i görecek.
+
 -->
 <picture>
     <source class="lazy-picture" media="(max-width:5000px)" srcset="/images/frontend/placeholder.gif"></source>
@@ -198,6 +198,18 @@ ex: https://kartalyuvasi.proj-e.com/admin/moduls/export/exportclient_guncelle.as
 
 <!-- background kullanılacaksa -->
 <div data-background="/images/frontend/design-uniform-bg.png"></div>
+
+
+<!--
+    ÖNEMLİ: Yukarıda kullanılan yapılar sitede scroll yaptıkça tetikleniyor. Bazı durumlarda sitedeki swiper içerisinde swipe yaptıkça lazyload tetiklemek gerekebilir. Bu durumda lazy-swiper classını eklemek gerekiyor.
+-->
+
+<picture>
+    <source class="lazy-picture lazy-swiper" media="(max-width:5000px)" srcset="/images/frontend/placeholder.gif"></source>
+    <source srcset="/upload/banner/menu/koleksiyon-adidas.jpg 1x, /upload/banner/menu/koleksiyon-adidas.jpg 2x" media="(max-width: 960px)"></source>
+    <source srcset="/upload/banner/menu/koleksiyon-adidas.jpg" media="(min-width: 961px)"></source>
+    <img src="/upload/banner/menu/koleksiyon-adidas.jpg" /> 
+</picture>
 
 ```
 
