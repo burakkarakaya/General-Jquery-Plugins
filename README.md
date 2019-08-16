@@ -42,6 +42,14 @@ genel.css
 ```
 
 2- PWA için manifest.json hazılanmalı
+
+a. Dil dosya yönetimi - site bilgilerine eklenecek kod.
+ex: https://kartalyuvasi.proj-e.com/admin/moduls/mlng/lngFile_guncelle.aspx?ID=868&
+```HTML
+<link rel="manifest" href="/manifest.json">
+```
+
+b. E-MOS script içerisine eklenecek örnek kod
 ex: https://kartalyuvasi.proj-e.com/admin/moduls/export/exportclient_guncelle.aspx?ID=3335&
 
 ```JSON
@@ -49,16 +57,16 @@ ex: https://kartalyuvasi.proj-e.com/admin/moduls/export/exportclient_guncelle.as
 "short_name": "Kartal Yuvasi",
 "name": "Kartal Yuvasi",
 "icons": [
-{
-"src": "/images/frontend/favicon/bjk-192.png",
-"type": "image/png",
-"sizes": "192x192"
-},
-{
-"src": "/images/frontend/favicon/bjk-512.png",
-"type": "image/png",
-"sizes": "512x512"
-}
+    {
+    "src": "/images/frontend/favicon/bjk-192.png",
+    "type": "image/png",
+    "sizes": "192x192"
+    },
+    {
+    "src": "/images/frontend/favicon/bjk-512.png",
+    "type": "image/png",
+    "sizes": "512x512"
+    }
 ],
 "start_url": "/?source=pwa",
 "background_color": "#FFFFFF",
@@ -66,7 +74,6 @@ ex: https://kartalyuvasi.proj-e.com/admin/moduls/export/exportclient_guncelle.as
 "scope": "/",
 "theme_color": "#000000"
 }
-
 ```
 
 
