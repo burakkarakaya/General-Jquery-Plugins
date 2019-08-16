@@ -41,6 +41,35 @@ custom.js
 genel.css
 ```
 
+2- PWA için manifest.json hazılanmalı
+ex: https://kartalyuvasi.proj-e.com/admin/moduls/export/exportclient_guncelle.aspx?ID=3335&
+
+```JSON
+{
+"short_name": "Kartal Yuvasi",
+"name": "Kartal Yuvasi",
+"icons": [
+{
+"src": "/images/frontend/favicon/bjk-192.png",
+"type": "image/png",
+"sizes": "192x192"
+},
+{
+"src": "/images/frontend/favicon/bjk-512.png",
+"type": "image/png",
+"sizes": "512x512"
+}
+],
+"start_url": "/?source=pwa",
+"background_color": "#FFFFFF",
+"display": "standalone",
+"scope": "/",
+"theme_color": "#000000"
+}
+
+```
+
+
 # Management
 
 ### Multi Languages
