@@ -1,6 +1,6 @@
 # Page Speed Kuralları
 
-1- JS ve Css sıkıştırmaya konulmalı Burada dikkat edilmesi gereken ilk anda yüklenmesi gerekli olan jsler senkron seçilmesi, kalan jsler asenkron seçilmeli. 
+1- JS ve Css sıkıştırmaya konulmalı Burada dikkat edilmesi gereken ilk anda yüklenmesi gerekli olan jsler senkron, kalan jsler asenkron seçilmeli. 
 
 ex: https://kartalyuvasi.proj-e.com/admin/moduls/scriptManager/scriptFileManager_liste.aspx?ps=80
 
