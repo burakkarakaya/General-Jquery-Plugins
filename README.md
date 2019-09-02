@@ -257,6 +257,35 @@ form: [
     </div>
 ```
 
+### Accordion
+
+```HTML
+<div class="ems-tab ems-tab-vertical">
+    <div class="ems-tab-content">
+        <div rel="tab-1">
+            <div class="ems-tab-inner-header">Tab 1</div>
+            <div class="ems-tab-inner-content">
+                tab 1 content
+            </div>
+        </div>
+        <div rel="tab-2">
+            <div class="ems-tab-inner-header">Tab 2</div>
+            <div class="ems-tab-inner-content">
+                tab 2 content
+            </div>
+        </div>
+        <div rel="tab-3">
+            <div class="ems-tab-inner-header">Tab 3</div>
+            <div class="ems-tab-inner-content">
+                tab 3 content
+            </div>
+        </div>
+    </div>
+</div>
+
+```
+
+
 ### System Widget
 
 ``` HTML
