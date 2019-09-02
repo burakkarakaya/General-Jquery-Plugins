@@ -13,6 +13,7 @@ jquery-base.min.js
 ascMustScripts.js
 customEvents-99.1.0.min.js
 unveil-lazyload.js
+formValidation.js
 emos.css
 ```
 
@@ -25,7 +26,6 @@ jquery.cookie.js
 cartScripts.js
 popupDimensions.js
 comboBox.js
-formValidation.js
 minus.popup.js
 jquery.maskedinput.js
 ajaxtooltip.js
@@ -102,7 +102,7 @@ b. E-MOS script içerisine eklenecek örnek kod
 ex: https://kartalyuvasi.proj-e.com/admin/moduls/export/exportclient_guncelle.aspx?ID=3334&
 
 ```JS
-var CACHE_NAME = 'kartal-yuvasi-v1.2';
+var CACHE_NAME = 'kartal-yuvasi-v1.#$ssSCRIPT_FILETIME#$';
 var urlsToCache = [
   '/',
   '/styles/fonts/fira/FiraSans-Regular.woff2',
@@ -114,9 +114,16 @@ var urlsToCache = [
   '/styles/js/libs/ScrollMagic.js',
   '/styles/js/libs/animation.gsap.js',
   '/styles/js/libs/debug.addIndicators.js',
-  '/userControls/kutu/search_suggest.min.js',
-  '/styles/js/uniform.js',
-  '/styles/genel.css'
+  
+  
+    '/userControls/kutu/search_suggest.min.js',
+    '/styles/js/uniform.js',
+    '/styles/genel.css',
+    
+    '/styles/joinedFiles/compressed/emos_header_#$ssSCRIPT_FILETIME#$.js',
+    '/styles/joinedFiles/compressed/emos_header_async_#$ssSCRIPT_FILETIME#$.js',
+    '/styles/joinedFiles/compressed/emos_header_async_#$ssSCRIPT_FILETIME#$.css',
+    '/styles/joinedFiles/compressed/emos_footer_async_#$ssSCRIPT_FILETIME#$.js'
 ];
 
 self.addEventListener("install", function(event) {
