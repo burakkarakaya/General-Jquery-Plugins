@@ -892,6 +892,25 @@ function counterOption(o) {
 
 // DISPATCHER
 
+function onSwiper(o){
+    o = o || {};
+    var type = o['type'] || '',
+        ID = $( o['ID'] || '' );
+    if( type == 'slideChangeTransitionEnd' ){
+        ID
+        .find('video')
+        .each(function(){
+            var vid = $(this).get(0);
+            vid.pause();
+            vid.currentTime = 0;
+            vid.load();
+            $(vid).parents('.is-play').removeClass('is-play');
+        });
+    }
+}
+stage.addEventListener("CustomEvent", [{ type: "SWIPER_ACTIVE_ELEMENT", handler: "onSwiper" }]);
+
+
 /* 
     Genel Scroll & Resize
 */

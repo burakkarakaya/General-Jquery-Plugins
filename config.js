@@ -352,6 +352,11 @@ var SITE_CONFIG = {
             swiper config
         */
         swiper: {
+
+            defaultOpt: {
+                videoStretching: 'responsive'
+            },
+
             main: {
                 paginationClickable: true,
                 preloadImages: false,

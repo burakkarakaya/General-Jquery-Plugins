@@ -180,14 +180,26 @@ var bdy = $('body'),
         },
         detectPosition: function (o) {
             o = o || {};
-            var ID = o['ID'],
+            var ID = $(o['ID'] || ''),
                 rate = o['rate'] || 1,
+                threshold = o['threshold'] || 0,
+
                 _min = ht,
                 o1 = { x: 0, y: wst, width: wt, height: (ht * rate) || _min },
-                o2 = { x: 0, y: ID.offset().top, width: wt, height: (ID.height() * rate) || _min },
+                o2 = { x: 0, y: ID.offset().top - threshold, width: wt, height: (ID.height() * rate) || _min },
                 b = false;
             if (o1.x < o2.x + o2.width && o1.x + o1.width > o2.x && o1.y < o2.y + o2.height && o1.y + o1.height > o2.y)
                 b = true;
+
+            /* 
+                özel durumlarda elementi geçtikten sonra tetiklenmesi için
+                örneğin ürün liste loadmore
+            */
+           if( o['elementNext'] ){
+            if (o1.y >= o2.y + o2.height)
+                b = true;
+           }
+
             return b;
         },
         lazyLoad: function (o) {
@@ -501,6 +513,18 @@ var bdy = $('body'),
                         ID.minusLoadMoreButton(o['prop'] || {});
                     }
                 }
+            },
+            adjust: function () {
+                var _t = this, el = $(_t.arr.ID)
+                if (uty.detectEl(el))
+                    el.each(function () {
+                        var ths = $(this);
+                        if (ths.hasClass(_t.cls['active'])) {
+                            ths = ths.get(0);
+                            if (typeof ths.adjust !== 'undefined')
+                                ths.adjust();
+                        }
+                    });
             },
             init: function () {
                 var _t = this;
@@ -946,8 +970,9 @@ var bdy = $('body'),
                 var _t = this;
 
                 if (!ID.hasClass(_t['cls']['active']) && uty.detectEl(ID.find(_t.el.target)) && (!ID.hasClass(_t.cls['mobiSwiper']) || (uty.visibleControl() && ID.hasClass(_t.cls['mobiSwiper'])))) {
+                    var config = GET_CONFIG({ group: 'plugin', key: 'swiper' }) || {};
                     ID.addClass(_t['cls']['active']);
-                    ID.minusSwiper();
+                    ID.minusSwiper(config['defaultOpt'] || {} );
                 }
             },
             adjust: function () {
@@ -1037,6 +1062,7 @@ var bdy = $('body'),
             _t.swiper.adjust();
             _t.html5Video.adjust();
             _t.lazyLoad.adjust();
+            _t.loadMoreButton.adjust();
         },
         onScroll: function () {
             var _t = this;
@@ -1044,6 +1070,7 @@ var bdy = $('body'),
             _t.lazyLoad.adjust();
             _t.systemWidget.adjust();
             _t.tabMenu.adjust();
+            _t.loadMoreButton.adjust();
         },
         init: function () {
             var _t = this;
@@ -1159,3 +1186,9 @@ var bdy = $('body'),
     };
 
 initialize();
+
+/* DISPATCHER */
+stage.addEventListener("CustomEvent", [{ type: "teslimatKargoSuccess", handler: "setStyler" }]);
+function setStyler(){
+    plugin.styler.init();
+}

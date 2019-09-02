@@ -727,30 +727,35 @@ jQuery.extend(jQuery.easing, {
                             obj['on'] = {
                                 init: function () {
                                     _detectPosition.set();
-                                    
-                                    setTimeout(function(){
-                                        _videos.disabled();    
+
+                                    setTimeout(function () {
+                                        _videos.disabled();
                                     }, 333);
-                                    
+
                                     _callback({ type: 'init' });
+                                    _dispatch({ type: 'init' });
                                 },
                                 touchStart: function () {
                                     _autoPlay({ type: 'stop' });
                                     _callback({ type: 'touchStart' });
+                                    _dispatch({ type: 'touchStart' });
                                 },
                                 touchEnd: function () {
                                     _autoPlay({ type: 'start' });
                                     _callback({ type: 'touchEnd' });
+                                    _dispatch({ type: 'touchEnd' });
                                 },
                                 slideChangeTransitionStart: function (s) {
                                     _autoPlay({ type: 'stop' });
                                     _callback({ type: 'slideChangeTransitionStart', value: s });
+                                    _dispatch({ type: 'slideChangeTransitionStart', value: s });
                                 },
                                 slideChangeTransitionEnd: function (s) {
                                     _detectPosition.set();
                                     _autoPlay({ type: 'start' });
                                     _videos.disabled();
                                     _callback({ type: 'slideChangeTransitionEnd', value: s });
+                                    _dispatch({ type: 'slideChangeTransitionEnd', value: s });
                                 }
                             };
                             return obj;
@@ -785,16 +790,16 @@ jQuery.extend(jQuery.easing, {
                             } else {
                                 ID.addClass('no-controls').find('.swiper-slide').addClass('swiper-slide-active');
                                 _lazy({ target: ID });
-                                setTimeout(function(){
-                                    _videos.disabled();    
+                                setTimeout(function () {
+                                    _videos.disabled();
                                 }, 333);
                             }
                         }
                     };
                 main.init();
                 _videos.init();
-                
-                
+
+
 
                 this.getCurrent = function () {
                     if (main.current != null)
@@ -842,8 +847,9 @@ jQuery.extend(jQuery.easing, {
                 tabNav: '> .ems-tab-header > [rel]', // tab menu button
                 accNav: '> .ems-tab-content > div > .ems-tab-inner-header', // accordion menu button
                 begin: 0,
+                target: '.emosInfinite',
                 ajx: {
-                    target: '.emosInfinite',
+                    target: '.urnList .emosInfinite',
                     typ: 'append'
                 }
             };
@@ -897,8 +903,8 @@ jQuery.extend(jQuery.easing, {
                                         target.addClass(_t.cls['loaded']);
                                         d = uty.clearScriptTag(d['val'] || '');
                                         d = $('<div>' + d + '</div>').find(opt.ajx.target).html() || '';
-                                        if (opt.ajx.target !== '')
-                                            target = target.find(opt.ajx.target);
+                                        if (opt.target !== '')
+                                            target = target.find(opt.target);
 
                                         if (uty.detectEl(target)) {
                                             var typ = opt.ajx['typ'] || '';
@@ -1016,7 +1022,7 @@ jQuery.extend(jQuery.easing, {
             var defaults = {
                 target: '.emosInfinite',
                 ajx: {
-                    target: '.emosInfinite',
+                    target: '.urnList .emosInfinite',
                     itemTarget: '> li',
                     typ: 'append'
                 }
@@ -2473,6 +2479,8 @@ jQuery.extend(jQuery.easing, {
                 activePaging: '.urunPaging_pageNavigation [id$="ascPagingDataAlt_lblPaging"] span', // active
                 target: '.urnList .emosInfinite', // hedef ul
                 paging: '.urunPaging_pageNavigation', // hedef paging
+                infiniteScroll: false,
+                threshold: 200,
 
                 // cls
                 loading: 'ajx-loading', // ajx yüklenirken body class
@@ -2495,6 +2503,7 @@ jQuery.extend(jQuery.easing, {
                     },
                     main = {
                         param: 'srt',
+                        clicklable: true,
                         cls: {
                             selected: opt['selected'],
                             ready: opt['ready'],
@@ -2532,6 +2541,7 @@ jQuery.extend(jQuery.easing, {
 
                             _t.trigger({ type: type });
                             _t.control();
+                            _t.clicklable = true;
                         },
                         addEvent: function () {
                             var _t = this;
@@ -2541,7 +2551,8 @@ jQuery.extend(jQuery.easing, {
                                 .bind('click', function () {
                                     var ths = $(this),
                                         uri = $(opt['activePaging']).next('a').attr('href') || '';
-                                    if (uri != '') {
+                                    if (uri != '' && _t.clicklable) {
+                                        _t.clicklable = false;
                                         _t.loading('show');
                                         uty.ajx({ uri: uri }, function (k) {
                                             if (k['type'] == 'success')
@@ -2554,6 +2565,14 @@ jQuery.extend(jQuery.easing, {
                                 });
 
                         },
+                        adjust: function () {
+                            var _t = this;
+                            if (opt['infiniteScroll']) {
+                                if (uty.detectPosition({ ID: ID, threshold: opt['threshold'], elementNext: true })) {
+                                    ID.click();    
+                                }
+                            }
+                        },
                         init: function () {
                             var _t = this;
                             if (uty.detectEl(ID)) {
@@ -2563,6 +2582,10 @@ jQuery.extend(jQuery.easing, {
                         }
                     };
                 main.init();
+
+                this.adjust = function () {
+                    main.adjust();
+                };
             });
         }
     });
