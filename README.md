@@ -7,8 +7,8 @@
     isterseniz alabileceği değerler: append, prepend, before, after, html
     amacı ems-multi-languages içerisindeki data-target ile belirtilen nesnenin hedefine içeriğini eklemek.
 */
-<div rel="lbfBeden" data-type="append"></div>
 
+<div rel="lbfBeden" data-type="append"></div>
 <div class="ems-multi-languages ems-none">
     <div data-target="[rel='lbfBeden']" data-type="append">Beden: </div>
     <div data-target="[rel='lbfAdet']">Adet: </div>
