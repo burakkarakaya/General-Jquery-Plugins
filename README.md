@@ -262,10 +262,18 @@ form: [
 ```HTML
 <div class="ems-tab ems-tab-vertical">
     <div class="ems-tab-content">
-        <div rel="tab-1">
+        <div data-ajx="/urun_liste.aspx?kat=22949&lang=tr-TR&ps=8" rel="tab-1">
             <div class="ems-tab-inner-header">Tab 1</div>
             <div class="ems-tab-inner-content">
-                tab 1 content
+                <div class="swiper-container">
+                    <div class="swiper-inner">
+                        <ul class="emosInfinite">
+                        </ul>
+                    </div>
+                    <div class="swiper-button-prev"><i> </i></div>
+                    <div class="swiper-button-next"><i> </i></div>
+                    <div class="swiper-pagination"></div>
+                </div>
             </div>
         </div>
         <div rel="tab-2">
