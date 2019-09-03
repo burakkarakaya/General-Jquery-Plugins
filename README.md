@@ -1,3 +1,44 @@
+# Sıkıştırma
+
+JS ve Css sıkıştırmaya konulmalı Burada dikkat edilmesi gereken ilk anda yüklenmesi gerekli olan jsler senkron, kalan jsler asenkron seçilmeli. 
+
+```HTML
+/*
+    SENKRON OLACAKLAR
+*/
+
+jquery-base.min.js
+ascMustScripts.js
+customEvents-99.1.0.min.js
+unveil-lazyload.js
+formValidation.js
+jquery.cookie.js
+emos.css
+```
+
+```HTML
+/*
+    ASENKRON OLACAKLAR
+*/
+
+cartScripts.js
+popupDimensions.js
+comboBox.js
+minus.popup.js
+jquery.maskedinput.js
+ajaxtooltip.js
+fb-connect.js (ÖNEMLİ: sitede facebook connect kullanılmıyorsa bu script eklenmemeli)
+google-connect.js (ÖNEMLİ: sitede google connect kullanılmıyorsa bu script eklenmemeli)
+jquery-ui.min.js
+swiper.min.js
+mediaElement.js
+custom-plugins.js
+config.js
+allScripts.js
+custom.js
+genel.css
+```
+
 # Management
 
 ### Multi Languages
