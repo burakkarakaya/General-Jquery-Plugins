@@ -1,4 +1,4 @@
-[create an anchor](# Management)
+ [Go to Heading section] (#-this-is-a-heading)
 
 # Sıkıştırma
 
