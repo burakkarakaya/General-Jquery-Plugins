@@ -371,12 +371,50 @@ form: [
 
 ```
 
+### Video
+
+Siteye eklenen videoların ilk anda yüklenmemesi için video tagına class="is-scrolling" eklenmesi ve videonun ilk anda yüklenmemesi için preload="none", iosta videonun olduğu yerde gözükmesi için playsinline="true" parametrelerinin eklenmesi gerekir. Ayrıca autoplay özelliğini eklenmemesi lazım.
+
+```HTML
+<video 
+class="is-scrolling" 
+src="//player.vimeo.com/external/348070064.sd.mp4?s=fd02b2e7c50467ca51268998272bb0532592b543&profile_id=165"
+preload="none" 
+muted="true" 
+playsinline="true" 
+loop="true">
+</video>
+```
+
+```HTML
+
+<!--
+    NOT: Video swiper içerisinde kullanılacaksa aşağıdaki gibi bir html yapısında olması gerekmektedir. İlgili slide aktif olduğu zaman video otomatikman oynamaya başlayacaktır.
+-->
+
+<li class="swiper-slide">
+    <div class="slide-video">
+     <video 
+            src="https://player.vimeo.com/external/347762525.hd.mp4?s=c6e7f2ca6a1a1baa8bbda4fcf71124f32fa2520b&profile_id=175"
+            poster="/UPLOAD/BANNERS/homepage-slider/bt-design-dion-video-cover.png" 
+            preload="none" 
+            autobuffer="autobuffer" 
+            preload="none" 
+            muted="true" 
+            playsinline="true" 
+            loop="true" 
+            class="video-player">
+        </video>
+    </div>
+    <a href="javascript:void(0);" class="slide-video-btn"></a>
+</li>
+
+```
 
 ### System Widget
 
 ``` HTML
-<div class="system-widget widget swiper-container scroller-trigger"
-    data-uri="/urun_liste.aspx?kat=22949&lang=tr-TR&ps=8">
+<div class="system-widget widget swiper-container scroller-trigger" data-uri="/urun_liste.aspx?kat=22949&lang={{lang}}&ps=8">
     <div class="swiper-header"><span>ÖNE ÇIKAN ÜRÜNLER</span></div>
     <div class="swiper-inner">
         <ul class="emosInfinite swiper-wrapper">
@@ -386,4 +424,33 @@ form: [
     <div class="swiper-button-next"><i> </i></div>
     <div class="swiper-pagination"></div>
 </div>
+```
+```JS
+
+data-uri paremetresinde kullanabileceğimiz user controller.
+
+/usercontrols/kutu/ajxUrunTab.aspx?lang={{lang}}&tip=indirim&ps=10&rp=1&tur=sepetli 
+
+/usercontrols/kutu/ajxUrunTab.aspx?lang={{lang}}&tip=vitrin&ps=100&rp=1&tur=sepetli
+
+/usercontrols/kutu/ajxUrunTab.aspx?lang={{lang}}&tip=encoksatan&ps=100&rp=1&tur=sepetli
+
+/usercontrols/kutu/ajxUrunTab.aspx?lang={{lang}}&tip=yeniurun&ps=10&rp=1&tur=sepetli
+
+/usercontrols/kutu/ajxUrunTab.aspx?lang={{lang}}&kat={{prdCat}}&tip=onecikan&ps=100&rp=1&tur=sepetli
+
+/usercontrols/urunDetay/ascSonGezilenUrun_ajx.aspx?lang={{lang}}&listeTuru=sepetli&urunSayisi=10&repeatColumns=1&resimTipi=thumb
+
+/usercontrols/urunDetay/ajxIlgiliUrun.aspx?lang={{lang}}&urn={{prdCode}}&ps=100&rp=1
+
+/usercontrols/kutu/ajxUrunTab.aspx?lang={{lang}}&tip=seciliurun&ps=100&rp=1&ukods={{urn}}
+
+NOT: 
+
+{{lang}}: kısmı aktif dilin değerini alıyor. 
+
+{{prdCat}}: <div data-cat="24666" class="system-widget widget swiper-container scroller-trigger" data-uri="/urun_liste.aspx?kat={{prdCat}}&lang={{lang}}&ps=8"></div> burada div üzerinde data-cat attribute görürse onun değerini alır bulamazsa bu sefer urlString de kat geçiyorsa onun değerini alır. Yani ürün listede data-cat eklemeyerek sadece urlStringden okuyarak dinamik bir şekilde widgetı tetikletebilirsiniz. Ürün detay, ana sayfa gibi yerlerde data-cat ile belirlediğiniz kategorilerden ürün çekmesini sağlayabilirsiniz.
+
+{{prdCode}}: <div data-code="889977" class="system-widget widget swiper-container scroller-trigger" data-uri="/usercontrols/urunDetay/ajxIlgiliUrun.aspx?lang={{lang}}&urn={{prdCode}}&ps=100&rp=1"></div> burada div üzerinde data-code attribute görürse onun değerini alır bulamazsa ve ürün detaydaysa hdnURN_KOD değerini alır.
+
 ```
