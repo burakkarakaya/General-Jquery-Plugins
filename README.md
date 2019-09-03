@@ -309,6 +309,8 @@ form: [
 
 ### Tab Menu
 
+Eğer Ajax tab menu kullanacaksanız ilk anda istek atmaması için "scroller-trigger" classını eklemeniz gerekir. Böylece scroll edince viewport içerisinde tab gözüktüğü zaman tetikleme gerçekleşecektir.
+
 ``` HTML
  <div class="ems-tab scroller-trigger">
         <div class="ems-tab-header">
@@ -412,6 +414,8 @@ loop="true">
 ```
 
 ### System Widget
+
+System widgetları ilk anda yüklenmemesi scroll ettikten sonra yüklenmeleri için system widget "scroller-trigger" classı eklenmeli
 
 ``` HTML
 <div class="system-widget widget swiper-container scroller-trigger" data-uri="/urun_liste.aspx?kat=22949&lang={{lang}}&ps=8">
