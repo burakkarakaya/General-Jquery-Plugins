@@ -149,15 +149,17 @@ form: [
 ```
 
 # Plugins
+
 ### Lazy Load
+
 ```HTML
 <!-- 
-    NOT: lazyload tetiklenmesi için elementler gizli olmamalı yani ekranda gözükenler üzerinde işe yarayacak. Display: none olanlarda işe yaramayacak. 
--->
 
-<!-- 
-    picture tag kullanılmak isteniyorsa 
-    NOT: burada  <source class="lazy-picture" media="(max-width:5000px)" srcset="/images/frontend/placeholder.gif"></source> çok önemli.
+    NOTLAR: 
+    a. lazyload tetiklenmesi için elementler gizli olmamalı yani ekranda gözükenler üzerinde işe yarayacak. Display: none olanlarda işe yaramayacak. 
+
+    b. picture tag kullanılmak isteniyorsa burada <source class="lazy-picture" media="(max-width:5000px)" srcset="/images/frontend/placeholder.gif"></source> çok önemli yani ilk anda browser burda tanımladığın src'i görecek.
+
 -->
 <picture>
     <source class="lazy-picture" media="(max-width:5000px)" srcset="/images/frontend/placeholder.gif"></source>
@@ -171,6 +173,18 @@ form: [
 
 <!-- background kullanılacaksa -->
 <div data-background="/images/frontend/design-uniform-bg.png"></div>
+
+
+<!--
+    ÖNEMLİ: Yukarıda kullanılan yapılar sitede scroll yaptıkça tetikleniyor. Bazı durumlarda sitedeki swiper içerisinde swipe yaptıkça lazyload tetiklemek gerekebilir. Bu durumda lazy-swiper classını eklemek gerekiyor.
+-->
+
+<picture>
+    <source class="lazy-picture lazy-swiper" media="(max-width:5000px)" srcset="/images/frontend/placeholder.gif"></source>
+    <source srcset="/upload/banner/menu/koleksiyon-adidas.jpg 1x, /upload/banner/menu/koleksiyon-adidas.jpg 2x" media="(max-width: 960px)"></source>
+    <source srcset="/upload/banner/menu/koleksiyon-adidas.jpg" media="(min-width: 961px)"></source>
+    <img src="/upload/banner/menu/koleksiyon-adidas.jpg" /> 
+</picture>
 
 ```
 
@@ -204,21 +218,44 @@ form: [
 <div class="swiper-container homepage-slider" data-swiper="main">
     <div class="swiper-inner">
         <ul class="swiper-wrapper">
+
+            <!-- image kullanımı ayrıca lazyload olması isteniyorsa lazy-swiper classı eklenmeli -->
             <li class="swiper-slide type-img">
                 <div class="slide-content">
-                    <div class="slide-img"><img class="lazy-load" data-src="//via.placeholder.com/1440x630.jpg"
-                            data-srcset="//via.placeholder.com/1440x630 2x, //via.placeholder.com/1440x630 1x"
-                            alt="slide name!" /></div>
+                    <div class="slide-img">
+                        <picture>
+                            <source class="lazy-picture lazy-swiper" media="(max-width:5000px)"
+                                srcset="/images/frontend/placeholder.gif">
+                            </source>
+                            <source
+                                srcset="/upload/banner/menu/koleksiyon-adidas.jpg 1x, /upload/banner/menu/koleksiyon-adidas.jpg 2x"
+                                media="(max-width: 960px)">
+                            </source>
+                            <source srcset="/upload/banner/menu/koleksiyon-adidas.jpg" media="(min-width: 961px)">
+                            </source>
+                            <img src="/upload/banner/menu/koleksiyon-adidas.jpg" />
+                        </picture>
+                    </div>
                 </div>
             </li>
+
+            <!-- Video kullanımı -->
             <li class="swiper-slide type-video">
-                <div class="slide-content">
-                    <div class="slide-video"><video
-                            src="//player.vimeo.com/external/309629080.hd.mp4?s=c0c94fd088a550b1158dfb6a98f648f173aac3f7&amp;profile_id=174"
-                            preload="none" autobuffer="autobuffer" class="video-player"> </video></div>
-                    <a href="javascript:void(0);" class="slide-video-btn"></a>
+                <div class="slide-video">
+                    <video
+                        src="https://player.vimeo.com/external/347762525.hd.mp4?s=c6e7f2ca6a1a1baa8bbda4fcf71124f32fa2520b&profile_id=175"
+                        poster="/UPLOAD/BANNERS/homepage-slider/bt-design-dion-video-cover.png" 
+                        autobuffer="autobuffer"
+                        preload="none" 
+                        muted="true" 
+                        playsinline="true" 
+                        loop="true" 
+                        class="video-player">
+                    </video>
                 </div>
+                <a href="javascript:void(0);" class="slide-video-btn"></a>
             </li>
+
         </ul>
     </div>
     <div class="swiper-button-next"></div>
