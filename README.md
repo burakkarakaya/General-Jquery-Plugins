@@ -1,5 +1,3 @@
- [Go to Heading section] (#-this-is-a-heading)
-
 # Sıkıştırma
 
 JS ve Css sıkıştırmaya konulmalı Burada dikkat edilmesi gereken ilk anda yüklenmesi gerekli olan jsler senkron, kalan jsler asenkron seçilmeli. 
