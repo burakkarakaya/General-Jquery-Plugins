@@ -1,4 +1,4 @@
-[create an anchor](### Append)
+[create an anchor](# Management)
 
 # Sıkıştırma
 
