@@ -14,25 +14,44 @@ var SITE_CONFIG = {
         */
         urlSelected: [
             { uri: '/uyeIslem/favorilistem.aspx', elm: '[rel="ems-member-favorite"]', cls: 'selected' },
+            { uri: '/favorilerim/', elm: '[rel="ems-member-favorite"]'},
+            { uri: '/my-favorites/', elm: '[rel="ems-member-favorite"]'},
             { uri: '/uyeIslem/marketdedektif.aspx', elm: '[rel="ems-member-follow-list"]' },
             { uri: '/uyeIslem/siparistakip.aspx', elm: '[rel="ems-member-order"]' },
+            { uri: '/siparislerim/', elm: '[rel="ems-member-order"]' },
+            { uri: '/my-orders/', elm: '[rel="ems-member-order"]' },
             { uri: '/uyeIslem/siparisdetay.aspx', elm: '[rel="ems-member-order"]' },
             { uri: '/uyeIslem/siparisIptal.aspx', elm: '[rel="ems-member-order"]' },
             { uri: '/uyeIslem/siparisIade.aspx', elm: '[rel="ems-member-order"]' },
             { uri: '/uyeIslem/iadetakip.aspx', elm: '[rel="ems-member-refund"]' },
+            { uri: '/iadelerim/', elm: '[rel="ems-member-refund"]' },
+            { uri: '/my-return/', elm: '[rel="ems-member-refund"]' },
             { uri: '/uyeIslem/kuponlarim.aspx', elm: '[rel="ems-member-ticket"]' },
+            { uri: '/kuponlarim/', elm: '[rel="ems-member-ticket"]' },
+            { uri: '/my-coupon/', elm: '[rel="ems-member-ticket"]' },
             { uri: '/uyeIslem/odemeCeki.aspx', elm: '[rel="ems-member-gift-card"]' },
+            { uri: '/gift-kartlarim/', elm: '[rel="ems-member-gift-card"]' },
+            { uri: '/my-gift-card/', elm: '[rel="ems-member-gift-card"]' },            
             { uri: '/uyeBilgi/uyeBilgi.aspx', elm: '[rel="ems-member-info"]' },
+            { uri: '/kisisel-bilgilerim/', elm: '[rel="ems-member-info"]' },
+            { uri: '/my-personel-informations/', elm: '[rel="ems-member-info"]' },
             { uri: '/uyeBilgi/uyeSifre.aspx', elm: '[rel="ems-member-password"]' },
+            { uri: '/sifre-degistir/', elm: '[rel="ems-member-password"]' },
+            { uri: '/change-password/', elm: '[rel="ems-member-password"]' },
             { uri: '/uyeBilgi/uyeAdres.aspx', elm: '[rel="ems-member-address"]' },
+            { uri: '/adreslerim/', elm: '[rel="ems-member-address"]' },
+            { uri: '/my-address/', elm: '[rel="ems-member-address"]' },
             { uri: '/mesaj/mesaj.aspx', elm: '[rel="ems-member-message"]' },
             { uri: '/mesaj/mesaj_oku.aspx', elm: '[rel="ems-member-message"]' },
             { uri: '/mesaj/mesaj_gonder.aspx', elm: '[rel="ems-member-message"]' },
+            { uri: '/mesajlarim/', elm: '[rel="ems-member-message"]' },
+            { uri: '/my-message/', elm: '[rel="ems-member-message"]' },
             { uri: '/uyeIslem/kuponlarim.aspx?tp=2&spr=0', elm: '.btnKuponHepsi' },
+            { uri: '/kuponlarim/', elm: '.btnKuponHepsi' },
             { uri: '/uyeIslem/kuponlarim.aspx?tp=2&spr=2', elm: '.btnKuponAcikKuponlar' },
             { uri: '/uyeIslem/kuponlarim.aspx?tp=2&spr=4', elm: '.btnKuponKapanan' },
         ],
-
+        
         /* 
             form yönetimi 
         */
@@ -109,6 +128,34 @@ var SITE_CONFIG = {
                 'el': '[id$="txtURN_ADET"]',
                 'attr': { 'readonly': 'true' }
             },
+
+            /* XML Form */
+            {
+                'el': 'input.fc-int',
+                'attr': { 'readonly': 'true' },
+                'regex': 'typ2' 
+            },
+            {
+                'el': 'input.fc-string',
+                'attr': { 'readonly': 'true' },
+                'regex': 'typ1'
+            },
+            {
+                'el': 'input.fc-tc',
+                'mask': '99999999999',
+                'prop': { 'type': 'tel' },
+                'regex': 'typ1'
+            },
+            {
+                'el': 'input.fc-tel',
+                'mask': '999 9999999',
+                'prop': { 'type': 'tel' },
+                'regex': 'typ1'
+            },
+            {
+                'el': 'input.fc-mail',
+                'prop': { 'type': 'mail' }
+            }
         ],
 
         /* 
@@ -124,6 +171,12 @@ var SITE_CONFIG = {
         ]
     },
     plugin: {
+
+        animate: {
+            animCls: 'slideInUp', // viewporta girince alacağı class belirlenir.
+            threshold: 0, // threshold değeri
+            delay: 0, // girilen milisaniyeye göre settimeot ile classı atacak
+        },
 
         /* 
             zoom gallery

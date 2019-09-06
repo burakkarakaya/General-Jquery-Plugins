@@ -1774,7 +1774,7 @@ jQuery.extend(jQuery.easing, {
                                 act = uty.detectEl(ID.find(opt['activeElem'])) ? ID.find(opt['activeElem']) : $(opt['otherTarget']),
                                 elm = uty.detectEl(act.find('> ul')) ? act : act.parents('li').eq(0);
                             if (uty.detectEl(elm.find('ul'))) {
-                                _t.add({ htm: _t.getTemplate({ htm: _t.getHtml(elm) }) });
+                                _t.add({ htm: _t.getTemplate({ htm: _t.getHtml(elm.clone()) }) });
                                 _t.initPlugins();
                             }
 

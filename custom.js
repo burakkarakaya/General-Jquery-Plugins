@@ -880,7 +880,7 @@ function counterOption(o) {
 /* 
     başa dön
 */
-(function () {
+function pageTop() {
     var elm = $('.btn-page-top');
     if (uty.detectEl(elm))
         elm
@@ -888,37 +888,141 @@ function counterOption(o) {
                 evt.preventDefault();
                 uty.pageScroll({ scrollTop: 0 });
             });
-}());
+}
+pageTop();
 
 // DISPATCHER
 
-function onSwiper(o){
+function onSwiper(o) {
     o = o || {};
     var type = o['type'] || '',
-        ID = $( o['ID'] || '' );
-    if( type == 'slideChangeTransitionEnd' ){
+        ID = $(o['ID'] || '');
+    if (type == 'slideChangeTransitionEnd') {
         ID
-        .find('video')
-        .each(function(){
-            var vid = $(this).get(0);
-            vid.pause();
-            vid.currentTime = 0;
-            vid.load();
-            $(vid).parents('.is-play').removeClass('is-play');
-        });
+            .find('video')
+            .each(function () {
+                var vid = $(this).get(0);
+                vid.pause();
+                vid.currentTime = 0;
+                vid.load();
+                $(vid).parents('.is-play').removeClass('is-play');
+            });
     }
 }
 stage.addEventListener("CustomEvent", [{ type: "SWIPER_ACTIVE_ELEMENT", handler: "onSwiper" }]);
 
+/* 
+    landing page parallax text, image
+*/
+
+var landingPageParallaxEffect = {
+    el: {
+        con: '.lp-z-content .swiper-slide'
+    },
+    set: function (o) {
+        var ths = o['ths'],
+            target = o['target'],
+            parallaxValue = target.attr('data-parallax') || 0;
+
+        var r = (wst + ht - ths.offset().top) / (ht + ths.height());
+
+        if (r <= 0)
+            r = 0;
+
+        if (r >= 1)
+            r = 1;
+
+        target.get(0).style.transform = 'translate3d(0,' + (parallaxValue - Math.round((parallaxValue * 2) * r)) + 'px,0)';
+    },
+    adjust: function () {
+        var _t = this,
+            con = $(_t.el.con);
+        if (uty.detectEl(con)) {
+            if (uty.detectEl(con.find('[data-parallax]')))
+                con
+                    .each(function () {
+                        var ths = $(this),
+                            target = ths.find('[data-parallax]');
+
+                        target
+                            .each(function () {
+                                _t.set({ target: $(this), ths: ths });
+                            });
+                    });
+        }
+    },
+    setDefault: function () {
+        var _t = this;
+        $('.lp-z-content .swiper-slide:nth-child(odd)').find('.banner-body').attr('data-parallax', 200);
+        $('.lp-z-content .swiper-slide:nth-child(even)').find('.prm-media').attr('data-parallax', 200);
+        $('.lp-z-content .swiper-slide:nth-child(even)').find('.banner-body').attr('data-parallax', 300);
+    },
+    init: function () {
+        var _t = this;
+        if (uty.detectEl($(_t.el.con))) {
+            _t.setDefault();
+            _t.adjust();
+        }
+    }
+};
+
+landingPageParallaxEffect.init();
+
+/* 
+
+    kanat animasyonu
+
+*/
+
+var wingEffect = {
+    el: {
+        con: '.fd-wing',
+        left: '.fd-wing-l',
+        right: '.fd-wing-r'
+    },
+    set: function (o) {
+        var ths = o['ths'],
+            left = o['left'],
+            right = o['right'];
+
+        var r = (wst + ht - ths.offset().top) / ((ht * .5) + ths.height());
+
+        if (r <= 0)
+            r = 0;
+
+        if (r >= 1)
+            r = 1;
+
+        left.get(0).style.transform = 'rotate(' + ((r * 30) - 30) + 'deg)';
+        right.get(0).style.transform = 'rotate(' + (30 - (r * 30)) + 'deg)';
+    },
+    adjust: function () {
+        var _t = this,
+            con = $(_t.el.con);
+        if (uty.detectEl(con))
+            con
+                .each(function () {
+                    var ths = $(this),
+                        left = ths.find(_t.el.left),
+                        right = ths.find(_t.el.right);
+
+                    _t.set({ left: left, right: right, ths: ths });
+                });
+    }
+};
 
 /* 
     Genel Scroll & Resize
 */
 function onEventsResize() {
     footerAnimation.adjust();
+    landingPageParallaxEffect.adjust();
+    wingEffect.adjust();
 }
 function onEventsScroll() {
     footerAnimation.adjust();
+    landingPageParallaxEffect.adjust();
+    wingEffect.adjust();
 }
 
 stage.addEventListener("CustomEvent", [{ type: "EVENTS_ON_RESIZE", handler: "onEventsResize" }]);
@@ -1029,6 +1133,17 @@ function onListLoaded(o) {
             system widget
         */
         plugin.systemWidget.init();
+
+        /* 
+        
+        */
+        landingPageParallaxEffect.init();
+
+
+        /* 
+        
+        */
+       pageTop();
     }
 }
 stage.addEventListener("CustomEvent", [{ type: "LIST_LOADED", handler: "onListLoaded" }]);
@@ -1051,8 +1166,8 @@ stage.addEventListener("CustomEvent", [{ type: "SORT_LIST_CLICKED", handler: "on
 */
 var addToFavorites = {
     el: {
-        wrp: '.ems-page-product-detail', // favoriye ekleme özelliğinin olacağı 
-        allow: '.ems-page-member-favorites',
+        wrp: '.ems-page-product-detail, .ems-member-favorite', // favoriye ekleme özelliğinin olacağı sayfalar yazılır
+        allow: '.ems-member-favorite',
         favBtn: '.btnFavoriEkle',
         pageDetail: '.ems-page-product-detail',
 

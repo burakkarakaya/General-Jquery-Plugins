@@ -195,10 +195,10 @@ var bdy = $('body'),
                 özel durumlarda elementi geçtikten sonra tetiklenmesi için
                 örneğin ürün liste loadmore
             */
-           if( o['elementNext'] ){
-            if (o1.y >= o2.y + o2.height)
-                b = true;
-           }
+            if (o['elementNext']) {
+                if (o1.y >= o2.y + o2.height)
+                    b = true;
+            }
 
             return b;
         },
@@ -457,6 +457,37 @@ var bdy = $('body'),
         }
     },
     plugin = {
+
+        animate: {
+            def: GET_CONFIG({ group: 'plugin', key: 'animate' }) || {},
+            el: {
+                target: '.ems-animated:not(".animated")'
+            },
+            cls: {
+                animated: 'animated',
+            },
+            set: function (o) {
+                o = o || {};
+                var _t = this,
+                    ID = $(o['ID'] || '');
+
+                if (uty.detectPosition({ ID: ID, threshold: ID.attr('data-threshold') || _t.def['threshold'] || 0, elementNext: true }))
+                    setTimeout(function(){
+                        ID.addClass(_t.cls['animated'] + ' ' + (ID.attr('data-cls') || _t.def['animCls'] || 'slideInUp'));
+                    }, ID.attr('data-delay') || _t.def['delay'] || 0);
+            },
+            adjust: function () {
+                var _t = this,
+                    target = $(_t.el.target);
+
+                if (uty.detectEl(target))
+                    target
+                        .each(function () {
+                            _t.set({ ID: $(this) });
+                        });
+            }
+        },
+
         /* 
             zoom gallery
         */
@@ -972,7 +1003,7 @@ var bdy = $('body'),
                 if (!ID.hasClass(_t['cls']['active']) && uty.detectEl(ID.find(_t.el.target)) && (!ID.hasClass(_t.cls['mobiSwiper']) || (uty.visibleControl() && ID.hasClass(_t.cls['mobiSwiper'])))) {
                     var config = GET_CONFIG({ group: 'plugin', key: 'swiper' }) || {};
                     ID.addClass(_t['cls']['active']);
-                    ID.minusSwiper(config['defaultOpt'] || {} );
+                    ID.minusSwiper(config['defaultOpt'] || {});
                 }
             },
             adjust: function () {
@@ -1059,6 +1090,7 @@ var bdy = $('body'),
         },
         adjust: function () {
             var _t = this;
+            _t.animate.adjust();
             _t.swiper.adjust();
             _t.html5Video.adjust();
             _t.lazyLoad.adjust();
@@ -1066,6 +1098,7 @@ var bdy = $('body'),
         },
         onScroll: function () {
             var _t = this;
+            _t.animate.adjust();
             _t.html5Video.adjust();
             _t.lazyLoad.adjust();
             _t.systemWidget.adjust();
@@ -1189,6 +1222,6 @@ initialize();
 
 /* DISPATCHER */
 stage.addEventListener("CustomEvent", [{ type: "teslimatKargoSuccess", handler: "setStyler" }]);
-function setStyler(){
+function setStyler() {
     plugin.styler.init();
 }
