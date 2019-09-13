@@ -367,6 +367,32 @@ NOT:
 
 ### Tab Menu
 
+``` HTML
+ <div class="ems-tab">
+        <div class="ems-tab-header">
+            <a data-ajx="/urun_liste.aspx?kat=22949&lang=tr-TR&ps=8" href="javascript:void(0);"
+                rel="tab-1">ERKEK</a>
+            <a href="javascript:void(0);" rel="tab-2">KADIN</a>
+            <a href="javascript:void(0);" rel="tab-3">ÇOCUK</a>
+        </div>
+        <div class="ems-tab-content">
+            <div rel="tab-1">
+                <div class="swiper-container">
+                    <div class="swiper-inner">
+                        <ul class="emosInfinite">
+                        </ul>
+                    </div>
+                    <div class="swiper-button-prev"><i> </i></div>
+                    <div class="swiper-button-next"><i> </i></div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+            <div rel="tab-2">tab2</div>
+            <div rel="tab-3">tab3</div>
+        </div>
+    </div>
+```
+
 Eğer Ajax tab menu kullanacaksanız ilk anda istek atmaması için "scroller-trigger" classını eklemeniz gerekir. Böylece scroll edince viewport içerisinde tab gözüktüğü zaman tetikleme gerçekleşecektir.
 
 ``` HTML
