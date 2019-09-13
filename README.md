@@ -308,6 +308,19 @@ form: [
 
 ### System Widget
 
+``` HTML
+<div class="system-widget widget swiper-container" data-uri="/urun_liste.aspx?kat=22949&lang={{lang}}&ps=8">
+    <div class="swiper-header"><span>ÖNE ÇIKAN ÜRÜNLER</span></div>
+    <div class="swiper-inner">
+        <ul class="emosInfinite swiper-wrapper">
+        </ul>
+    </div>
+    <div class="swiper-button-prev"><i> </i></div>
+    <div class="swiper-button-next"><i> </i></div>
+    <div class="swiper-pagination"></div>
+</div>
+```
+
 System widgetları ilk anda yüklenmemesi scroll ettikten sonra yüklenmeleri için system widget "scroller-trigger" classı eklenmeli
 
 ``` HTML
