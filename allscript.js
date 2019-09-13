@@ -472,8 +472,8 @@ var bdy = $('body'),
                     ID = $(o['ID'] || '');
 
                 if (uty.detectPosition({ ID: ID, threshold: ID.attr('data-threshold') || _t.def['threshold'] || 0, elementNext: true }))
-                    setTimeout(function(){
-                        ID.addClass(_t.cls['animated'] + ' ' + (ID.attr('data-cls') || _t.def['animCls'] || 'slideInUp'));
+                    setTimeout(function () {
+                        ID.addClass(_t.cls['animated'] + ' ' + (ID.attr('data-cls') || _t.def['animCls'] || 'slideInUp'));
                     }, ID.attr('data-delay') || _t.def['delay'] || 0);
             },
             adjust: function () {
@@ -916,14 +916,16 @@ var bdy = $('body'),
             },
             cls: { active: 'ems-system-widget-active' },
             set: function (ID) {
-                var _t = this;
+                var _t = this,
+                    prop = GET_CONFIG({ group: 'plugin', key: 'systemWidget' }) || {};
+
                 if (!ID.hasClass(_t['cls']['active'])) {
                     ID.addClass(_t['cls']['active']);
-                    ID.minusSystemWidget();
+                    ID.minusSystemWidget(prop);
                 }
             },
             adjust: function () {
-                var _t = this, el = $(_t.el.con)
+                var _t = this, el = $(_t.el.con);
                 if (uty.detectEl(el))
                     el.each(function () {
                         var ths = $(this);
@@ -954,10 +956,12 @@ var bdy = $('body'),
             },
             cls: { active: 'ems-tabmenu-active' },
             set: function (ID) {
-                var _t = this;
+                var _t = this,
+                    prop = GET_CONFIG({ group: 'plugin', key: 'tabMenu' }) || {};
+
                 if (!ID.hasClass(_t['cls']['active'])) {
                     ID.addClass(_t['cls']['active']);
-                    ID.minusTab();
+                    ID.minusTab(prop);
                 }
             },
             adjust: function () {
@@ -1221,6 +1225,8 @@ var bdy = $('body'),
 initialize();
 
 /* DISPATCHER */
+stage.addEventListener("CustomEvent", [{ type: "xmlFormUlkeIl", handler: "setStyler" }]);
+stage.addEventListener("CustomEvent", [{ type: "xmlFormUlkeIlIlce", handler: "setStyler" }]);
 stage.addEventListener("CustomEvent", [{ type: "teslimatKargoSuccess", handler: "setStyler" }]);
 function setStyler() {
     plugin.styler.init();

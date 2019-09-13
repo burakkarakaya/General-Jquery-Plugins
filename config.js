@@ -85,6 +85,11 @@ var SITE_CONFIG = {
                 'mask': '99999',
                 'prop': { 'type': 'tel' }
             },
+            {
+                'el': '[id$="txtUYA_VERGINUMARASI"]',
+                'mask': '99999999999',
+                'prop': { 'type': 'tel' }
+            },
 
             /* iletisim */
             {
@@ -128,16 +133,18 @@ var SITE_CONFIG = {
                 'el': '[id$="txtURN_ADET"]',
                 'attr': { 'readonly': 'true' }
             },
+            {
+                'el': '[id$="SIP_HEDIYENOTU"]',
+                'attr': { 'maxlength': '250' }
+            },
 
             /* XML Form */
             {
                 'el': 'input.fc-int',
-                'attr': { 'readonly': 'true' },
                 'regex': 'typ2' 
             },
             {
                 'el': 'input.fc-string',
-                'attr': { 'readonly': 'true' },
                 'regex': 'typ1'
             },
             {
@@ -155,7 +162,12 @@ var SITE_CONFIG = {
             {
                 'el': 'input.fc-mail',
                 'prop': { 'type': 'mail' }
-            }
+            },
+            {
+                'el': 'input.fc-date',
+                'attr': { 'autocomplete': 'off', 'readonly': 'true' }
+            },
+            
         ],
 
         /* 

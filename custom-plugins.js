@@ -602,6 +602,7 @@ jQuery.extend(jQuery.easing, {
                                 k = o['ID'],
                                 ind = o['order'],
                                 vid = new MediaElementPlayer(k, {
+                                    pauseOtherPlayers: false,
                                     stretching: opt['videoStretching'] || 'fill',
                                     success: function (player, node) {
                                         player.addEventListener('ended', function (e) {
