@@ -458,6 +458,100 @@ var bdy = $('body'),
     },
     plugin = {
 
+        htmDropdown: {
+            arr: GET_CONFIG({ group: 'plugin', key: 'htmDropdown' }),
+            cls: {
+                active: 'ems-htm-dropdown-active'
+            },
+            set: function (o) {
+                var _t = this,
+                    ID = $(o['ID']);
+
+                if (!ID.hasClass(_t['cls']['active'])) {
+                    ID.addClass(_t['cls']['active']);
+                    var prop = o['prop'] || {},
+                        active = ID.find(prop['active']).eq( 0 ).html() || '',
+                        header = ID.find(prop['header']),
+                        cls = 'opened';
+
+                    header
+                        .html(active)
+                        .end()
+                        .unbind('click')
+                        .bind('click', function () {
+                            ID.toggleClass(cls);
+                        })
+                        .find('a')
+                        .unbind('click')
+                        .bind('click', function (evt) {
+                            evt.preventDefault();
+                        });
+                }
+
+            },
+            init: function () {
+                var _t = this,
+                    arr = _t.arr || {},
+                    ID = arr['ID'];
+                $(ID)
+                    .each(function () {
+                        _t.set({ ID: $(this), prop: arr['prop'] || {} });
+                    });
+
+            }
+        },
+
+        /* 
+            youtube ve vimeo ayrımına göre video gösterimi
+            ex:
+            <div class="videoArea" data-videosrc="https://www.youtube.com/embed/QWW71PH-Ydw"></div>         
+        */
+
+        videos: {
+            el: {
+                con: '[data-videosrc]'
+            },
+            temp: '<video height="360" width="640" preload="none" autobuffer="autobuffer"><source type="{{type}}" src="{{src}}"></source></video>',
+            getTemplate: function (o) {
+                o = o || {};
+                var _t = this;
+                return _t.temp.replace(/{{type}}/g, o['type'] || '').replace(/{{src}}/g, o['src'] || '');
+            },
+            add: function (ID) {
+                var _t = this,
+                    src = ID.attr('data-videosrc') || '',
+                    type = src.indexOf('youtube') != -1 ? 'video/youtube' : 'video/vimeo';
+
+                if (src != '') {
+                    ID.append(_t.getTemplate({ type: type, src: src }));
+                    setTimeout(function () {
+                        _t.initPlugins({ ID: ID.find('video').get(0) });
+                    }, 10);
+                }
+            },
+            initPlugins: function (o) {
+                var _t = this,
+                    ID = o['ID'];
+                new MediaElementPlayer(ID, {
+                    stretching: 'responsive',
+                    success: function (player, node) {
+                    }
+                });
+            },
+            set: function () {
+                var _t = this;
+                $(_t.el.con)
+                    .each(function () {
+                        _t.add($(this));
+                    })
+            },
+            init: function () {
+                var _t = this;
+                if (uty.detectEl($(_t.el.con)))
+                    _t.set();
+            }
+        },
+
         animate: {
             def: GET_CONFIG({ group: 'plugin', key: 'animate' }) || {},
             el: {
@@ -1111,6 +1205,8 @@ var bdy = $('body'),
         },
         init: function () {
             var _t = this;
+            _t.htmDropdown.init();
+            _t.videos.init();
             _t.html5Video.init();
             _t.zoomGallery.init();
             _t.socialShare.init();
@@ -1225,9 +1321,19 @@ var bdy = $('body'),
 initialize();
 
 /* DISPATCHER */
+// AJX STYLER TRIGGER
+stage.addEventListener("CustomEvent", [{ type: "taksitChanged", handler: "setStyler" }]);
 stage.addEventListener("CustomEvent", [{ type: "xmlFormUlkeIl", handler: "setStyler" }]);
 stage.addEventListener("CustomEvent", [{ type: "xmlFormUlkeIlIlce", handler: "setStyler" }]);
 stage.addEventListener("CustomEvent", [{ type: "teslimatKargoSuccess", handler: "setStyler" }]);
 function setStyler() {
     plugin.styler.init();
+}
+
+// CUSTOM CONTENT RATE TYPE
+stage.addEventListener("CustomEventClass", [{ type: "CUSTOM_RATE_CONTENT", handler: "onCustomRateContent" }]);
+function onCustomRateContent(o) {
+    var ID = o['ID'],
+        type = o['type'];
+    ID.parents('.content-scoring').eq(0).removeClass('ems-success').removeClass('ems-error').addClass('ems-' + type);
 }

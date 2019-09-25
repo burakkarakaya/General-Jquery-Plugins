@@ -71,7 +71,7 @@ var SITE_CONFIG = {
             },
             {
                 'el': '[id$="txtUYA_CEPTELEFON"]',
-                'mask': '999 9999999',
+                'regex': 'typ2',
                 'prop': { 'type': 'tel' },
                 'attr': { 'required': 'true' }
             },
@@ -82,7 +82,7 @@ var SITE_CONFIG = {
             },
             {
                 'el': '[id$="txtUYA_POSTAKODU"]',
-                'mask': '99999',
+                'regex': 'typ2',
                 'prop': { 'type': 'tel' }
             },
             {
@@ -94,7 +94,7 @@ var SITE_CONFIG = {
             /* iletisim */
             {
                 'el': '[id$="txtUYM_TELEFON"]',
-                'mask': '999 9999999',
+                'regex': 'typ2',
                 'prop': { 'type': 'tel' }
             },
 
@@ -105,15 +105,16 @@ var SITE_CONFIG = {
             },
             {
                 'el': '[id$="txtUYE_CEPTELEFONALAN"]',
-                'mask': '999',
+                'regex': 'typ2',
                 'prop': { 'type': 'tel' },
                 'attr': { 'required': 'true' }
             },
             {
                 'el': '[id$="txtUYE_CEPTELEFON"]',
-                'mask': '9999999',
+                'regex': 'typ2',
                 'prop': { 'type': 'tel' },
-                'attr': { 'required': 'true' }
+                'attr': { 'required': 'true' },
+                'removeAttr': ['maxlength']
             },
             {
                 'el': '[id$="txtUYE_DOGUMTARIHI"]',
@@ -150,14 +151,12 @@ var SITE_CONFIG = {
             {
                 'el': 'input.fc-tc',
                 'mask': '99999999999',
-                'prop': { 'type': 'tel' },
-                'regex': 'typ1'
+                'prop': { 'type': 'tel' }
             },
             {
                 'el': 'input.fc-tel',
-                'mask': '999 9999999',
-                'prop': { 'type': 'tel' },
-                'regex': 'typ1'
+                'regex': 'typ2',
+                'prop': { 'type': 'tel' }
             },
             {
                 'el': 'input.fc-mail',
@@ -183,6 +182,14 @@ var SITE_CONFIG = {
         ]
     },
     plugin: {
+
+        htmDropdown: {
+            'ID': '.dropdown',
+            'prop': {
+                'header': '.dropdown-header', // dropdown clicked header
+                'active': '.selected, .active, .act' // active element
+            }
+        },
 
         animate: {
             animCls: 'slideInUp', // viewporta girince alacağı class belirlenir.

@@ -1537,6 +1537,9 @@ jQuery.extend(jQuery.easing, {
             return this.each(function (e) {
                 var opt = option,
                     ID = $(this),
+                    _dispatch = function (obj) {
+                        stage.dispatchEvent("CustomEvent", "CUSTOM_SEARCH", $.extend({ ID: ID }, obj));
+                    },
                     main = {
                         loading: function (k) {
                             var _t = this;
@@ -1551,6 +1554,9 @@ jQuery.extend(jQuery.easing, {
                                 uty.cssClass({ 'ID': 'body', 'delay': 100, 'type': 'add', 'cls': [opt['ready'], opt['animate']] });
                             else
                                 uty.cssClass({ 'ID': 'body', 'delay': 444, 'type': 'remove', 'cls': [opt['animate'], opt['ready']] });
+
+
+                            _dispatch({ type: 'Search-' + k });    
                         },
                         destroy: function () {
                             var _t = this,
