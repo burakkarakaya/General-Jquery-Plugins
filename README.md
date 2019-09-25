@@ -457,6 +457,29 @@ Eğer Ajax tab menu kullanacaksanız ilk anda istek atmaması için "scroller-tr
 
 ```
 
+### Html Dropdown
+
+Config.js
+```JS
+    htmDropdown: {
+        'ID': '.dropdown',
+        'prop': {
+            'header': '.dropdown-header', // dropdown clicked header
+            'active': '.selected, .active, .act' // active element
+        }
+    }
+```
+
+```HTML
+<div class="dropdown">
+    <span class="dropdown-header"></span>
+    <ul>
+        <li class="selected"></li>
+        <li></li>
+    </ul>
+</div>
+```
+
 ### Video
 
 Siteye eklenen videoların ilk anda yüklenmemesi için video tagına class="is-scrolling" eklenmesi ve videonun ilk anda yüklenmemesi için preload="none", iosta videonun olduğu yerde gözükmesi için playsinline="true" parametrelerinin eklenmesi gerekir. Ayrıca autoplay özelliğini eklenmemesi lazım.
