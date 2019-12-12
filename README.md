@@ -349,11 +349,13 @@ data-uri paremetresinde kullanabileceğimiz user controller. Ayrıca bu değerle
 
 /usercontrols/kutu/ajxUrunTab.aspx?lang={{lang}}&kat={{prdCat}}&tip=onecikan&ps=100&rp=1&tur=sepetli
 
+/usercontrols/kutu/ajxUrunTab.aspx?lang={{lang}}&tip=seciliurun&ps=100&rp=1&ukods={{urn}}
+
 /usercontrols/urunDetay/ascSonGezilenUrun_ajx.aspx?lang={{lang}}&listeTuru=sepetli&urunSayisi=10&repeatColumns=1&resimTipi=thumb
 
-/usercontrols/urunDetay/ajxIlgiliUrun.aspx?lang={{lang}}&urn={{prdCode}}&ps=100&rp=1
+/usercontrols/urunDetay/ajxIlgiliUrun.aspx?lang={{lang}}&urn={{prdCode}}&ps=10&rp=1
 
-/usercontrols/kutu/ajxUrunTab.aspx?lang={{lang}}&tip=seciliurun&ps=100&rp=1&ukods={{urn}}
+/usercontrols/urunDetay/ajxTavsiyeUrun.aspx?lang={{lang}}&urn={{prdCode}}&ps=10&rp=1&grup=1
 
 NOT: 
 
