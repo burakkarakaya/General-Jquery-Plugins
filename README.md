@@ -339,6 +339,8 @@ System widgetları ilk anda yüklenmemesi scroll ettikten sonra yüklenmeleri i�
 
 data-uri paremetresinde kullanabileceğimiz user controller. Ayrıca bu değerleri ajax tab menudede kullanabilirsiniz.
 
+/usercontrols/kutu/ajxUrunTab.aspx?lang={{lang}}&tip=urun&kat=20998&ps=9
+
 /usercontrols/kutu/ajxUrunTab.aspx?lang={{lang}}&tip=indirim&ps=10&rp=1&tur=sepetli 
 
 /usercontrols/kutu/ajxUrunTab.aspx?lang={{lang}}&tip=vitrin&ps=100&rp=1&tur=sepetli
